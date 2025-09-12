@@ -121,7 +121,7 @@ function downloadPDF() {
     doc.setFontSize(16);
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'normal');
-    doc.text('Full Stack Engineer', margin, 30);
+    doc.text('Backend Developer | Python Specialist | AI & LLM Enthusiast', margin, 30);
     
     yPosition = 50;
     
@@ -150,8 +150,8 @@ function downloadPDF() {
     yPosition = addSectionHeader(currentLanguage === 'en' ? 'About Me' : 'Acerca de mí', yPosition);
     
     const aboutText = currentLanguage === 'en' ? 
-        'Full Stack Engineer, specialist in Python and JavaScript. Computer Engineer graduated from the National University of Piura. Co-founder of Tallanix S.A.C and Xprende Tech. Free Software activist and founding member of the Piura Free Software Community VICUX and the Python Piura Programmers Community.' :
-        'Full Stack Engineer, especialista en Python y JavaScript. Ingeniero Informático egresado de la Universidad Nacional de Piura. Socio fundador de Tallanix S.A.C y de Xprende Tech. Activista del Software Libre y miembro fundador de la Comunidad Piurana de Software Libre VICUX y de la Comunidad de Programadores Python Piura.';
+        'Backend developer with advanced experience in Python, specialized in building scalable and efficient solutions. Focused on integrating AI and LLMs into high-impact applications using tools like LangChain, Langraph and RAG.' :
+        'Desarrollador backend con experiencia avanzada en Python, especializado en la creación de soluciones escalables y eficientes. Enfocado en integrar IA y LLMs en aplicaciones de alto impacto usando LangChain, Langraph y RAG.';
     
     yPosition = addText(aboutText, margin, yPosition, { fontSize: 10 });
     yPosition += 10;
@@ -160,8 +160,8 @@ function downloadPDF() {
     yPosition = addSectionHeader(currentLanguage === 'en' ? 'Skills' : 'Habilidades', yPosition);
     
     const skills = [
-        'Python (90%)', 'JavaScript (90%)', 'GNU/Linux (90%)', 'Git (90%)',
-        'Django (90%)', 'React (70%)', 'Vue (70%)'
+        'Python (95%)', 'Backend (Django / FastAPI) (90%)', 'LangChain & Langraph (LLMs, RAG) (75%)', 'AI / NLP (80%)',
+        'APIs & Microservices (90%)', 'Databases (SQL / NoSQL) (90%)', 'n8n (Automation) (40%)'
     ];
     
     const skillsText = skills.join(' • ');
