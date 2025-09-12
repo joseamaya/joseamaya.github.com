@@ -394,6 +394,41 @@ function downloadPDF() {
         }
     ];
     
+    // Replace projects with current GitHub repos summary
+    const repoList = currentLanguage === 'en' ? [
+        { name: 'joseamaya.github.com', description: 'My personal website and portfolio (static site).', url: 'https://github.com/joseamaya/joseamaya.github.com' },
+        { name: 'template-snyk', description: 'Template with Snyk integration for dependency management.', url: 'https://github.com/joseamaya/template-snyk' },
+        { name: 'chatbot-wsp', description: 'Python bot for WhatsApp integrations.', url: 'https://github.com/joseamaya/chatbot-wsp' },
+    { name: 'telegram-multibot', description: 'Implementation of multiple Telegram bots using Python.', url: 'https://github.com/joseamaya/telegram-multibot' },
+        { name: 'chatbot-canvas-connect', description: 'TypeScript implementation to connect chatbots with Canvas/LMS.', url: 'https://github.com/joseamaya/chatbot-canvas-connect' },
+        { name: 'cuota-connect', description: 'TypeScript project related to financial integrations.', url: 'https://github.com/joseamaya/cuota-connect' },
+        { name: 'langraph-tutorials', description: 'Notebooks and tutorials about Langraph and LLMs.', url: 'https://github.com/joseamaya/langraph-tutorials' },
+        { name: 'tambox', description: 'Logistics software in Django with PostgreSQL.', url: 'https://github.com/joseamaya/tambox' },
+        { name: 'multitenant', description: 'Multitenant example in Django (data isolation).', url: 'https://github.com/joseamaya/multitenant' },
+        { name: 'tienda', description: 'Django app to learn and deploy on Heroku.', url: 'https://github.com/joseamaya/tienda' },
+        { name: 'volpox', description: 'Software for vote control in electoral records.', url: 'https://github.com/joseamaya/volpox' }
+    ] : [
+        { name: 'joseamaya.github.com', description: 'Mi página personal y portafolio estática.', url: 'https://github.com/joseamaya/joseamaya.github.com' },
+        { name: 'template-snyk', description: 'Plantilla con integración Snyk para gestión de dependencias.', url: 'https://github.com/joseamaya/template-snyk' },
+        { name: 'chatbot-wsp', description: 'Bot en Python para integraciones con WhatsApp.', url: 'https://github.com/joseamaya/chatbot-wsp' },
+    { name: 'telegram-multibot', description: 'Implementación de múltiples bots para Telegram con Python.', url: 'https://github.com/joseamaya/telegram-multibot' },
+        { name: 'chatbot-canvas-connect', description: 'Implementación en TypeScript para conectar chatbots con Canvas/LMS.', url: 'https://github.com/joseamaya/chatbot-canvas-connect' },
+        { name: 'cuota-connect', description: 'Proyecto en TypeScript relacionado con integraciones financieras.', url: 'https://github.com/joseamaya/cuota-connect' },
+        { name: 'langraph-tutorials', description: 'Cuadernos y tutoriales sobre Langraph y LLMs.', url: 'https://github.com/joseamaya/langraph-tutorials' },
+        { name: 'tambox', description: 'Software de logística en Django con PostgreSQL.', url: 'https://github.com/joseamaya/tambox' },
+        { name: 'multitenant', description: 'Ejemplo multitenant en Django (aislamiento de datos).', url: 'https://github.com/joseamaya/multitenant' },
+        { name: 'tienda', description: 'Aplicativo Django para aprender y desplegar en Heroku.', url: 'https://github.com/joseamaya/tienda' },
+        { name: 'volpox', description: 'Software para control de votos en actas electorales.', url: 'https://github.com/joseamaya/volpox' }
+    ];
+
+    repoList.forEach(project => {
+        if (yPosition > 250) { doc.addPage(); yPosition = 20; }
+        yPosition = addText(project.name, margin, yPosition, { fontSize: 11, fontStyle: 'bold' });
+        yPosition = addText(project.description, margin, yPosition, { fontSize: 9 });
+        yPosition = addText(project.url, margin, yPosition, { fontSize: 9, color: primaryColor });
+        yPosition += 8;
+    });
+    
     projects.forEach(project => {
         if (yPosition > 250) {
             doc.addPage();
