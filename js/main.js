@@ -356,10 +356,12 @@ function downloadPDF() {
     yPosition = addSectionHeader(currentLanguage === 'en' ? 'Education' : 'Educación', yPosition);
     
     const education = currentLanguage === 'en' ? [
+        "Master\'s Program in Science with specialization in Applied Mathematics - National University of Piura (2023-2024)",
         'Computer Engineering - National University of Piura (2004-2009)',
         'Secondary Education - I.E San Pedro - Cancas (1999-2003)',
         'Primary Education - I.E José Olaya Balandra (1993-1998)'
     ] : [
+        'Programa de Maestría en Ciencias con mención en Matemática Aplicada - Universidad Nacional de Piura (2023-2024)',
         'Ingeniería Informática - Universidad Nacional de Piura (2004-2009)',
         'Educación Secundaria - I.E San Pedro - Cancas (1999-2003)',
         'Educación Primaria - I.E José Olaya Balandra (1993-1998)'
@@ -371,74 +373,54 @@ function downloadPDF() {
     
     yPosition += 10;
     
-    // Personal Projects
+    // Personal Projects - extract only projects that appear in the HTML
     yPosition = addSectionHeader(currentLanguage === 'en' ? 'Personal Projects' : 'Proyectos Personales', yPosition);
-    
-    const projects = currentLanguage === 'en' ? [
-        {
-            name: 'Tambox',
-            description: 'Free software developed in Django with PostgreSQL database for the management and control of a company\'s logistics, currently supports the creation of purchase orders, service orders, requirements management, warehouse management and generation of accounting reports specific to the warehouse.'
-        },
-        {
-            name: 'Volpox',
-            description: 'Free software developed in Django for controlling votes cast and recorded in electoral records for regional and national election processes in Peru, it was successfully tested in the regional and local election process in 2014 and in the national elections of 2016.'
-        }
-    ] : [
-        {
-            name: 'Tambox',
-            description: 'Software libre desarrollado en Django con la base de datos PostgreSQL para la gestión y control de la logística de una empresa, actualmente soporta la creación de órdenes de compra, órdenes de servicio, gestión de requerimientos, gestión de almacenes y generación de reportes contables propios del almacén.'
-        },
-        {
-            name: 'Volpox',
-            description: 'Software libre desarrollado en Django para el control de los votos emitidos y registrados en las actas electorales para los procesos de elecciones regionales y nacionales en Perú, fue probado exitosamente en el proceso de elecciones regionales y locales en el año 2014 y en las elecciones nacionales del año 2016.'
-        }
-    ];
-    
-    // Replace projects with current GitHub repos summary
-    const repoList = currentLanguage === 'en' ? [
-        { name: 'joseamaya.github.com', description: 'My personal website and portfolio (static site).', url: 'https://github.com/joseamaya/joseamaya.github.com' },
-        { name: 'template-snyk', description: 'Template with Snyk integration for dependency management.', url: 'https://github.com/joseamaya/template-snyk' },
-        { name: 'chatbot-wsp', description: 'Python bot for WhatsApp integrations.', url: 'https://github.com/joseamaya/chatbot-wsp' },
-    { name: 'telegram-multibot', description: 'Implementation of multiple Telegram bots using Python.', url: 'https://github.com/joseamaya/telegram-multibot' },
-        { name: 'chatbot-canvas-connect', description: 'TypeScript implementation to connect chatbots with Canvas/LMS.', url: 'https://github.com/joseamaya/chatbot-canvas-connect' },
-        { name: 'cuota-connect', description: 'TypeScript project related to financial integrations.', url: 'https://github.com/joseamaya/cuota-connect' },
-        { name: 'langraph-tutorials', description: 'Notebooks and tutorials about Langraph and LLMs.', url: 'https://github.com/joseamaya/langraph-tutorials' },
-        { name: 'tambox', description: 'Logistics software in Django with PostgreSQL.', url: 'https://github.com/joseamaya/tambox' },
-        { name: 'multitenant', description: 'Multitenant example in Django (data isolation).', url: 'https://github.com/joseamaya/multitenant' },
-        { name: 'tienda', description: 'Django app to learn and deploy on Heroku.', url: 'https://github.com/joseamaya/tienda' },
-        { name: 'volpox', description: 'Software for vote control in electoral records.', url: 'https://github.com/joseamaya/volpox' }
-    ] : [
-        { name: 'joseamaya.github.com', description: 'Mi página personal y portafolio estática.', url: 'https://github.com/joseamaya/joseamaya.github.com' },
-        { name: 'template-snyk', description: 'Plantilla con integración Snyk para gestión de dependencias.', url: 'https://github.com/joseamaya/template-snyk' },
-        { name: 'chatbot-wsp', description: 'Bot en Python para integraciones con WhatsApp.', url: 'https://github.com/joseamaya/chatbot-wsp' },
-    { name: 'telegram-multibot', description: 'Implementación de múltiples bots para Telegram con Python.', url: 'https://github.com/joseamaya/telegram-multibot' },
-        { name: 'chatbot-canvas-connect', description: 'Implementación en TypeScript para conectar chatbots con Canvas/LMS.', url: 'https://github.com/joseamaya/chatbot-canvas-connect' },
-        { name: 'cuota-connect', description: 'Proyecto en TypeScript relacionado con integraciones financieras.', url: 'https://github.com/joseamaya/cuota-connect' },
-        { name: 'langraph-tutorials', description: 'Cuadernos y tutoriales sobre Langraph y LLMs.', url: 'https://github.com/joseamaya/langraph-tutorials' },
-        { name: 'tambox', description: 'Software de logística en Django con PostgreSQL.', url: 'https://github.com/joseamaya/tambox' },
-        { name: 'multitenant', description: 'Ejemplo multitenant en Django (aislamiento de datos).', url: 'https://github.com/joseamaya/multitenant' },
-        { name: 'tienda', description: 'Aplicativo Django para aprender y desplegar en Heroku.', url: 'https://github.com/joseamaya/tienda' },
-        { name: 'volpox', description: 'Software para control de votos en actas electorales.', url: 'https://github.com/joseamaya/volpox' }
-    ];
 
-    repoList.forEach(project => {
-        if (yPosition > 250) { doc.addPage(); yPosition = 20; }
-        yPosition = addText(project.name, margin, yPosition, { fontSize: 11, fontStyle: 'bold' });
-        yPosition = addText(project.description, margin, yPosition, { fontSize: 9 });
-        yPosition = addText(project.url, margin, yPosition, { fontSize: 9, color: primaryColor });
-        yPosition += 8;
-    });
-    
-    projects.forEach(project => {
-        if (yPosition > 250) {
-            doc.addPage();
-            yPosition = 20;
+    try {
+        const projectsCard = Array.from(document.querySelectorAll('.card')).find(c => {
+            const title = c.querySelector('.card-title');
+            if (!title) return false;
+            const t = (title.getAttribute('data-es') || title.textContent || '').trim();
+            return /Proyectos Personales|Personal Projects/i.test(t);
+        });
+
+        const domProjects = [];
+        if (projectsCard) {
+            const items = projectsCard.querySelectorAll('.experience-item');
+            items.forEach(it => {
+                const nameEl = it.querySelector('.experience-title');
+                const descEl = it.querySelector('.experience-description');
+                const linkEl = it.querySelector('.experience-company a[href]');
+
+                const name = nameEl ? (currentLanguage === 'en' ? (nameEl.getAttribute('data-en') || nameEl.textContent) : (nameEl.getAttribute('data-es') || nameEl.textContent)) : '';
+                let description = '';
+                if (descEl) {
+                    const localized = descEl.querySelector('[data-en],[data-es]');
+                    if (localized) description = currentLanguage === 'en' ? (localized.getAttribute('data-en') || localized.textContent) : (localized.getAttribute('data-es') || localized.textContent);
+                    else description = descEl.textContent.trim();
+                }
+                const url = linkEl ? linkEl.href : '';
+
+                if (name || description || url) domProjects.push({ name: (name || '').trim(), description: (description || '').trim(), url: url });
+            });
         }
-        
-        yPosition = addText(project.name, margin, yPosition, { fontSize: 11, fontStyle: 'bold' });
-        yPosition = addText(project.description, margin, yPosition, { fontSize: 9 });
-        yPosition += 8;
-    });
+
+        if (!domProjects.length) {
+            // nothing to list; add a short note so the section isn't empty
+            yPosition = addText(currentLanguage === 'en' ? 'No projects listed in the HTML.' : 'No hay proyectos listados en el HTML.', margin, yPosition, { fontSize: 10, color: secondaryColor });
+            yPosition += 8;
+        } else {
+            domProjects.forEach(project => {
+                if (yPosition > 250) { doc.addPage(); yPosition = 20; }
+                yPosition = addText(project.name || '', margin, yPosition, { fontSize: 11, fontStyle: 'bold' });
+                if (project.description) yPosition = addText(project.description, margin, yPosition, { fontSize: 9 });
+                if (project.url) yPosition = addText(project.url, margin, yPosition, { fontSize: 9, color: primaryColor });
+                yPosition += 8;
+            });
+        }
+    } catch (err) {
+        console.error('Error extrayendo proyectos del DOM:', err);
+    }
     
     // Footer
     const pageCount = doc.internal.getNumberOfPages();
