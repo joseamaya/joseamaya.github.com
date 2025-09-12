@@ -181,60 +181,138 @@ function downloadPDF() {
     // Work Experience
     yPosition = addSectionHeader(currentLanguage === 'en' ? 'Work Experience' : 'Experiencia Laboral', yPosition);
     
-    const experiences = currentLanguage === 'en' ? [
-        {
-            title: 'CTO - Co-founder',
-            company: 'Xprende Tech, Quito',
-            period: 'Jun 2019 - Present',
-            description: 'I am responsible for leading the technology team and supervising all decisions related to technology and product development of the company. I am also a co-founder of the company with projects in several Latin American countries.'
-        },
-        {
-            title: 'Full Stack Engineer',
-            company: 'Efilm Online, Bilbao',
-            period: 'Feb 2017 - Present',
-            description: 'I am responsible for working on all parts of the software development process, from user interface design to backend creation and system architecture, as well as application implementation and problem solving.'
-        },
-        {
-            title: 'Co-founder',
-            company: 'Tallanix S.A.C',
-            period: 'Dec 2016 - Present',
-            description: 'Tallanix is a company that we have formed together with other partners to carry out incubation and acceleration activities for startups in the North zone of Peru and South of Ecuador.'
+    // Build experiences from DOM so the PDF matches the page content (handles both legacy header/description blocks and terminal-line blocks)
+    function textForLocalized(el) {
+        if (!el) return '';
+        const attr = currentLanguage === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-es');
+        if (attr && attr.trim().length) return attr.trim();
+        return el.textContent.trim();
+    }
+
+    function parseExperienceItem(item) {
+        let title = '';
+        let company = '';
+        let period = '';
+        let description = '';
+
+        const header = item.querySelector('.experience-header');
+        const descBlock = item.querySelector('.experience-description');
+
+        if (header) {
+            const h4 = header.querySelector('.experience-title');
+            const comp = header.querySelector('.experience-company');
+            const date = header.querySelector('.experience-date');
+
+            title = textForLocalized(h4) || (h4 ? h4.textContent.trim() : '');
+            company = textForLocalized(comp) || (comp ? comp.textContent.trim() : '');
+            period = date ? date.textContent.trim() : '';
+
+            if (descBlock) {
+                // Prefer localized paragraph inside description
+                const localized = descBlock.querySelector('[data-en],[data-es]');
+                description = localized ? textForLocalized(localized) : descBlock.textContent.trim();
+            }
+        } else {
+            // terminal-line style
+            const lines = item.querySelectorAll('.terminal-line');
+            if (lines.length > 0) {
+                // First line: contains title and period (period may be in a terminal-argument with muted color)
+                const first = lines[0];
+                // pick a localized element if present
+                const possibleTitle = first.querySelector('[data-en],[data-es]');
+                if (possibleTitle) title = textForLocalized(possibleTitle);
+                // fallback: find terminal-argument elements
+                if (!title) {
+                    const args = first.querySelectorAll('.terminal-argument');
+                    if (args.length > 0) title = args[0].textContent.trim();
+                }
+
+                // period: try to find the muted argument
+                const muted = first.querySelector('.terminal-argument[style*="terminal-text-muted"], .terminal-argument[style*="text-muted"], .terminal-argument[style*="--terminal-text-muted"]');
+                if (muted) period = muted.textContent.trim();
+                else {
+                    // sometimes the last span in the first line is the period
+                    const args = first.querySelectorAll('span');
+                    if (args.length > 0) {
+                        const last = args[args.length - 1];
+                        const txt = last.textContent.trim();
+                        if (/\(|\d{4}/.test(txt)) period = txt;
+                    }
+                }
+
+                // company: second line normally has company
+                if (lines[1]) {
+                    const compArg = lines[1].querySelector('[data-en],[data-es]') || lines[1].querySelectorAll('.terminal-argument');
+                    if (compArg) {
+                        if (compArg.getAttribute) company = textForLocalized(compArg);
+                        else if (compArg.length) company = compArg[compArg.length - 1].textContent.trim();
+                    }
+                }
+
+                // description: remaining lines
+                const descParts = [];
+                for (let i = 2; i < lines.length; i++) {
+                    const localized = lines[i].querySelector('[data-en],[data-es]');
+                    if (localized) descParts.push(textForLocalized(localized));
+                    else descParts.push(lines[i].textContent.trim());
+                }
+                description = descParts.join(' ').replace(/\s+/g, ' ').trim();
+            }
         }
-    ] : [
-        {
-            title: 'CTO - Socio Fundador',
-            company: 'Xprende Tech, Quito',
-            period: 'Jun 2019 - Actualidad',
-            description: 'Soy el responsable de liderar el equipo de tecnología y supervisar todas las decisiones relacionadas con la tecnología y el desarrollo de productos de la empresa. Soy además socio fundador de la empresa con proyectos en varios países de Latinoamérica.'
-        },
-        {
-            title: 'Full Stack Engineer',
-            company: 'Efilm Online, Bilbao',
-            period: 'Feb 2017 - Actualidad',
-            description: 'Soy responsable de trabajar en todas las partes del proceso de desarrollo de software, desde el diseño de la interfaz de usuario hasta la creación del backend y la arquitectura del sistema además de la implementación de las aplicaciones y la resolución de problemas.'
-        },
-        {
-            title: 'Socio Fundador',
-            company: 'Tallanix S.A.C',
-            period: 'Dic 2016 - Actualidad',
-            description: 'Tallanix es una empresa que hemos formado en conjunto con otros socios para llevar acabo actividades de incubación y aceleración de emprendimientos en la zona Norte de Perú y Sur del Ecuador.'
+
+        return { title, company, period, description };
+    }
+
+    // Locate the Experience card and extract all `.experience-item`
+    let domExperiences = [];
+    try {
+        const experienceCard = Array.from(document.querySelectorAll('.card')).find(c => {
+            const title = c.querySelector('.card-title');
+            if (!title) return false;
+            const t = title.getAttribute('data-es') || title.textContent || '';
+            return /Experiencia Laboral|Work Experience/i.test(t);
+        });
+
+        if (experienceCard) {
+            const items = experienceCard.querySelectorAll('.experience-item');
+            items.forEach(it => {
+                const parsed = parseExperienceItem(it);
+                // ensure at least a title exists
+                if (parsed.title || parsed.company || parsed.description) domExperiences.push(parsed);
+            });
         }
-    ];
-    
-    experiences.forEach(exp => {
-        // Check if we need a new page
+    } catch (err) {
+        console.error('Error extrayendo experiencias del DOM:', err);
+    }
+
+    // Fallback to the previous hardcoded list if none found
+    if (!domExperiences.length) {
+        domExperiences = currentLanguage === 'en' ? [
+            {
+                title: 'CTO - Co-founder',
+                company: 'Xprende Tech, Quito',
+                period: 'Jun 2019 - Present',
+                description: 'I am responsible for leading the technology team and supervising all decisions related to technology and product development of the company.'
+            }
+        ] : [
+            {
+                title: 'CTO - Socio Fundador',
+                company: 'Xprende Tech, Quito',
+                period: 'Jun 2019 - Actualidad',
+                description: 'Soy el responsable de liderar el equipo de tecnología y supervisar todas las decisiones relacionadas con la tecnología y el desarrollo de productos de la empresa.'
+            }
+        ];
+    }
+
+    domExperiences.forEach(exp => {
         if (yPosition > 250) {
             doc.addPage();
             yPosition = 20;
         }
-        
-        // Job title and company
-        yPosition = addText(exp.title, margin, yPosition, { fontSize: 11, fontStyle: 'bold' });
-        yPosition = addText(exp.company, margin, yPosition, { fontSize: 10, color: primaryColor });
-        yPosition = addText(exp.period, margin, yPosition, { fontSize: 9, color: secondaryColor });
-        
-        // Description
-        yPosition = addText(exp.description, margin, yPosition, { fontSize: 9 });
+        yPosition = addText(exp.title || '', margin, yPosition, { fontSize: 11, fontStyle: 'bold' });
+        if (exp.company) yPosition = addText(exp.company, margin, yPosition, { fontSize: 10, color: primaryColor });
+        if (exp.period) yPosition = addText(exp.period, margin, yPosition, { fontSize: 9, color: secondaryColor });
+        if (exp.description) yPosition = addText(exp.description, margin, yPosition, { fontSize: 9 });
         yPosition += 8;
     });
     
