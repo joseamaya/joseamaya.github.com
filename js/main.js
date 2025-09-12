@@ -132,12 +132,12 @@ function downloadPDF() {
         'Email: miguel.amaya99@gmail.com',
         'GitHub: github.com/joseamaya',
         'Location: Piura, Peru',
-        'Website: Python Piura'
+        'Website: https://joseamaya.github.io/'
     ] : [
         'Email: miguel.amaya99@gmail.com',
         'GitHub: github.com/joseamaya',
         'Ubicación: Piura, Perú',
-        'Sitio Web: Python Piura'
+        'Sitio Web: https://joseamaya.github.io/'
     ];
     
     contactInfo.forEach(info => {
@@ -150,8 +150,8 @@ function downloadPDF() {
     yPosition = addSectionHeader(currentLanguage === 'en' ? 'About Me' : 'Acerca de mí', yPosition);
     
     const aboutText = currentLanguage === 'en' ? 
-        'Backend developer with advanced experience in Python, specialized in building scalable and efficient solutions. Focused on integrating AI and LLMs into high-impact applications using tools like LangChain, Langraph and RAG.' :
-        'Desarrollador backend con experiencia avanzada en Python, especializado en la creación de soluciones escalables y eficientes. Enfocado en integrar IA y LLMs en aplicaciones de alto impacto usando LangChain, Langraph y RAG.';
+        'Backend developer with advanced experience in Python, specialized in building scalable and efficient solutions. Experienced in integrating modern backend architectures and applying AI where it adds value.' :
+        'Desarrollador backend con experiencia avanzada en Python, especializado en la creación de soluciones escalables y eficientes. Con experiencia integrando arquitecturas backend modernas y aplicando IA cuando aporta valor.';
     
     yPosition = addText(aboutText, margin, yPosition, { fontSize: 10 });
     yPosition += 10;
@@ -160,7 +160,7 @@ function downloadPDF() {
     yPosition = addSectionHeader(currentLanguage === 'en' ? 'Skills' : 'Habilidades', yPosition);
     
     const skills = [
-        'Python (95%)', 'Backend (Django / FastAPI) (90%)', 'LangChain & Langraph (LLMs, RAG) (75%)', 'AI / NLP (80%)',
+        'Python (95%)', 'Backend (Django / FastAPI) (90%)', 'LangChain & Langraph (LLMs, RAG) (75%)', 'GNU/Linux (80%)',
         'APIs & Microservices (90%)', 'Databases (SQL / NoSQL) (90%)', 'n8n (Automation) (40%)'
     ];
     
@@ -315,6 +315,42 @@ function downloadPDF() {
         if (exp.description) yPosition = addText(exp.description, margin, yPosition, { fontSize: 9 });
         yPosition += 8;
     });
+    
+    // Communities & Talks (new card)
+    try {
+        const communitiesCard = Array.from(document.querySelectorAll('.card')).find(c => {
+            const title = c.querySelector('.card-title');
+            if (!title) return false;
+            const t = (title.getAttribute('data-es') || title.textContent || '').trim();
+            return /Comunidades & Charlas|Communities & Talks/i.test(t);
+        });
+
+        if (communitiesCard) {
+            const communityItems = [];
+            const items = communitiesCard.querySelectorAll('.experience-item');
+            items.forEach(it => {
+                const parsed = parseExperienceItem(it);
+                if (parsed.title || parsed.company || parsed.description) communityItems.push(parsed);
+            });
+
+            if (communityItems.length) {
+                yPosition = addSectionHeader(currentLanguage === 'en' ? 'Communities & Talks' : 'Comunidades & Charlas', yPosition);
+                communityItems.forEach(ci => {
+                    if (yPosition > 250) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    yPosition = addText(ci.title || '', margin, yPosition, { fontSize: 11, fontStyle: 'bold' });
+                    if (ci.company) yPosition = addText(ci.company, margin, yPosition, { fontSize: 10, color: primaryColor });
+                    if (ci.period) yPosition = addText(ci.period, margin, yPosition, { fontSize: 9, color: secondaryColor });
+                    if (ci.description) yPosition = addText(ci.description, margin, yPosition, { fontSize: 9 });
+                    yPosition += 8;
+                });
+            }
+        }
+    } catch (err) {
+        console.error('Error extrayendo comunidades del DOM:', err);
+    }
     
     // Education
     yPosition = addSectionHeader(currentLanguage === 'en' ? 'Education' : 'Educación', yPosition);
