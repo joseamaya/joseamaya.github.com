@@ -356,12 +356,12 @@ function downloadPDF() {
     yPosition = addSectionHeader(currentLanguage === 'en' ? 'Education' : 'Educación', yPosition);
     
     const education = currentLanguage === 'en' ? [
-        "Master\'s Program in Science with specialization in Applied Mathematics - National University of Piura (2023-2024)",
+        "Master's in Science, specialization in Applied Mathematics - National University of Piura (2023-2024)",
         'Computer Engineering - National University of Piura (2004-2009)',
         'Secondary Education - I.E San Pedro - Cancas (1999-2003)',
         'Primary Education - I.E José Olaya Balandra (1993-1998)'
     ] : [
-        'Programa de Maestría en Ciencias con mención en Matemática Aplicada - Universidad Nacional de Piura (2023-2024)',
+        'Maestría en Ciencias con mención en Matemática Aplicada - Universidad Nacional de Piura (2023-2024)',
         'Ingeniería Informática - Universidad Nacional de Piura (2004-2009)',
         'Educación Secundaria - I.E San Pedro - Cancas (1999-2003)',
         'Educación Primaria - I.E José Olaya Balandra (1993-1998)'
