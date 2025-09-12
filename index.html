@@ -1,406 +1,1061 @@
 <!DOCTYPE html>
-<html>
-<title>Miguel Amaya</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-	html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
-	a:link {
-    	text-decoration: none;
-	}
-</style>
-<body class="w3-light-grey">
-
-<!-- Page Container -->
-<div class="w3-content w3-margin-top" style="max-width:1400px;">
-
-  <!-- The Grid -->
-  <div class="w3-row-padding">
-  
-    <!-- Left Column -->
-    <div class="w3-third">
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="José Miguel Amaya Camacho - Full Stack Engineer especialista en Python y JavaScript">
+    <meta name="keywords" content="Full Stack, Python, JavaScript, Django, React, Vue, Desarrollador, Perú">
+    <meta name="author" content="José Miguel Amaya Camacho">
     
-      <div class="w3-white w3-text-grey w3-card-4">
-        <div class="w3-display-container">
-          <img src="/images/photo.jpg" style="width:100%" alt="Avatar">
-          <div class="w3-display-bottomleft w3-container w3-text-black">
-            <h2>José Miguel Amaya Camacho</h2>
-          </div>
-        </div>
-        <div class="w3-container">
-          <p>
-          	<i class="fa fa-briefcase fa-fw w3-margin-right w3-large w3-text-teal"></i>
-          	Full Stack Engineer
-          </p>
-          <p>
-          	<i class="fa fa-home fa-fw w3-margin-right w3-large w3-text-teal"></i>
-          	Piura - Perú
-          </p>
-          <p>
-          	<i class="fa fa-envelope fa-fw w3-margin-right w3-large w3-text-teal"></i>miguel.amaya99@gmail.com
-          </p>
-          <p>
-          	<i class="fa fa-github fa-fw w3-margin-right w3-large w3-text-teal"></i>
-          	<a href="https://github.com/joseamaya">github.com/joseamaya</a>
-          </p>
-          <p>
-          	<i class="fa fa-search fa-fw w3-margin-right w3-large w3-text-teal"></i>
-          	<a href="http://pythonpiura.org">Python Piura</a>
-          </p>
-          <hr>
+    <title>José Miguel Amaya - Full Stack Engineer</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Modern Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Color Palette */
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #0f172a;
+            --accent-color: #06b6d4;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-accent: #f1f5f9;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            
+            /* Dark mode colors */
+            --dark-bg-primary: #0f172a;
+            --dark-bg-secondary: #1e293b;
+            --dark-bg-accent: #334155;
+            --dark-text-primary: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --dark-text-muted: #94a3b8;
+            --dark-border-color: #334155;
+        }
 
-          <p class="w3-large"><b><i class="fa fa-asterisk fa-fw w3-margin-right w3-text-teal"></i>Habilidades</b></p>
-          <p>Python</p>
-          <div class="w3-light-grey w3-round-xlarge w3-small">
-            <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:90%">90%</div>
-          </div>
-          <p>JavaScript</p>
-          <div class="w3-light-grey w3-round-xlarge w3-small">
-            <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:90%">
-              <div class="w3-center w3-text-white">90%</div>
+        /* Dark mode */
+        [data-theme="dark"] {
+            --bg-primary: var(--dark-bg-primary);
+            --bg-secondary: var(--dark-bg-secondary);
+            --bg-accent: var(--dark-bg-accent);
+            --text-primary: var(--dark-text-primary);
+            --text-secondary: var(--dark-text-secondary);
+            --text-muted: var(--dark-text-muted);
+            --border-color: var(--dark-border-color);
+        }
+
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--text-primary);
+        }
+
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 2rem; }
+        h3 { font-size: 1.5rem; }
+        h4 { font-size: 1.25rem; }
+        h5 { font-size: 1.125rem; }
+        h6 { font-size: 1rem; }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 3rem;
+        }
+
+        .grid-cols-1 { grid-template-columns: 1fr; }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+            .md\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (min-width: 1024px) {
+            .lg\:grid-cols-2 { grid-template-columns: 1fr 2fr; }
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin: 0 auto 1.5rem;
+            display: block;
+            object-fit: cover;
+            box-shadow: var(--shadow-xl);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-image:hover {
+            transform: scale(1.05);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .header .location {
+            font-size: 1rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Language toggle */
+        .language-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 6rem;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .language-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Skills */
+        .skill-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .skill-percentage {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .skill-bar {
+            height: 8px;
+            background: var(--bg-accent);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 4px;
+            transition: width 1s ease;
+            position: relative;
+        }
+
+        .skill-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Experience */
+        .experience-item {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .experience-item:last-child {
+            border-bottom: none;
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .experience-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .experience-company {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .experience-date {
+            background: var(--bg-accent);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+        }
+
+        .experience-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .experience-description ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .experience-description li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* Contact info */
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .contact-icon {
+            width: 20px;
+            color: var(--primary-color);
+        }
+
+        .contact-text {
+            color: var(--text-secondary);
+        }
+
+        /* Social links */
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header .subtitle {
+                font-size: 1rem;
+            }
+
+            .grid {
+                gap: 2.5rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .experience-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+                width: 45px;
+                height: 45px;
+            }
+
+            .language-toggle {
+                top: 1rem;
+                right: 5rem;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in-left {
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.6s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+
+    <!-- Language Toggle -->
+    <button class="language-toggle" onclick="toggleLanguage()" aria-label="Cambiar idioma">
+        <i class="fas fa-globe" id="language-icon"></i>
+        <span id="language-text">EN</span>
+    </button>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content fade-in">
+                <img src="/images/photo.jpg" alt="José Miguel Amaya" class="profile-image">
+                <h1>José Miguel Amaya Camacho</h1>
+                <p class="subtitle" data-es="Full Stack Engineer" data-en="Full Stack Engineer">Full Stack Engineer</p>
+                <div class="location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span data-es="Piura, Perú" data-en="Piura, Peru">Piura, Perú</span>
+                </div>
             </div>
-          </div>
-          <p>GNU/Linux</p>
-          <div class="w3-light-grey w3-round-xlarge w3-small">
-            <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:90%">90%</div>
-          </div>
-          <p>Git</p>
-          <div class="w3-light-grey w3-round-xlarge w3-small">
-            <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:90%">90%</div>
-          </div>
-          <p>Django</p>
-          <div class="w3-light-grey w3-round-xlarge w3-small">
-            <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:90%">90%</div>
-          </div>
-		  <p>React</p>
-          <div class="w3-light-grey w3-round-xlarge w3-small">
-            <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:70%">70%</div>
-          </div>
-		  <p>Vue</p>
-          <div class="w3-light-grey w3-round-xlarge w3-small">
-            <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:70%">70%</div>
-          </div>		  
-          <br>
+        </div>
+    </header>
 
-          <p class="w3-large w3-text-theme"><b><i class="fa fa-globe fa-fw w3-margin-right w3-text-teal"></i>Idiomas</b></p>
-          <p>Español</p>
-          <div class="w3-light-grey w3-round-xlarge">
-            <div class="w3-round-xlarge w3-teal" style="height:24px;width:100%"></div>
-          </div>
-          <p>Inglés</p>
-          <div class="w3-light-grey w3-round-xlarge">
-            <div class="w3-round-xlarge w3-teal" style="height:24px;width:65%"></div>
-          </div>          
-          <br>
-        </div>
-      </div><br>
+    <!-- Main Content -->
+    <main class="container" style="margin-top: -2rem; position: relative; z-index: 10;">
+        <div class="grid lg:grid-cols-2">
+            <!-- Left Column - Personal Info -->
+            <div class="lg:col-span-1">
+                <!-- Contact Card -->
+                <div class="card slide-in-left">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="card-title" data-es="Contacto" data-en="Contact">Contacto</h3>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-briefcase contact-icon"></i>
+                        <span class="contact-text" data-es="Full Stack Engineer" data-en="Full Stack Engineer">Full Stack Engineer</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <a href="mailto:miguel.amaya99@gmail.com" class="contact-text">miguel.amaya99@gmail.com</a>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-github contact-icon"></i>
+                        <a href="https://github.com/joseamaya" class="contact-text">github.com/joseamaya</a>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-globe contact-icon"></i>
+                        <a href="http://pythonpiura.org" class="contact-text">Python Piura</a>
+                    </div>
+                </div>
 
-    <!-- End Left Column -->
-    </div>
+                <!-- Skills Card -->
+                <div class="card slide-in-left">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3 class="card-title" data-es="Habilidades" data-en="Skills">Habilidades</h3>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Python</span>
+                            <span class="skill-percentage">90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">JavaScript</span>
+                            <span class="skill-percentage">90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">GNU/Linux</span>
+                            <span class="skill-percentage">90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Git</span>
+                            <span class="skill-percentage">90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Django</span>
+                            <span class="skill-percentage">90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">React</span>
+                            <span class="skill-percentage">70%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Vue</span>
+                            <span class="skill-percentage">70%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Right Column -->
-    <div class="w3-twothird">
-	    <div class="w3-container w3-card-2 w3-white w3-margin-bottom">
-	        <h2 class="w3-text-grey w3-padding-16">
-	        	<i class="fa fa-user fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>
-	        	Acerca de mi
-	        </h2>
-	        <div class="w3-container" align="justify">
-	          <p>
-	          	Full Stack Engineer, especialista en Python y Javascript.
-	          </p>
-	          <p>
-	          	Ingeniero Informático egresado de la Universidad Nacional de Piura. Socio fundador de Tallanix S.A.C y de Xprende Tech. Activista del Software Libre y miembro fundador de la Comunidad Piurana de Software Libre VICUX y de la Comunidad de Programadores Python Piura.
-	          </p>	          
-	        </div>	        
-	      </div>
+                <!-- Languages Card -->
+                <div class="card slide-in-left">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <h3 class="card-title" data-es="Idiomas" data-en="Languages">Idiomas</h3>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name" data-es="Español" data-en="Spanish">Español</span>
+                            <span class="skill-percentage">100%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name" data-es="Inglés" data-en="English">Inglés</span>
+                            <span class="skill-percentage">65%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: 65%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    
-      <div class="w3-container w3-card-2 w3-white w3-margin-bottom" align="justify">
-        <h2 class="w3-text-grey w3-padding-16">
-	        <i class="fa fa-suitcase fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>
-	        Experiencia Laboral
-        </h2>        
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>CTO - Socio Fundador en Xprende Tech, Quito</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Jun 2019 - <span class="w3-tag w3-teal w3-round">Actualidad</span></h6>
-          <p>Soy el responsable de liderar el equipo de tecnología y supervisar todas las decisiones relacionadas con la tecnología y el desarrollo de productos de la empresa. 
-			Soy además socio fundador de la empresa con proyectos en varios países de Latinoamérica.</p>
-          <hr>
-        </div>
-		<div class="w3-container">
-          <h5 class="w3-opacity"><b>Full Stack Engineer en Efilm Online, Bilbao</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Feb 2017 - <span class="w3-tag w3-teal w3-round">Actualidad</span></h6>
-          <p>Full Stack Engineer en Efilm Online, Bilbao
-      Soy responsable de trabajar en todas las partes del proceso de desarrollo de software, desde el diseño de la interfaz de usuario hasta la creación del backend y la arquitectura del sistema además de la implementación de las aplicaciones y la resolución de problemas.</p>
-          <hr>
-        </div>
-		<div class="w3-container">
-			<h5 class="w3-opacity"><b>Socio Fundador / tallanix.com</b></h5>
-			<h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Dic 2016 - <span class="w3-tag w3-teal w3-round">Actualidad</span></h6>
-			<p>Tallanix es una empresa que hemos formado en conjunto con otros socios para llevar acabo actividades de incubación y aceleración de emprendimientos en la zona Norte de Perú y Sur del Ecuador</p>			
-			<hr>
-		</div>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>Desarrollador Web / nomadizers.com</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Ene 2017 - Jul 2017</h6>
-          <p>Colaborador remoto en el proyecto español Nomadizers, que es una aplicación para viajes y turismo, que pone en contacto a las personas que desean viajar en grupo o compartir experiencias. Desarrollo parte del backend del proyecto relacionado a los lugares turísticos, con el framework Django y diversas librerias</p>
-          <hr>
-        </div>        
-		<div class="w3-container">
-          <h5 class="w3-opacity"><b>Programador Odoo / yaroslab.com</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Jul 2017 - Octubre 2017</h6>
-          <p>Programador Odoo remoto en la empresa Yaroslab, trabajo en varios proyectos implementando los requerimientos solicitados por los analistas funcionales, usando el framework de Odoo OpenObject y la base de datos Postgresql</p>
-          <hr>
-        </div>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>Analista - Programador / satp.gob.pe</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Mayo 2015 - Feb 2017</h6>
-          <p>Trabajé en el Sistema de Administración Tributaria de Piura realizando las siguientes actividades:</p>
-          <ul>
-          <li>
-          	Desarrollo del Sistema Integrado de Administración - SIAD, con el framework Django, con integración al webservice de consulta de RUC de la ONGEI. 
-          </li>
-          <li>
-          	Desarrollo de la Aplicación WSATP para consultas y reportes tributarios y no tributarios con el framework Django, con conexión al sistemas gestor de base de datos SQL Server 2008. 
-          </li>
-          <li>
-          	Desarrollo de múltiples scripts en python para consulta masiva de Datos. 
-          </li>
-          <li>
-          	Instalación y administración del groupware Zimbra.
-          </li>
-          <li>
-          Instalación del Sistema de Control de Inventario OCSReports.
-          </li>
-          <li>Múltiples actividades de soporte técnico.</li>
-          </ul>
-          <hr>
-        </div>
-		<div class="w3-container">
-			<h5 class="w3-opacity"><b>Socio Fundador / intix.pe</b></h5>
-			<h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Enero 2014 - Dic 2015</h6>
-			<p>Intix S.R.L fue una empresa que fundé en conjunto con tres socios mas, donde desarrollé las siguientes actividades:</p>
-			<ul>
-				<li>
-				Gerente General de la empresa, desarrollando las actividades administrativas y de gestión, propias del cargo. 
-				</li>
-				<li>
-				Implantación del Módulo de Almacén hecho en Java para la asociación BOS Salitral, con la correspondiente instalación del servidor CENTOS, servidor Glasfish y servidor de base de datos SQL SERVER 2008. 
-				</li>
-				<li>
-				Análisis para el desarrollo del Módulo de Drawback(Beneficios del exportador - SUNAT) para la Agrícola San José.
-				</li>
-				<li>
-				Desarrollo de una aplicación web para el control de actas electorales, usando el framework Django, para el movimiento regional Región para Todos.
-				</li>          
-			</ul>
-			<hr>
-		</div>
-		<div class="w3-container">
-			<h5 class="w3-opacity"><b>Docente / Escuela Tecnológica Superior UNP</b></h5>
-			<h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Enero 2014 - Marzo 2015</h6>
-			<p>Me desempeñé como docente dictando los siguientes cursos:</p>
-			<ul>
-				<li>
-				Semestre 2014-0: Base de Datos II y Programación III. 
-				</li>
-				<li>
-				Semestre 2014-1: Ingeniería de Software II, Gráficos por Computadoras y Software de Aplicación I
-				</li>
-				<li>
-				Semestre 2014-2: Programación I, Programación II, Análisis de Sistemas y Seminario de Informática.
-				</li>
-				<li>
-				Semestre 2015-0: Gráficos por Computadora.
-				</li>          
-			</ul>
-			<hr>
-		</div>
-		<div class="w3-container">
-			<h5 class="w3-opacity"><b>Consultor / CEPIBO</b></h5>
-			<h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Enero 2014 - Abril 2014</h6>
-			<p>Me desempeñé como consultor en la Central Piurana de Pequeños Productores de Banano Orgánico desempeñando las siguientes actividades:</p>
-			<ul>
-				<li>
-				Migración de todas las aplicaciones de ofimática a software libre. 
-				</li>
-				<li>
-				Capacitación de usuarios en el uso de aplicaciones ofimáticas y de usuario final con software libre.
-				</li>				
-			</ul>
-			<hr>
-		</div>
-		<div class="w3-container">
-			<h5 class="w3-opacity"><b>Profesional de Apoyo / SUNAT</b></h5>
-			<h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Mayo 2012 - Noviembre 2013</h6>
-			<p>Me desempeñé como Profesional de Apoyo en la sección Control de la Deuda, División de Control de la Deuda y Cobranza Coactiva - Intendencia Regional Piura de la Superintendencia Nacional de Administración Tributaria - SUNAT, desarrollando las siguientes actividades:</p>
-			<ul>
-				<li>
-				Emisión de órdenes de pago. 
-				</li>
-				<li>
-				Emisión de multas.
-				</li>
-				<li>
-				Generación de resoluciones de ejecución coactiva.
-				</li>
-				<li>Proceso de telecobranza.</li>
-				<li>Emisión de resoluciones varias.</li>
-				<li>Desarrollo de una aplicación en PHP que facilitaba la emisión y automatización de los procesos anteriores.</li>
-			</ul>
-			<hr>
-		</div>        
-		<div class="w3-container">
-			<h5 class="w3-opacity"><b>Encargado del Área de Informática / CEPIBO</b></h5>
-			<h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Marzo 2012 - Mayo 2012</h6>
-			<p>Me desempeñé como Encargado del Área de Informática, desarrollando las siguientes actividades:</p>
-			<ul>
-				<li>
-				Administración del ERP SIGRE.
-				</li>
-				<li>
-				Soporte técnico y mantenimiento.
-				</li>				
-			</ul>
-			<hr>
-		</div>
-		<div class="w3-container">
-			<h5 class="w3-opacity"><b>Supervisor de Proyecto / North Peruvian System</b></h5>
-			<h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Julio 2011 - Febrero 2012</h6>
-			<p>Me desempeñé como supervisor de la implantación del ERP SIGRE(Solución Integral de Gestión de Recursos Empresariales) en la Central Piurana de Pequeños Productores de Banano Orgánico - CEPIBO, desarrollando las siguientes actividades:</p>
-			<ul>
-				<li>
-				Gestión del Proyecto
-				</li>
-				<li>
-				Capacitación de usuarios.
-				</li>
-				<li>
-				Análisis de requerimientos.
-				</li>				
-				<li>
-				Administración de la Base de Datos.
-				</li>				
-			</ul>
-			<hr>
-		</div>
-		<div class="w3-container">
-			<h5 class="w3-opacity"><b>Encargado del Área de Informática / Colegio de Contadores Públicos de Piura</b></h5>
-			<h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Nov 2010 - Jun 2011</h6>
-			<p>Me desempeñé como encargado del área de Informática del Colegio de Contadores Públicos de Piura, desarrollando las siguientes actividades:</p>
-			<ul>
-				<li>
-				Analista programador.
-				</li>
-				<li>
-				Administrador de red.
-				</li>
-				<li>
-				Encargado de soporte técnico.
-				</li>				
-				<li>
-				Administrador de servidores GNU/Linux.
-				</li>							
-				<li>	
-				Administrador web.
-				</li>				
-				<li>
-				Administrador de base de datos.			
-				</li>				
-			</ul>
-			<hr>
-		</div>
-		<div class="w3-container">
-			<h5 class="w3-opacity"><b>Prácticas Profesionales / SUNAT</b></h5>
-			<h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Dic 2009 - Noviembre 2010</h6>
-			<p>Realicé mis prácticas profesionales en la Intendencia Regional Piura - SUNAT, desarrollando las siguientes actividades:</p>
-			<ul>
-				<li>
-				Apoyo en las labores administrativas de la sección Control de la Deuda.
-				</li>
-				<li>
-				Desarrollo y mejora de aplicativos informáticos para facilitar los procesos administrativos, tales como el sistema documentario interno y la aplicación de carga de imágenes de los acuses de notificación.
-				</li>
-				<li>
-				Manejo de los sistemas informáticos de la institución tales como RSIRAT, SCAD, SIRAT.
-				</li>				
-				<li>
-				Apoyo en el Área de Notificaciones de la Intendencia.
-				</li>				
-			</ul>
-			<hr>
-		</div>        
-      </div>
-      <div class="w3-container w3-card-2 w3-white">
-        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Educación</h2>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>Universidad Nacional de Piura</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>2004 - 2009</h6>
-          <p>Ingeniería Informática</p>
-          <hr>
-        </div>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>I.E San Pedro - Cancas</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>1999 - 2003</h6>
-          <p>Educación Secundaria</p>
-          <hr>
-        </div>
-        <div class="w3-container">
-          <h5 class="w3-opacity"><b>I.E José Olaya Balandra</b></h5>
-          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>1993 - 1998</h6>
-          <p>Educación Primaria</p><br>
-        </div>
-      </div>
-      <div class="w3-container w3-card-2 w3-white" align="justify">
-        <h2 class="w3-text-grey w3-padding-16"><i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Proyectos Personales</h2>
-        <div class="w3-container">
-        	<h5 class="w3-opacity"><b>Tambox</b></h5>
-			<a href="https://github.com/joseamaya/tambox">
-				<i class="fa fa-github w3-hover-opacity"></i> Repositorio
-			</a>  			
-			<p>Tambox es un software libre desarrollado en Django con la base de datos Postgresql para la gestión y control de la logística de una empresa, actualmente soporta la creación de ordenes de compra, órdenes de servicio, gestión de requerimientos, gestión de almaces y generación de reportes contables propios del almacén</p>
-			<hr>
-			<h5 class="w3-opacity"><b>Volpox</b></h5>
-			<a href="https://github.com/joseamaya/volpox">
-				<i class="fa fa-github w3-hover-opacity"></i> Repositorio
-			</a>  			
-			<p>Volpox es un software libre desarrollado en Django para el control de los votos emitidos y registrados en las actas electorales para los procesos de elecciones regionales y nacionales en Perú, fue probado exitosamente en el proceso de elecciones regionales y locales en el año 2014 y en las elecciones nacionales del año 2016. Actualmente está en proceso de actualización a la nueva versión de Django y en corrección de errores e implementación de mejoras</p>
-			<hr>			
-        </div>
-        
-      </div>
+            <!-- Right Column - Main Content -->
+            <div class="lg:col-span-1">
+                <!-- About Card -->
+                <div class="card slide-in-right">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="card-title" data-es="Acerca de mí" data-en="About Me">Acerca de mí</h3>
+                    </div>
+                    <div class="experience-description">
+                        <p style="font-size: 1.1rem; margin-bottom: 1.5rem; font-weight: 500;" data-es="Full Stack Engineer, especialista en Python y JavaScript." data-en="Full Stack Engineer, specialist in Python and JavaScript.">
+                            Full Stack Engineer, especialista en Python y JavaScript.
+                        </p>
+                        <p style="font-size: 1rem; line-height: 1.8; text-align: justify;" data-es="Ingeniero Informático egresado de la Universidad Nacional de Piura. Socio fundador de Tallanix S.A.C y de Xprende Tech. Activista del Software Libre y miembro fundador de la Comunidad Piurana de Software Libre VICUX y de la Comunidad de Programadores Python Piura." data-en="Computer Engineer graduated from the National University of Piura. Co-founder of Tallanix S.A.C and Xprende Tech. Free Software activist and founding member of the Piura Free Software Community VICUX and the Python Piura Programmers Community.">
+                            Ingeniero Informático egresado de la Universidad Nacional de Piura. Socio fundador de Tallanix S.A.C y de Xprende Tech. Activista del Software Libre y miembro fundador de la Comunidad Piurana de Software Libre VICUX y de la Comunidad de Programadores Python Piura.
+                        </p>
+                    </div>
+                </div>
 
-    <!-- End Right Column -->
-    </div>
-    
-  <!-- End Grid -->
-  </div>
-  
-  <!-- End Page Container -->
-</div>
+                <!-- Experience Card -->
+                <div class="card slide-in-right">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3 class="card-title" data-es="Experiencia Laboral" data-en="Work Experience">Experiencia Laboral</h3>
+                    </div>
+                    
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <h4 class="experience-title" data-es="CTO - Socio Fundador" data-en="CTO - Co-founder">CTO - Socio Fundador</h4>
+                                <p class="experience-company">Xprende Tech, Quito</p>
+                            </div>
+                            <span class="experience-date" data-es="Jun 2019 - Actualidad" data-en="Jun 2019 - Present">Jun 2019 - Actualidad</span>
+                        </div>
+                        <div class="experience-description">
+                            <p data-es="Soy el responsable de liderar el equipo de tecnología y supervisar todas las decisiones relacionadas con la tecnología y el desarrollo de productos de la empresa. Soy además socio fundador de la empresa con proyectos en varios países de Latinoamérica." data-en="I am responsible for leading the technology team and supervising all decisions related to technology and product development of the company. I am also a co-founder of the company with projects in several Latin American countries.">Soy el responsable de liderar el equipo de tecnología y supervisar todas las decisiones relacionadas con la tecnología y el desarrollo de productos de la empresa. Soy además socio fundador de la empresa con proyectos en varios países de Latinoamérica.</p>
+                        </div>
+                    </div>
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <h4 class="experience-title">Full Stack Engineer</h4>
+                                <p class="experience-company">Efilm Online, Bilbao</p>
+                            </div>
+                            <span class="experience-date" data-es="Feb 2017 - Actualidad" data-en="Feb 2017 - Present">Feb 2017 - Actualidad</span>
+                        </div>
+                        <div class="experience-description">
+                            <p data-es="Soy responsable de trabajar en todas las partes del proceso de desarrollo de software, desde el diseño de la interfaz de usuario hasta la creación del backend y la arquitectura del sistema además de la implementación de las aplicaciones y la resolución de problemas." data-en="I am responsible for working on all parts of the software development process, from user interface design to backend creation and system architecture, as well as application implementation and problem solving.">Soy responsable de trabajar en todas las partes del proceso de desarrollo de software, desde el diseño de la interfaz de usuario hasta la creación del backend y la arquitectura del sistema además de la implementación de las aplicaciones y la resolución de problemas.</p>
+                        </div>
+                    </div>
 
-<footer class="w3-container w3-teal w3-center w3-margin-top">
-  <p>Encuentrame también:</p>
-  	<a href="https://twitter.com/jamayac99">
-  		<i class="fa fa-twitter w3-hover-opacity"></i>
-  	</a> 
-  	<a href="https://github.com/joseamaya">
-  		<i class="fa fa-github w3-hover-opacity"></i>
-  	</a>  
-  	<a href="https://www.linkedin.com/in/miguelamaya99/">
-  		<i class="fa fa-linkedin w3-hover-opacity"></i>
-  	</a>
-  	<a href="https://www.youtube.com/channel/UCMr-MS5fqUMzzc82MnUlGow">
-  		<i class="fa fa-youtube w3-hover-opacity"></i>
-  	</a>
-  	<a href="https://elclickizquierdo.wordpress.com/">
-  		<i class="fa fa-wordpress w3-hover-opacity"></i>
-  	</a>
-</footer>
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <h4 class="experience-title" data-es="Socio Fundador" data-en="Co-founder">Socio Fundador</h4>
+                                <p class="experience-company">Tallanix S.A.C</p>
+                            </div>
+                            <span class="experience-date" data-es="Dic 2016 - Actualidad" data-en="Dec 2016 - Present">Dic 2016 - Actualidad</span>
+                        </div>
+                        <div class="experience-description">
+                            <p data-es="Tallanix es una empresa que hemos formado en conjunto con otros socios para llevar acabo actividades de incubación y aceleración de emprendimientos en la zona Norte de Perú y Sur del Ecuador." data-en="Tallanix is a company that we have formed together with other partners to carry out incubation and acceleration activities for startups in the North zone of Peru and South of Ecuador.">Tallanix es una empresa que hemos formado en conjunto con otros socios para llevar acabo actividades de incubación y aceleración de emprendimientos en la zona Norte de Perú y Sur del Ecuador.</p>
+                        </div>
+                    </div>
 
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <h4 class="experience-title" data-es="Desarrollador Web" data-en="Web Developer">Desarrollador Web</h4>
+                                <p class="experience-company">Nomadizers.com</p>
+                            </div>
+                            <span class="experience-date" data-es="Ene 2017 - Jul 2017" data-en="Jan 2017 - Jul 2017">Ene 2017 - Jul 2017</span>
+                        </div>
+                        <div class="experience-description">
+                            <p data-es="Colaborador remoto en el proyecto español Nomadizers, que es una aplicación para viajes y turismo, que pone en contacto a las personas que desean viajar en grupo o compartir experiencias. Desarrollo parte del backend del proyecto relacionado a los lugares turísticos, con el framework Django y diversas librerías." data-en="Remote collaborator on the Spanish project Nomadizers, which is a travel and tourism application that connects people who want to travel in groups or share experiences. I developed part of the project's backend related to tourist places, using the Django framework and various libraries.">Colaborador remoto en el proyecto español Nomadizers, que es una aplicación para viajes y turismo, que pone en contacto a las personas que desean viajar en grupo o compartir experiencias. Desarrollo parte del backend del proyecto relacionado a los lugares turísticos, con el framework Django y diversas librerías.</p>
+                        </div>
+                    </div>
+
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <h4 class="experience-title" data-es="Programador Odoo" data-en="Odoo Developer">Programador Odoo</h4>
+                                <p class="experience-company">Yaroslab.com</p>
+                            </div>
+                            <span class="experience-date" data-es="Jul 2017 - Oct 2017" data-en="Jul 2017 - Oct 2017">Jul 2017 - Oct 2017</span>
+                        </div>
+                        <div class="experience-description">
+                            <p data-es="Programador Odoo remoto en la empresa Yaroslab, trabajo en varios proyectos implementando los requerimientos solicitados por los analistas funcionales, usando el framework de Odoo OpenObject y la base de datos PostgreSQL." data-en="Remote Odoo developer at Yaroslab company, working on several projects implementing requirements requested by functional analysts, using the Odoo OpenObject framework and PostgreSQL database.">Programador Odoo remoto en la empresa Yaroslab, trabajo en varios proyectos implementando los requerimientos solicitados por los analistas funcionales, usando el framework de Odoo OpenObject y la base de datos PostgreSQL.</p>
+                        </div>
+                    </div>
+
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <h4 class="experience-title" data-es="Analista - Programador" data-en="Analyst - Programmer">Analista - Programador</h4>
+                                <p class="experience-company">SATP - Sistema de Administración Tributaria de Piura</p>
+                            </div>
+                            <span class="experience-date" data-es="Mayo 2015 - Feb 2017" data-en="May 2015 - Feb 2017">Mayo 2015 - Feb 2017</span>
+                        </div>
+                        <div class="experience-description">
+                            <p data-es="Trabajé en el Sistema de Administración Tributaria de Piura realizando las siguientes actividades:" data-en="I worked at the Piura Tax Administration System performing the following activities:">Trabajé en el Sistema de Administración Tributaria de Piura realizando las siguientes actividades:</p>
+                            <ul>
+                                <li data-es="Desarrollo del Sistema Integrado de Administración - SIAD, con el framework Django, con integración al webservice de consulta de RUC de la ONGEI." data-en="Development of the Integrated Administration System - SIAD, with Django framework, with integration to ONGEI's RUC query webservice.">Desarrollo del Sistema Integrado de Administración - SIAD, con el framework Django, con integración al webservice de consulta de RUC de la ONGEI.</li>
+                                <li data-es="Desarrollo de la Aplicación WSATP para consultas y reportes tributarios y no tributarios con el framework Django, con conexión al sistemas gestor de base de datos SQL Server 2008." data-en="Development of the WSATP Application for tax and non-tax queries and reports with Django framework, with connection to SQL Server 2008 database management system.">Desarrollo de la Aplicación WSATP para consultas y reportes tributarios y no tributarios con el framework Django, con conexión al sistemas gestor de base de datos SQL Server 2008.</li>
+                                <li data-es="Desarrollo de múltiples scripts en python para consulta masiva de Datos." data-en="Development of multiple Python scripts for massive data queries.">Desarrollo de múltiples scripts en python para consulta masiva de Datos.</li>
+                                <li data-es="Instalación y administración del groupware Zimbra." data-en="Installation and administration of Zimbra groupware.">Instalación y administración del groupware Zimbra.</li>
+                                <li data-es="Instalación del Sistema de Control de Inventario OCSReports." data-en="Installation of OCSReports Inventory Control System.">Instalación del Sistema de Control de Inventario OCSReports.</li>
+                                <li data-es="Múltiples actividades de soporte técnico." data-en="Multiple technical support activities.">Múltiples actividades de soporte técnico.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Card -->
+                <div class="card slide-in-right">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="card-title" data-es="Educación" data-en="Education">Educación</h3>
+                    </div>
+                    
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <h4 class="experience-title" data-es="Ingeniería Informática" data-en="Computer Engineering">Ingeniería Informática</h4>
+                                <p class="experience-company">Universidad Nacional de Piura</p>
+                            </div>
+                            <span class="experience-date">2004 - 2009</span>
+                        </div>
+                    </div>
+
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <h4 class="experience-title" data-es="Educación Secundaria" data-en="Secondary Education">Educación Secundaria</h4>
+                                <p class="experience-company">I.E San Pedro - Cancas</p>
+                            </div>
+                            <span class="experience-date">1999 - 2003</span>
+                        </div>
+                    </div>
+
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <h4 class="experience-title" data-es="Educación Primaria" data-en="Primary Education">Educación Primaria</h4>
+                                <p class="experience-company">I.E José Olaya Balandra</p>
+                            </div>
+                            <span class="experience-date">1993 - 1998</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects Card -->
+                <div class="card slide-in-right">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-code-branch"></i>
+                        </div>
+                        <h3 class="card-title" data-es="Proyectos Personales" data-en="Personal Projects">Proyectos Personales</h3>
+                    </div>
+                    
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <h4 class="experience-title">Tambox</h4>
+                                <p class="experience-company">
+                                    <a href="https://github.com/joseamaya/tambox" target="_blank">
+                                        <i class="fab fa-github"></i> <span data-es="Ver en GitHub" data-en="View on GitHub">Ver en GitHub</span>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="experience-description">
+                            <p data-es="Tambox es un software libre desarrollado en Django con la base de datos PostgreSQL para la gestión y control de la logística de una empresa, actualmente soporta la creación de órdenes de compra, órdenes de servicio, gestión de requerimientos, gestión de almacenes y generación de reportes contables propios del almacén." data-en="Tambox is free software developed in Django with PostgreSQL database for the management and control of a company's logistics, currently supports the creation of purchase orders, service orders, requirements management, warehouse management and generation of accounting reports specific to the warehouse.">Tambox es un software libre desarrollado en Django con la base de datos PostgreSQL para la gestión y control de la logística de una empresa, actualmente soporta la creación de órdenes de compra, órdenes de servicio, gestión de requerimientos, gestión de almacenes y generación de reportes contables propios del almacén.</p>
+                        </div>
+                    </div>
+
+                    <div class="experience-item">
+                        <div class="experience-header">
+                            <div>
+                                <h4 class="experience-title">Volpox</h4>
+                                <p class="experience-company">
+                                    <a href="https://github.com/joseamaya/volpox" target="_blank">
+                                        <i class="fab fa-github"></i> <span data-es="Ver en GitHub" data-en="View on GitHub">Ver en GitHub</span>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="experience-description">
+                            <p data-es="Volpox es un software libre desarrollado en Django para el control de los votos emitidos y registrados en las actas electorales para los procesos de elecciones regionales y nacionales en Perú, fue probado exitosamente en el proceso de elecciones regionales y locales en el año 2014 y en las elecciones nacionales del año 2016. Actualmente está en proceso de actualización a la nueva versión de Django y en corrección de errores e implementación de mejoras." data-en="Volpox is free software developed in Django for controlling votes cast and recorded in electoral records for regional and national election processes in Peru, it was successfully tested in the regional and local election process in 2014 and in the national elections of 2016. It is currently in the process of updating to the new version of Django and correcting errors and implementing improvements.">Volpox es un software libre desarrollado en Django para el control de los votos emitidos y registrados en las actas electorales para los procesos de elecciones regionales y nacionales en Perú, fue probado exitosamente en el proceso de elecciones regionales y locales en el año 2014 y en las elecciones nacionales del año 2016. Actualmente está en proceso de actualización a la nueva versión de Django y en corrección de errores e implementación de mejoras.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p style="margin-bottom: 1rem; color: var(--text-secondary);" data-es="Encuéntrame también:" data-en="Find me also:">Encuéntrame también:</p>
+            <div class="social-links">
+                <a href="https://twitter.com/jamayac99" class="social-link" target="_blank" aria-label="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://github.com/joseamaya" class="social-link" target="_blank" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/miguelamaya99/" class="social-link" target="_blank" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://www.youtube.com/channel/UCMr-MS5fqUMzzc82MnUlGow" class="social-link" target="_blank" aria-label="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://elclickizquierdo.wordpress.com/" class="social-link" target="_blank" aria-label="WordPress">
+                    <i class="fab fa-wordpress"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Language toggle functionality
+        function toggleLanguage() {
+            const body = document.body;
+            const languageText = document.getElementById('language-text');
+            const currentLanguage = body.getAttribute('data-lang') || 'es';
+            
+            if (currentLanguage === 'es') {
+                body.setAttribute('data-lang', 'en');
+                languageText.textContent = 'ES';
+                translatePage('en');
+                localStorage.setItem('language', 'en');
+            } else {
+                body.setAttribute('data-lang', 'es');
+                languageText.textContent = 'EN';
+                translatePage('es');
+                localStorage.setItem('language', 'es');
+            }
+        }
+
+        // Translation function
+        function translatePage(language) {
+            const elements = document.querySelectorAll('[data-es][data-en]');
+            elements.forEach(element => {
+                if (language === 'en') {
+                    element.textContent = element.getAttribute('data-en');
+                } else {
+                    element.textContent = element.getAttribute('data-es');
+                }
+            });
+        }
+
+        // Load saved theme and language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const savedLanguage = localStorage.getItem('language') || 'es';
+            const themeIcon = document.getElementById('theme-icon');
+            const languageText = document.getElementById('language-text');
+            
+            // Load theme
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                themeIcon.className = 'fas fa-moon';
+            }
+            
+            // Load language
+            document.body.setAttribute('data-lang', savedLanguage);
+            if (savedLanguage === 'en') {
+                languageText.textContent = 'ES';
+                translatePage('en');
+            } else {
+                languageText.textContent = 'EN';
+                translatePage('es');
+            }
+
+            // Animate skill bars on scroll
+            const observerOptions = {
+                threshold: 0.5,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const skillBars = entry.target.querySelectorAll('.skill-progress');
+                        skillBars.forEach(bar => {
+                            const width = bar.style.width;
+                            bar.style.width = '0%';
+                            setTimeout(() => {
+                                bar.style.width = width;
+                            }, 200);
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe skill cards
+            const skillCards = document.querySelectorAll('.card');
+            skillCards.forEach(card => {
+                if (card.querySelector('.skill-progress')) {
+                    observer.observe(card);
+                }
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
