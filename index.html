@@ -24,42 +24,44 @@
     
     <style>
         :root {
-            /* Color Palette */
-            --primary-color: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary-color: #0f172a;
-            --accent-color: #06b6d4;
-            --text-primary: #0f172a;
-            --text-secondary: #64748b;
-            --text-muted: #94a3b8;
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8fafc;
-            --bg-accent: #f1f5f9;
-            --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            /* Terminal Color Palette */
+            --terminal-bg: #0d1117;
+            --terminal-bg-secondary: #161b22;
+            --terminal-bg-accent: #21262d;
+            --terminal-border: #30363d;
+            --terminal-text: #c9d1d9;
+            --terminal-text-secondary: #8b949e;
+            --terminal-text-muted: #6e7681;
+            --terminal-accent: #58a6ff;
+            --terminal-success: #3fb950;
+            --terminal-warning: #d29922;
+            --terminal-error: #f85149;
+            --terminal-purple: #bc8cff;
+            --terminal-cyan: #39d353;
+            --terminal-orange: #ff7b72;
             
-            /* Dark mode colors */
-            --dark-bg-primary: #0f172a;
-            --dark-bg-secondary: #1e293b;
-            --dark-bg-accent: #334155;
-            --dark-text-primary: #f8fafc;
-            --dark-text-secondary: #cbd5e1;
-            --dark-text-muted: #94a3b8;
-            --dark-border-color: #334155;
+            /* Glow effects */
+            --glow-primary: 0 0 20px rgba(88, 166, 255, 0.3);
+            --glow-success: 0 0 20px rgba(63, 185, 80, 0.3);
+            --glow-warning: 0 0 20px rgba(210, 153, 34, 0.3);
+            --glow-error: 0 0 20px rgba(248, 81, 73, 0.3);
+            
+            /* Shadows */
+            --shadow-terminal: 0 4px 20px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 30px rgba(88, 166, 255, 0.2);
         }
 
-        /* Dark mode */
-        [data-theme="dark"] {
-            --bg-primary: var(--dark-bg-primary);
-            --bg-secondary: var(--dark-bg-secondary);
-            --bg-accent: var(--dark-bg-accent);
-            --text-primary: var(--dark-text-primary);
-            --text-secondary: var(--dark-text-secondary);
-            --text-muted: var(--dark-text-muted);
-            --border-color: var(--dark-border-color);
+        /* Terminal theme - always dark */
+        body {
+            --bg-primary: var(--terminal-bg);
+            --bg-secondary: var(--terminal-bg-secondary);
+            --bg-accent: var(--terminal-bg-accent);
+            --text-primary: var(--terminal-text);
+            --text-secondary: var(--terminal-text-secondary);
+            --text-muted: var(--terminal-text-muted);
+            --border-color: var(--terminal-border);
+            --primary-color: var(--terminal-accent);
+            --accent-color: var(--terminal-cyan);
         }
 
         /* Reset and base styles */
@@ -74,11 +76,28 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
             line-height: 1.6;
             color: var(--text-primary);
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            background: var(--terminal-bg);
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(88, 166, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(63, 185, 80, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(188, 140, 255, 0.1) 0%, transparent 50%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Terminal cursor animation */
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .terminal-cursor::after {
+            content: '_';
+            animation: blink 1s infinite;
+            color: var(--terminal-accent);
         }
 
         /* Typography */
@@ -135,161 +154,179 @@
             .lg\:grid-cols-2 { grid-template-columns: 1fr 2fr; }
         }
 
-        /* Header */
+        /* Terminal Header */
         .header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
-            color: white;
-            padding: 4rem 0;
+            background: var(--terminal-bg-secondary);
+            border: 1px solid var(--terminal-border);
+            border-radius: 8px;
+            margin: 2rem auto;
+            max-width: 1200px;
+            position: relative;
+            box-shadow: var(--shadow-terminal);
+            overflow: hidden;
+        }
+
+        .terminal-header-bar {
+            background: var(--terminal-bg-accent);
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--terminal-border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: var(--terminal-error); }
+        .terminal-dot.yellow { background: var(--terminal-warning); }
+        .terminal-dot.green { background: var(--terminal-success); }
+
+        .terminal-title {
+            color: var(--terminal-text-secondary);
+            font-size: 0.875rem;
+            margin-left: 1rem;
+        }
+
+        .header-content {
+            padding: 3rem 2rem;
             text-align: center;
+            position: relative;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            border: 2px solid var(--terminal-accent);
+            margin: 0 auto 2rem;
+            display: block;
+            object-fit: cover;
+            box-shadow: var(--glow-primary);
+            transition: all 0.3s ease;
+        }
+
+        .profile-image:hover {
+            transform: scale(1.05);
+            box-shadow: var(--glow-primary), 0 0 40px rgba(88, 166, 255, 0.4);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--terminal-accent);
+            text-shadow: 0 0 10px rgba(88, 166, 255, 0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.25rem;
+            color: var(--terminal-cyan);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .header .location {
+            font-size: 1rem;
+            color: var(--terminal-text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .terminal-prompt {
+            color: var(--terminal-success);
+            font-weight: bold;
+        }
+
+        .terminal-command {
+            color: var(--terminal-accent);
+        }
+
+        /* Terminal Control Buttons */
+        .theme-toggle, .language-toggle, .download-pdf-toggle {
+            position: fixed;
+            top: 2rem;
+            background: var(--terminal-bg-secondary);
+            border: 1px solid var(--terminal-border);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: var(--shadow-terminal);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--terminal-text);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .theme-toggle {
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            padding: 0;
+            justify-content: center;
+        }
+
+        .language-toggle {
+            right: 6rem;
+        }
+
+        .download-pdf-toggle {
+            right: 10rem;
+        }
+
+        .theme-toggle:hover, .language-toggle:hover, .download-pdf-toggle:hover {
+            border-color: var(--terminal-accent);
+            box-shadow: var(--shadow-terminal), var(--glow-primary);
+            transform: translateY(-2px);
+        }
+
+        .download-pdf-toggle:hover {
+            background: var(--terminal-accent);
+            color: var(--terminal-bg);
+        }
+
+        /* Terminal Cards */
+        .card {
+            background: var(--terminal-bg-secondary);
+            border: 1px solid var(--terminal-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-terminal);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
             position: relative;
             overflow: hidden;
         }
 
-        .header::before {
+        .card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            opacity: 0.1;
-        }
-
-        .header-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .profile-image {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 4px solid white;
-            margin: 0 auto 1.5rem;
-            display: block;
-            object-fit: cover;
-            box-shadow: var(--shadow-xl);
-            transition: transform 0.3s ease;
-        }
-
-        .profile-image:hover {
-            transform: scale(1.05);
-        }
-
-        .header h1 {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-
-        .header .subtitle {
-            font-size: 1.25rem;
-            opacity: 0.9;
-            margin-bottom: 1rem;
-        }
-
-        .header .location {
-            font-size: 1rem;
-            opacity: 0.8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        /* Theme toggle */
-        .theme-toggle {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            background: var(--bg-primary);
-            border: 2px solid var(--border-color);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            box-shadow: var(--shadow-md);
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow-lg);
-        }
-
-        /* Language toggle */
-        .language-toggle {
-            position: fixed;
-            top: 2rem;
-            right: 6rem;
-            background: var(--bg-primary);
-            border: 2px solid var(--border-color);
-            border-radius: 25px;
-            padding: 0.5rem 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            box-shadow: var(--shadow-md);
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .language-toggle:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-lg);
-        }
-
-        /* Download PDF toggle */
-        .download-pdf-toggle {
-            position: fixed;
-            top: 2rem;
-            right: 10rem;
-            background: var(--bg-primary);
-            border: 2px solid var(--border-color);
-            border-radius: 25px;
-            padding: 0.5rem 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            box-shadow: var(--shadow-md);
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .download-pdf-toggle:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-lg);
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        /* Cards */
-        .card {
-            background: var(--bg-primary);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            margin-bottom: 2rem;
+            height: 2px;
+            background: linear-gradient(90deg, var(--terminal-accent), var(--terminal-cyan), var(--terminal-purple));
         }
 
         .card:hover {
-            box-shadow: var(--shadow-md);
+            border-color: var(--terminal-accent);
+            box-shadow: var(--shadow-terminal), var(--glow-primary);
             transform: translateY(-2px);
         }
 
@@ -303,22 +340,47 @@
         .card-icon {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            border-radius: 8px;
+            background: var(--terminal-bg-accent);
+            border: 1px solid var(--terminal-border);
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--terminal-accent);
             font-size: 1.25rem;
+            box-shadow: var(--glow-primary);
         }
 
         .card-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--terminal-accent);
+            text-shadow: 0 0 5px rgba(88, 166, 255, 0.3);
         }
 
-        /* Skills */
+        .terminal-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-prompt-symbol {
+            color: var(--terminal-success);
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        .terminal-command-text {
+            color: var(--terminal-accent);
+            margin-right: 0.5rem;
+        }
+
+        .terminal-argument {
+            color: var(--terminal-text);
+        }
+
+        /* Terminal Skills */
         .skill-item {
             margin-bottom: 1.5rem;
         }
@@ -332,28 +394,33 @@
 
         .skill-name {
             font-weight: 500;
-            color: var(--text-primary);
+            color: var(--terminal-text);
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .skill-percentage {
             font-size: 0.875rem;
-            color: var(--text-secondary);
+            color: var(--terminal-success);
             font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
         }
 
         .skill-bar {
-            height: 8px;
-            background: var(--bg-accent);
-            border-radius: 4px;
+            height: 12px;
+            background: var(--terminal-bg-accent);
+            border: 1px solid var(--terminal-border);
+            border-radius: 6px;
             overflow: hidden;
+            position: relative;
         }
 
         .skill-progress {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            background: linear-gradient(90deg, var(--terminal-accent), var(--terminal-cyan));
             border-radius: 4px;
             transition: width 1s ease;
             position: relative;
+            box-shadow: var(--glow-primary);
         }
 
         .skill-progress::after {
@@ -363,13 +430,29 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 2s infinite;
+            background: linear-gradient(90deg, transparent, rgba(88, 166, 255, 0.4), transparent);
+            animation: terminal-shimmer 2s infinite;
         }
 
-        @keyframes shimmer {
+        @keyframes terminal-shimmer {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
+        }
+
+        .skill-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(88, 166, 255, 0.1) 2px,
+                rgba(88, 166, 255, 0.1) 4px
+            );
         }
 
         /* Experience */
@@ -450,42 +533,84 @@
             color: var(--text-secondary);
         }
 
-        /* Social links */
+        /* Terminal Social links */
         .social-links {
             display: flex;
             gap: 1rem;
             justify-content: center;
-            margin-top: 2rem;
+            margin-top: 1rem;
         }
 
         .social-link {
             width: 50px;
             height: 50px;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 50%;
+            background: var(--terminal-bg-accent);
+            border: 1px solid var(--terminal-border);
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-secondary);
+            color: var(--terminal-text-secondary);
             font-size: 1.25rem;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(88, 166, 255, 0.3), transparent);
+            transition: left 0.5s ease;
         }
 
         .social-link:hover {
-            background: var(--primary-color);
-            color: white;
+            border-color: var(--terminal-accent);
+            color: var(--terminal-accent);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--glow-primary);
         }
 
-        /* Footer */
+        .social-link:hover::before {
+            left: 100%;
+        }
+
+        /* Terminal Footer */
         .footer {
-            background: var(--bg-secondary);
-            padding: 2rem 0;
+            background: var(--terminal-bg-secondary);
+            border: 1px solid var(--terminal-border);
+            border-radius: 8px;
+            padding: 2rem;
             text-align: center;
-            margin-top: 4rem;
-            border-top: 1px solid var(--border-color);
+            margin: 4rem auto 2rem;
+            max-width: 1200px;
+            box-shadow: var(--shadow-terminal);
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--terminal-accent), var(--terminal-cyan), var(--terminal-purple));
+        }
+
+        .terminal-status {
+            color: var(--terminal-success);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 1rem;
+        }
+
+        .terminal-status::before {
+            content: '● ';
+            color: var(--terminal-success);
+            animation: blink 2s infinite;
         }
 
         /* Responsive design */
@@ -537,7 +662,7 @@
             }
         }
 
-        /* Animations */
+        /* Terminal Animations */
         .fade-in {
             animation: fadeIn 0.6s ease-out;
         }
@@ -582,9 +707,58 @@
                 transform: translateX(0);
             }
         }
+
+        /* Terminal typing effect */
+        .typing-effect {
+            overflow: hidden;
+            border-right: 2px solid var(--terminal-accent);
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--terminal-accent); }
+        }
+
+        /* Matrix-style background effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .matrix-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(88, 166, 255, 0.03) 2px,
+                rgba(88, 166, 255, 0.03) 4px
+            );
+        }
     </style>
 </head>
 <body>
+    <!-- Matrix Background Effect -->
+    <div class="matrix-bg"></div>
+    
     <!-- Theme Toggle -->
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
         <i class="fas fa-moon" id="theme-icon"></i>
@@ -602,17 +776,24 @@
         <span data-es="PDF" data-en="PDF">PDF</span>
     </button>
 
-    <!-- Header -->
+    <!-- Terminal Header -->
     <header class="header">
-        <div class="container">
-            <div class="header-content fade-in">
-                <img src="/images/photo.jpg" alt="José Miguel Amaya" class="profile-image">
-                <h1>José Miguel Amaya Camacho</h1>
-                <p class="subtitle" data-es="Full Stack Engineer" data-en="Full Stack Engineer">Full Stack Engineer</p>
-                <div class="location">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span data-es="Piura, Perú" data-en="Piura, Peru">Piura, Perú</span>
-                </div>
+        <div class="terminal-header-bar">
+            <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">joseamaya@portfolio:~$</div>
+        </div>
+        <div class="header-content fade-in">
+            <img src="/images/photo.jpg" alt="José Miguel Amaya" class="profile-image">
+            <h1 class="terminal-cursor">José Miguel Amaya Camacho</h1>
+            <p class="subtitle" data-es="Full Stack Engineer" data-en="Full Stack Engineer">Full Stack Engineer</p>
+            <div class="location">
+                <span class="terminal-prompt">$</span>
+                <span class="terminal-command">whoami</span>
+                <span class="terminal-argument" data-es="Piura, Perú" data-en="Piura, Peru">Piura, Perú</span>
             </div>
         </div>
     </header>
@@ -626,26 +807,35 @@
                 <div class="card slide-in-left">
                     <div class="card-header">
                         <div class="card-icon">
-                            <i class="fas fa-user"></i>
+                            <i class="fas fa-terminal"></i>
                         </div>
                         <h3 class="card-title" data-es="Contacto" data-en="Contact">Contacto</h3>
                     </div>
                     
-                    <div class="contact-item">
-                        <i class="fas fa-briefcase contact-icon"></i>
-                        <span class="contact-text" data-es="Full Stack Engineer" data-en="Full Stack Engineer">Full Stack Engineer</span>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt-symbol">$</span>
+                        <span class="terminal-command-text">cat</span>
+                        <span class="terminal-argument">profile.txt</span>
                     </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope contact-icon"></i>
-                        <a href="mailto:miguel.amaya99@gmail.com" class="contact-text">miguel.amaya99@gmail.com</a>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt-symbol">></span>
+                        <span class="terminal-command-text">role:</span>
+                        <span class="terminal-argument" data-es="Full Stack Engineer" data-en="Full Stack Engineer">Full Stack Engineer</span>
                     </div>
-                    <div class="contact-item">
-                        <i class="fas fa-github contact-icon"></i>
-                        <a href="https://github.com/joseamaya" class="contact-text">github.com/joseamaya</a>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt-symbol">></span>
+                        <span class="terminal-command-text">email:</span>
+                        <a href="mailto:miguel.amaya99@gmail.com" class="terminal-argument">miguel.amaya99@gmail.com</a>
                     </div>
-                    <div class="contact-item">
-                        <i class="fas fa-globe contact-icon"></i>
-                        <a href="http://pythonpiura.org" class="contact-text">Python Piura</a>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt-symbol">></span>
+                        <span class="terminal-command-text">github:</span>
+                        <a href="https://github.com/joseamaya" class="terminal-argument">github.com/joseamaya</a>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt-symbol">></span>
+                        <span class="terminal-command-text">website:</span>
+                        <a href="http://pythonpiura.org" class="terminal-argument">Python Piura</a>
                     </div>
                 </div>
 
@@ -656,6 +846,12 @@
                             <i class="fas fa-code"></i>
                         </div>
                         <h3 class="card-title" data-es="Habilidades" data-en="Skills">Habilidades</h3>
+                    </div>
+                    
+                    <div class="terminal-line">
+                        <span class="terminal-prompt-symbol">$</span>
+                        <span class="terminal-command-text">ls</span>
+                        <span class="terminal-argument">skills/</span>
                     </div>
                     
                     <div class="skill-item">
@@ -738,6 +934,12 @@
                         <h3 class="card-title" data-es="Idiomas" data-en="Languages">Idiomas</h3>
                     </div>
                     
+                    <div class="terminal-line">
+                        <span class="terminal-prompt-symbol">$</span>
+                        <span class="terminal-command-text">locale</span>
+                        <span class="terminal-argument">-a</span>
+                    </div>
+                    
                     <div class="skill-item">
                         <div class="skill-header">
                             <span class="skill-name" data-es="Español" data-en="Spanish">Español</span>
@@ -770,13 +972,28 @@
                         </div>
                         <h3 class="card-title" data-es="Acerca de mí" data-en="About Me">Acerca de mí</h3>
                     </div>
-                    <div class="experience-description">
-                        <p style="font-size: 1.1rem; margin-bottom: 1.5rem; font-weight: 500;" data-es="Full Stack Engineer, especialista en Python y JavaScript." data-en="Full Stack Engineer, specialist in Python and JavaScript.">
-                            Full Stack Engineer, especialista en Python y JavaScript.
-                        </p>
-                        <p style="font-size: 1rem; line-height: 1.8; text-align: justify;" data-es="Ingeniero Informático egresado de la Universidad Nacional de Piura. Socio fundador de Tallanix S.A.C y de Xprende Tech. Activista del Software Libre y miembro fundador de la Comunidad Piurana de Software Libre VICUX y de la Comunidad de Programadores Python Piura." data-en="Computer Engineer graduated from the National University of Piura. Co-founder of Tallanix S.A.C and Xprende Tech. Free Software activist and founding member of the Piura Free Software Community VICUX and the Python Piura Programmers Community.">
+                    
+                    <div class="terminal-line">
+                        <span class="terminal-prompt-symbol">$</span>
+                        <span class="terminal-command-text">cat</span>
+                        <span class="terminal-argument">about.md</span>
+                    </div>
+                    
+                    <div class="terminal-line">
+                        <span class="terminal-prompt-symbol">></span>
+                        <span class="terminal-command-text">title:</span>
+                        <span class="terminal-argument" data-es="Full Stack Engineer, especialista en Python y JavaScript." data-en="Full Stack Engineer, specialist in Python and JavaScript.">Full Stack Engineer, especialista en Python y JavaScript.</span>
+                    </div>
+                    
+                    <div class="terminal-line">
+                        <span class="terminal-prompt-symbol">></span>
+                        <span class="terminal-command-text">description:</span>
+                    </div>
+                    
+                    <div class="terminal-line" style="margin-left: 2rem; margin-top: 0.5rem;">
+                        <span class="terminal-argument" data-es="Ingeniero Informático egresado de la Universidad Nacional de Piura. Socio fundador de Tallanix S.A.C y de Xprende Tech. Activista del Software Libre y miembro fundador de la Comunidad Piurana de Software Libre VICUX y de la Comunidad de Programadores Python Piura." data-en="Computer Engineer graduated from the National University of Piura. Co-founder of Tallanix S.A.C and Xprende Tech. Free Software activist and founding member of the Piura Free Software Community VICUX and the Python Piura Programmers Community.">
                             Ingeniero Informático egresado de la Universidad Nacional de Piura. Socio fundador de Tallanix S.A.C y de Xprende Tech. Activista del Software Libre y miembro fundador de la Comunidad Piurana de Software Libre VICUX y de la Comunidad de Programadores Python Piura.
-                        </p>
+                        </span>
                     </div>
                 </div>
 
@@ -789,41 +1006,68 @@
                         <h3 class="card-title" data-es="Experiencia Laboral" data-en="Work Experience">Experiencia Laboral</h3>
                     </div>
                     
+                    <div class="terminal-line">
+                        <span class="terminal-prompt-symbol">$</span>
+                        <span class="terminal-command-text">git</span>
+                        <span class="terminal-argument">log --oneline --graph</span>
+                    </div>
+                    
                     <div class="experience-item">
-                        <div class="experience-header">
-                            <div>
-                                <h4 class="experience-title" data-es="CTO - Socio Fundador" data-en="CTO - Co-founder">CTO - Socio Fundador</h4>
-                                <p class="experience-company">Xprende Tech, Quito</p>
-                            </div>
-                            <span class="experience-date" data-es="Jun 2019 - Actualidad" data-en="Jun 2019 - Present">Jun 2019 - Actualidad</span>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt-symbol">*</span>
+                            <span class="terminal-command-text" style="color: var(--terminal-success);">a1b2c3d</span>
+                            <span class="terminal-argument" data-es="CTO - Socio Fundador" data-en="CTO - Co-founder">CTO - Socio Fundador</span>
+                            <span class="terminal-argument" style="color: var(--terminal-text-muted);">(Jun 2019 - Actualidad)</span>
                         </div>
-                        <div class="experience-description">
-                            <p data-es="Soy el responsable de liderar el equipo de tecnología y supervisar todas las decisiones relacionadas con la tecnología y el desarrollo de productos de la empresa. Soy además socio fundador de la empresa con proyectos en varios países de Latinoamérica." data-en="I am responsible for leading the technology team and supervising all decisions related to technology and product development of the company. I am also a co-founder of the company with projects in several Latin American countries.">Soy el responsable de liderar el equipo de tecnología y supervisar todas las decisiones relacionadas con la tecnología y el desarrollo de productos de la empresa. Soy además socio fundador de la empresa con proyectos en varios países de Latinoamérica.</p>
+                        <div class="terminal-line" style="margin-left: 2rem;">
+                            <span class="terminal-prompt-symbol">|</span>
+                            <span class="terminal-command-text">company:</span>
+                            <span class="terminal-argument">Xprende Tech, Quito</span>
+                        </div>
+                        <div class="terminal-line" style="margin-left: 2rem; margin-top: 0.5rem;">
+                            <span class="terminal-prompt-symbol">|</span>
+                            <span class="terminal-argument" data-es="Soy el responsable de liderar el equipo de tecnología y supervisar todas las decisiones relacionadas con la tecnología y el desarrollo de productos de la empresa. Soy además socio fundador de la empresa con proyectos en varios países de Latinoamérica." data-en="I am responsible for leading the technology team and supervising all decisions related to technology and product development of the company. I am also a co-founder of the company with projects in several Latin American countries.">
+                                Soy el responsable de liderar el equipo de tecnología y supervisar todas las decisiones relacionadas con la tecnología y el desarrollo de productos de la empresa. Soy además socio fundador de la empresa con proyectos en varios países de Latinoamérica.
+                            </span>
                         </div>
                     </div>
                     <div class="experience-item">
-                        <div class="experience-header">
-                            <div>
-                                <h4 class="experience-title">Full Stack Engineer</h4>
-                                <p class="experience-company">Efilm Online, Bilbao</p>
-                            </div>
-                            <span class="experience-date" data-es="Feb 2017 - Actualidad" data-en="Feb 2017 - Present">Feb 2017 - Actualidad</span>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt-symbol">*</span>
+                            <span class="terminal-command-text" style="color: var(--terminal-success);">b2c3d4e</span>
+                            <span class="terminal-argument">Full Stack Engineer</span>
+                            <span class="terminal-argument" style="color: var(--terminal-text-muted);">(Feb 2017 - Actualidad)</span>
                         </div>
-                        <div class="experience-description">
-                            <p data-es="Soy responsable de trabajar en todas las partes del proceso de desarrollo de software, desde el diseño de la interfaz de usuario hasta la creación del backend y la arquitectura del sistema además de la implementación de las aplicaciones y la resolución de problemas." data-en="I am responsible for working on all parts of the software development process, from user interface design to backend creation and system architecture, as well as application implementation and problem solving.">Soy responsable de trabajar en todas las partes del proceso de desarrollo de software, desde el diseño de la interfaz de usuario hasta la creación del backend y la arquitectura del sistema además de la implementación de las aplicaciones y la resolución de problemas.</p>
+                        <div class="terminal-line" style="margin-left: 2rem;">
+                            <span class="terminal-prompt-symbol">|</span>
+                            <span class="terminal-command-text">company:</span>
+                            <span class="terminal-argument">Efilm Online, Bilbao</span>
+                        </div>
+                        <div class="terminal-line" style="margin-left: 2rem; margin-top: 0.5rem;">
+                            <span class="terminal-prompt-symbol">|</span>
+                            <span class="terminal-argument" data-es="Soy responsable de trabajar en todas las partes del proceso de desarrollo de software, desde el diseño de la interfaz de usuario hasta la creación del backend y la arquitectura del sistema además de la implementación de las aplicaciones y la resolución de problemas." data-en="I am responsible for working on all parts of the software development process, from user interface design to backend creation and system architecture, as well as application implementation and problem solving.">
+                                Soy responsable de trabajar en todas las partes del proceso de desarrollo de software, desde el diseño de la interfaz de usuario hasta la creación del backend y la arquitectura del sistema además de la implementación de las aplicaciones y la resolución de problemas.
+                            </span>
                         </div>
                     </div>
 
                     <div class="experience-item">
-                        <div class="experience-header">
-                            <div>
-                                <h4 class="experience-title" data-es="Socio Fundador" data-en="Co-founder">Socio Fundador</h4>
-                                <p class="experience-company">Tallanix S.A.C</p>
-                            </div>
-                            <span class="experience-date" data-es="Dic 2016 - Actualidad" data-en="Dec 2016 - Present">Dic 2016 - Actualidad</span>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt-symbol">*</span>
+                            <span class="terminal-command-text" style="color: var(--terminal-success);">c3d4e5f</span>
+                            <span class="terminal-argument" data-es="Socio Fundador" data-en="Co-founder">Socio Fundador</span>
+                            <span class="terminal-argument" style="color: var(--terminal-text-muted);">(Dic 2016 - Actualidad)</span>
                         </div>
-                        <div class="experience-description">
-                            <p data-es="Tallanix es una empresa que hemos formado en conjunto con otros socios para llevar acabo actividades de incubación y aceleración de emprendimientos en la zona Norte de Perú y Sur del Ecuador." data-en="Tallanix is a company that we have formed together with other partners to carry out incubation and acceleration activities for startups in the North zone of Peru and South of Ecuador.">Tallanix es una empresa que hemos formado en conjunto con otros socios para llevar acabo actividades de incubación y aceleración de emprendimientos en la zona Norte de Perú y Sur del Ecuador.</p>
+                        <div class="terminal-line" style="margin-left: 2rem;">
+                            <span class="terminal-prompt-symbol">|</span>
+                            <span class="terminal-command-text">company:</span>
+                            <span class="terminal-argument">Tallanix S.A.C</span>
+                        </div>
+                        <div class="terminal-line" style="margin-left: 2rem; margin-top: 0.5rem;">
+                            <span class="terminal-prompt-symbol">|</span>
+                            <span class="terminal-argument" data-es="Tallanix es una empresa que hemos formado en conjunto con otros socios para llevar acabo actividades de incubación y aceleración de emprendimientos en la zona Norte de Perú y Sur del Ecuador." data-en="Tallanix is a company that we have formed together with other partners to carry out incubation and acceleration activities for startups in the North zone of Peru and South of Ecuador.">
+                                Tallanix es una empresa que hemos formado en conjunto con otros socios para llevar acabo actividades de incubación y aceleración de emprendimientos en la zona Norte de Perú y Sur del Ecuador.
+                            </span>
                         </div>
                     </div>
 
@@ -959,27 +1203,39 @@
             </div>
         </div>
     </main>
-    <!-- Footer -->
+    <!-- Terminal Footer -->
     <footer class="footer">
-        <div class="container">
-            <p style="margin-bottom: 1rem; color: var(--text-secondary);" data-es="Encuéntrame también:" data-en="Find me also:">Encuéntrame también:</p>
-            <div class="social-links">
-                <a href="https://twitter.com/jamayac99" class="social-link" target="_blank" aria-label="Twitter">
-                    <i class="fab fa-twitter"></i>
-                </a>
-                <a href="https://github.com/joseamaya" class="social-link" target="_blank" aria-label="GitHub">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://www.linkedin.com/in/miguelamaya99/" class="social-link" target="_blank" aria-label="LinkedIn">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="https://www.youtube.com/channel/UCMr-MS5fqUMzzc82MnUlGow" class="social-link" target="_blank" aria-label="YouTube">
-                    <i class="fab fa-youtube"></i>
-                </a>
-                <a href="https://elclickizquierdo.wordpress.com/" class="social-link" target="_blank" aria-label="WordPress">
-                    <i class="fab fa-wordpress"></i>
-                </a>
-            </div>
+        <div class="terminal-status" data-es="Sistema en línea - Conectado" data-en="System online - Connected">Sistema en línea - Conectado</div>
+        
+        <div class="terminal-line" style="justify-content: center; margin-bottom: 1rem;">
+            <span class="terminal-prompt-symbol">$</span>
+            <span class="terminal-command-text">find</span>
+            <span class="terminal-argument">social/</span>
+            <span class="terminal-command-text">-name</span>
+            <span class="terminal-argument">"*.links"</span>
+        </div>
+        
+        <div class="social-links">
+            <a href="https://twitter.com/jamayac99" class="social-link" target="_blank" aria-label="Twitter">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://github.com/joseamaya" class="social-link" target="_blank" aria-label="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/miguelamaya99/" class="social-link" target="_blank" aria-label="LinkedIn">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="https://www.youtube.com/channel/UCMr-MS5fqUMzzc82MnUlGow" class="social-link" target="_blank" aria-label="YouTube">
+                <i class="fab fa-youtube"></i>
+            </a>
+            <a href="https://elclickizquierdo.wordpress.com/" class="social-link" target="_blank" aria-label="WordPress">
+                <i class="fab fa-wordpress"></i>
+            </a>
+        </div>
+        
+        <div class="terminal-line" style="justify-content: center; margin-top: 1rem; color: var(--terminal-text-muted); font-size: 0.8rem;">
+            <span class="terminal-prompt-symbol">#</span>
+            <span class="terminal-argument">joseamaya@portfolio:~$ _</span>
         </div>
     </footer>
 
