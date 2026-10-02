@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo dejé de programar y empecé a orquestar · José Miguel Amaya</title>
+<link rel="stylesheet" href="vendor/reveal/reset.css">
+<link rel="stylesheet" href="vendor/reveal/reveal.css">
+<link rel="stylesheet" href="vendor/reveal/highlight-theme.css">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- 1 PORTADA -->
+<section class="navy" data-transition="fade">
+  <div class="cover">
+    <div class="left">
+      <div class="kicker">Panel · AI for Devs · Innospace Camco · 3 oct 2026</div>
+      <h1>Cómo dejé de programar<span class="two">y empecé a orquestar.</span></h1>
+      <p class="sub">Orquesto agentes con opencode. Esto es lo que aprendí.</p>
+      <div class="who"><strong>José Miguel Amaya Camacho</strong><span>CTO &amp; Socio Fundador · Xprende Tech</span></div>
+    </div>
+    <div class="right">
+      <img class="port" src="assets/cover-orchestra.png" alt="Orquestar agentes con opencode">
+      <img class="sky" src="assets/skyline.png" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- 2 QUIÉN SOY -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--navy)">Quién les habla</div>
+    <h2>José Miguel Amaya — 15+ años construyendo software</h2>
+    <div class="grid g2" style="margin-top:24px;align-items:start;grid-template-columns:300px 1fr">
+      <img src="assets/miguel-square.png" alt="" style="width:100%;border-radius:14px;border:3px solid var(--cyan-l)">
+      <ul style="font-size:.6em;line-height:1.6;margin:0;padding-left:1.1em">
+        <li>CTO y socio fundador de <strong>Xprende Tech</strong> (Quito). Full Stack Engineer en Efilm Online.</li>
+        <li>Fundador de <strong>Tallanix</strong>, <strong>Python Piura</strong> y <strong>VICUX</strong>.</li>
+        <li>Especialista en Python, Django/FastAPI e IA (LangChain, LangGraph, RAG).</li>
+        <li>Hace 5 meses integré <strong>opencode</strong> a mi trabajo diario. Hoy es mi forma de trabajar.</li>
+      </ul>
+    </div>
+    <div class="grow" style="display:flex;gap:60px;align-items:end;margin-top:10px">
+      <div><div class="muted" style="font-family:'JetBrains Mono';font-size:.36em">comunidad</div><img src="assets/logo-pythonpiura.jpg" alt="" style="height:80px"></div>
+      <div><div class="muted" style="font-family:'JetBrains Mono';font-size:.36em">empresa</div><img src="assets/logo-tallanix.png" alt="" style="height:70px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 QUÉ ES OPENCODE -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--navy)">Antes de empezar · la herramienta</div>
+    <h2>opencode: el agente de código, open source</h2>
+    <div class="grid g4" style="margin-top:22px">
+      <div class="card a-green"><div class="label">Licencia · open source</div><div class="value">MIT</div><p>El agente de código abierto. Hoy: más de 200.000 estrellas en GitHub.</p></div>
+      <div class="card a-cyan"><div class="label">Terminal primero</div><div class="value" style="font-family:'JetBrains Mono'">la TUI</div><p>Vive en tu terminal. También hay app de escritorio y extensión de IDE.</p></div>
+      <div class="card a-navy"><div class="label">Trae tu modelo</div><div class="value" style="font-size:.9em">agnóstico</div><p>Anthropic, OpenAI, Google o un modelo local. Tú eliges; no estás atado a nadie.</p></div>
+      <div class="card a-amber"><div class="label">Corre en tu máquina</div><div class="value" style="font-size:.9em">tus permisos</div><p>Tus archivos y tus llaves se quedan contigo. Nada sale si no lo autorizas.</p></div>
+    </div>
+    <p class="mono" style="font-size:.4em;color:var(--muted);margin-top:16px">curl -fsSL https://opencode.ai/install | bash</p>
+    <p class="italic" style="color:var(--navy);font-size:.48em;margin-top:6px">No es un chat: es un agente que lee, edita y ejecuta en tu repo.</p>
+  </div>
+</section>
+
+<!-- 4 CÓMO TRABAJA -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Antes de empezar · cómo funciona</div>
+    <h2>Una TUI, un servidor y tus herramientas</h2>
+    <div class="flow" style="width:100%;margin-top:18px">
+      <div class="step"><div class="n" style="color:var(--cyan)">1</div><h4>Tú</h4><small>el prompt</small></div>
+      <div class="arrow">›</div>
+      <div class="step"><div class="n" style="color:var(--cyan)">2</div><h4>TUI</h4><small>cliente</small></div>
+      <div class="arrow">›</div>
+      <div class="step"><div class="n" style="color:var(--cyan)">3</div><h4>Servidor</h4><small>local · OpenAPI</small></div>
+      <div class="arrow">›</div>
+      <div class="step"><div class="n" style="color:var(--cyan)">4</div><h4>Modelo + tools</h4><small>read · edit · bash</small></div>
+      <div class="arrow">›</div>
+      <div class="step"><div class="n" style="color:var(--cyan)">5</div><h4>Tu repo</h4><small>archivos y git</small></div>
+    </div>
+    <div class="grid g4" style="margin-top:18px">
+      <div class="card n a-cyan"><div class="label">Cliente / servidor</div><div class="value" style="font-size:.9em">local</div><p>La TUI es el cliente: habla con un servidor HTTP local.</p></div>
+      <div class="card n a-green"><div class="label">Sesiones</div><div class="value" style="font-size:.9em">con memoria</div><p>Cada hilo es una sesión; se guarda en tu máquina.</p></div>
+      <div class="card n a-amber"><div class="label">Agentes</div><div class="value" style="font-family:'JetBrains Mono';font-size:.85em">build / plan</div><p>Dos modos con Tab: build edita, plan solo lee. Tú apruebas cada acción sensible.</p></div>
+      <div class="card n a-red"><div class="label">Se autocorrige · LSP</div><div class="value" style="font-size:.85em">diagnósticos</div><p>Con lsp: true, los errores del editor vuelven al agente y se corrige solo.</p></div>
+    </div>
+    <p class="italic" style="font-size:.44em;color:#A9BAD4;margin-top:14px">El mismo esqueleto que después armé a mi manera.</p>
+  </div>
+</section>
+
+<!-- 5 DÍA 1 + CURVA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green)">28 de abril de 2026 · mi curva real</div>
+    <h2>Empecé gratis, entendiendo código. En dos meses, 1.320 sesiones.</h2>
+    <div style="display:grid;grid-template-columns:4.35fr 7.2fr;gap:24px;margin-top:14px;flex:1;min-height:0">
+      <div class="card a-navy" style="justify-content:center;gap:.55em">
+        <div class="label" style="font-size:.36em">28 abr 2026 · el día 1</div>
+        <div style="display:flex;flex-direction:column;gap:.6em;margin-top:.35em">
+          <div>
+            <div class="label" style="font-size:.32em">Primera sesión</div>
+            <div class="value" style="font-size:.9em;color:var(--navy)">14:23</div>
+            <p style="font-size:.42em;margin:.15em 0 0">un backend viejo · sin plan mode ni skills.</p>
+          </div>
+          <div>
+            <div class="label" style="font-size:.32em">Primer modelo</div>
+            <div class="value" style="font-size:.9em;color:var(--green)">gratis</div>
+            <p style="font-size:.42em;margin:.15em 0 0">minimax-m2.5-free. Probé gratis antes de pagar.</p>
+          </div>
+          <div>
+            <div class="label" style="font-size:.32em">Mi primer prompt</div>
+            <div class="value" style="font-size:.68em;color:var(--amber)">“Analiza y explícame”</div>
+            <p style="font-size:.42em;margin:.15em 0 0">Le pedí que entendiera, no que escribiera.</p>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;min-height:0">
+        <div class="grow" style="position:relative;min-height:0"><canvas data-chart="sessionsByMonth"></canvas></div>
+        <p class="italic muted" style="font-size:.4em">Abril fue la duda. Mayo y junio, la explosión. Agosto bajó: no por trabajar menos, sino por trabajar mejor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 GOLPES + MODELOS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--amber)">Lo que aprendí a golpes</div>
+    <h2>Probé 21 modelos. Ninguno arregló el fondo.</h2>
+    <div class="grow" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;margin-top:10px">
+      <div style="position:relative;height:100%"><canvas data-chart="modelsDoughnut"></canvas></div>
+      <div>
+        <div class="card a-green"><div class="label">El que se quedó</div><div class="value" style="font-size:.85em">2.795 sesiones</div><p>con deepseek-v4-flash. Dejé de saltar de modelo; la palanca no estaba ahí.</p></div>
+        <div class="card a-amber" style="margin-top:14px"><div class="label">Lección</div><div class="value" style="font-size:.8em">contexto &gt; modelo</div><p>El agente fallaba por falta de contexto y verificación, no por “tonto”.</p></div>
+      </div>
+    </div>
+    <div class="card" style="--line:#F3D9A8;background:#FDF3E3;border-color:#F3D9A8;margin-top:16px;padding:18px 24px">
+      <h3 style="font-size:.66em">“21 modelos. Ninguno arregló el fondo”</h3>
+      <p style="font-size:.44em">En mayo y junio probé un modelo distinto casi cada día: 2.406 sesiones. La más cara, $25,55, una auditoría que se descarriló. Sin spec ni contexto, el modelo da igual.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 BISAGRA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green)">La decisión que lo cambió todo</div>
+    <h2>Un proyecto nuevo desde cero</h2>
+    <p class="lead">El 15 de junio abrí un backend nuevo. En lugar de improvisar, monté el método que me faltó en mayo:</p>
+    <div class="grid g4" style="margin-top:16px">
+      <div class="card a-navy"><div class="num" style="color:var(--navy)">1</div><h3 style="font-size:.55em;margin-top:.3em">AGENTS.md que enlaza</h3><p>154 líneas: cómo se corre, cómo se prueba y a qué specs apunta. El detalle vive en PRPs/ y Linear.</p></div>
+      <div class="card a-cyan"><div class="num" style="color:var(--cyan)">2</div><h3 style="font-size:.55em;margin-top:.3em">PRP por feature</h3><p>001 fundación y 002 catálogo: criterios con casillas y gotchas. En otro repo, ya llevo 159.</p></div>
+      <div class="card a-green"><div class="num" style="color:var(--green)">3</div><h3 style="font-size:.55em;margin-top:.3em">Skills adoptadas</h3><p>prp-manager, tdd, code-reviewer. Y las fijo con un skills-lock.json en el repo.</p></div>
+      <div class="card a-amber"><div class="num" style="color:var(--amber)">4</div><h3 style="font-size:.55em;margin-top:.3em">Verificación que corre el agente</h3><p>make test, ruff y mypy sin errores nuevos. Si no pasa, no cuenta.</p></div>
+    </div>
+    <p class="mt" style="color:var(--navy);font-weight:700;font-size:.5em">860 sesiones después, es mi proyecto mejor organizado. No por el modelo: por el orden. A ese orden lo llamo el arnés: lo que yo armo alrededor de opencode.</p>
+  </div>
+</section>
+
+<!-- 8 GUÍAS Y SENSORES -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">El arnés por dentro</div>
+    <h2>Guías y sensores: las dos palancas del arnés</h2>
+    <p class="lead" style="font-size:.6em">Guías para que acierte a la primera. Sensores para que se corrija antes de que yo mire.</p>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card n a-cyan" style="min-height:250px">
+        <div class="label" style="color:var(--cyan-l)">Guías · antes</div>
+        <h3 style="font-size:.62em;margin-top:.2em">Evitan el error antes de que ocurra.</h3>
+        <ul style="font-size:.46em;line-height:1.6;margin:.55em 0 0;padding-left:1em;color:#DCE6F5">
+          <li><strong>AGENTS.md</strong> que enlaza</li>
+          <li><strong>PRP</strong> por feature</li>
+          <li>Empezar en <strong>plan</strong> · skills</li>
+        </ul>
+      </div>
+      <div class="card n a-green" style="min-height:250px">
+        <div class="label" style="color:var(--green)">Sensores · después</div>
+        <h3 style="font-size:.62em;margin-top:.2em">Lo corrigen antes de que yo lo mire.</h3>
+        <ul style="font-size:.46em;line-height:1.6;margin:.55em 0 0;padding-left:1em;color:#DCE6F5">
+          <li><strong>make test · ruff · mypy</strong> <span style="color:var(--green)">computacional</span></li>
+          <li>Subagente <strong>reviewer</strong> <span style="color:var(--green)">inferencial</span></li>
+          <li>Revisión humana del PR <span style="color:var(--green)">inferencial</span></li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:16px;background:#131D31;border:1px solid var(--dark-line);border-left:6px solid var(--cyan-l);border-radius:10px;padding:11px 18px">
+      <span style="color:#fff;font-weight:700;font-size:.5em">Acierta a la primera y se corrige solo. Por eso el modelo da igual: el criterio vive en tus guías y sensores.</span>
+    </div>
+  </div>
+</section>
+
+<!-- 9 FLUJO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Cómo fluye una sesión</div>
+    <h2>Del código a un PR, en siete pasos</h2>
+    <div class="grow" style="display:flex;align-items:center">
+      <div class="flow" style="width:100%">
+        <div class="step" style="--navy:var(--navy)"><div class="n" style="color:var(--navy)">1</div><h4>Entender</h4><small>codegraph explore</small></div>
+        <div class="arrow">›</div>
+        <div class="step"><div class="n" style="color:var(--cyan)">2</div><h4>Planificar</h4><small>modo plan</small></div>
+        <div class="arrow">›</div>
+        <div class="step"><div class="n" style="color:var(--green)">3</div><h4>Especificar</h4><small>PRPs/00N--…</small></div>
+        <div class="arrow">›</div>
+        <div class="step"><div class="n" style="color:var(--amber)">4</div><h4>Construir</h4><small>modo build</small></div>
+        <div class="arrow">›</div>
+        <div class="step"><div class="n" style="color:var(--red)">5</div><h4>Verificar</h4><small>make test · ruff · mypy</small></div>
+        <div class="arrow">›</div>
+        <div class="step"><div class="n" style="color:var(--navy)">6</div><h4>Revisar</h4><small>subagente reviewer</small></div>
+        <div class="arrow">›</div>
+        <div class="step"><div class="n" style="color:var(--cyan)">7</div><h4>Entregar</h4><small>gh pr create + humano</small></div>
+      </div>
+    </div>
+    <p class="italic muted" style="font-size:.44em">No es un método de libro: es el orden que me funcionó. Cuando el paso 1 y el 3 están firmes, el resto casi se cuida solo.</p>
+  </div>
+</section>
+
+<!-- 10 MODOS -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Cómo trabajo hoy · modos</div>
+    <h2>Empiezo en plan, no en build</h2>
+    <div style="display:grid;grid-template-columns:4.2fr 7.4fr;gap:20px;margin-top:14px;flex:1;min-height:0">
+      <div style="display:flex;flex-direction:column;gap:12px;min-height:0">
+        <div class="card n a-cyan" style="flex:1"><div class="label">build</div><div class="value count" data-count="agent.build">1.528</div><p>implementa y verifica</p></div>
+        <div class="card n a-green" style="flex:1"><div class="label">explore</div><div class="value count" data-count="agent.explore">1.656</div><p>investiga en otro contexto</p></div>
+        <div class="card n a-amber" style="flex:1"><div class="label">plan</div><div class="value count" data-count="agent.plan">659</div><p>solo lee y diseña</p></div>
+      </div>
+      <div style="background:#fff;border-radius:16px;padding:12px 16px;position:relative;min-height:0"><canvas data-chart="agentMonth"></canvas></div>
+    </div>
+    <p class="italic" style="font-size:.42em;color:#A9BAD4;margin-top:10px">En septiembre, por primera vez, plan (281) superó a build (161). Dejé de construir tanto y empecé a dirigir.</p>
+  </div>
+</section>
+
+<!-- 11 SUBAGENTES -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Subagentes</div>
+    <h2>Delego: un subagente investiga aparte y me devuelve el resumen</h2>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card n a-cyan"><div class="num" style="color:var(--cyan-l)">1</div><h3 style="font-size:.6em;margin-top:.25em">Le pido</h3><p>task: explore, plan o build</p></div>
+      <div class="card n a-green"><div class="num" style="color:var(--green)">2</div><h3 style="font-size:.6em;margin-top:.25em">Trabaja en su contexto</h3><p>lee 40 archivos, sin ensuciar el mío</p></div>
+      <div class="card n a-amber"><div class="num" style="color:var(--amber)">3</div><h3 style="font-size:.6em;margin-top:.25em">Me devuelve</h3><p>3 conclusiones, no el ruido</p></div>
+    </div>
+    <div class="card n a-cyan" style="margin-top:16px;display:flex;flex-direction:row;align-items:center;gap:1.1em;padding:20px 26px">
+      <div class="value" style="font-size:1.5em;color:#fff"><span class="count" data-count="task_calls">2.382</span></div>
+      <p style="font-size:.5em;margin:0">subagentes lanzados en 5 meses. Mi sesión principal no se ahoga: recibo la conclusión, no el ruido.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 EL CONTEXTO -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">El contexto</div>
+    <h2>Un AGENTS.md por repo. Mi config global está vacía.</h2>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card n a-green"><div class="label">El bueno</div><div class="value">154 líneas</div><p>Enlaces, no historia: cómo se corre, cómo se prueba y a qué specs apunta.</p></div>
+      <div class="card n a-amber"><div class="label">La deuda</div><div class="value">734 líneas</div><p>Un AGENTS.md que intenta contarlo todo. Menos archivo, más enlaces.</p></div>
+    </div>
+    <p class="italic" style="color:#A9BAD4;font-size:.44em;margin-top:8px">El detalle vive en PRPs/ y en Linear, no en el AGENTS.md.</p>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="card n a-cyan"><div class="label">Compaction</div><div class="value" style="font-family:'JetBrains Mono'">/compact</div><p>Cuando una sesión se acerca al límite, opencode la resume y sigue. Yo lo llamo a mano antes de que se ahogue.</p></div>
+      <div class="card n a-green"><div class="label">Ventana nueva</div><div class="value" style="font-family:'JetBrains Mono'">/new</div><p>Cambio de tarea, cambio de sesión. El contexto viejo no ayuda: estorba.</p></div>
+      <div class="card n a-amber"><div class="label">Ojo con el resumen</div><div class="value" style="font-size:.8em">pierde detalle</div><p>Compaction libera espacio, no guarda la verdad. Lo que importa vive en el AGENTS.md o en el PRP, que son texto en el repo.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 ESPECIFICACIÓN -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">La especificación</div>
+    <h2>230 sesiones con PRP. 159 en un repo.</h2>
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:18px;margin-top:18px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card n a-amber"><div class="label">Sesiones con PRP</div><div class="value count" data-count="prp_sessions">230</div><p>en el título</p></div>
+        <div class="card n a-cyan"><div class="label">PRPs en un solo repo</div><div class="value">159</div><p>001 a 159, en un repo</p></div>
+      </div>
+      <img src="assets/term-prp.png" alt="" style="width:100%;border-radius:12px">
+    </div>
+    <p style="font-size:.44em;color:#A9BAD4;margin-top:14px">Un PRP es un contrato con casillas: objetivo, criterios de éxito, gotchas y qué no romper. El nombre lleva el issue: PRPs/007--fix-target-tests.md.</p>
+  </div>
+</section>
+
+<!-- 14 CODEGRAPH -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Leer el código · codegraph</div>
+    <h2 style="font-size:1.18em">Codegraph: leer código dejó de ser el cuello de botella</h2>
+    <div class="grid g4" style="margin-top:10px">
+      <div class="card a-navy" style="padding:14px 16px"><h3 style="font-size:.5em">Un mapa, no un texto</h3><p style="font-size:.42em">Nodos: funciones, clases, métodos. Aristas: quién llama a quién.</p></div>
+      <div class="card a-cyan" style="padding:14px 16px"><h3 style="font-size:.5em">Se indexa una vez</h3><p style="font-size:.42em"><code>codegraph init</code> deja el grafo en <code>.codegraph/</code>, en tu máquina.</p></div>
+      <div class="card a-green" style="padding:14px 16px"><h3 style="font-size:.5em">Se pregunta en tu idioma</h3><p style="font-size:.42em">Una consulta devuelve símbolos y su ruta de llamada, no 40 archivos.</p></div>
+      <div class="card a-amber" style="padding:14px 16px"><h3 style="font-size:.5em">Es un servidor MCP</h3><p style="font-size:.42em">explore, node, callers, impact, affected; se habilita por agente.</p></div>
+    </div>
+    <div class="grow" style="display:flex;align-items:center;justify-content:center;margin-top:12px;min-height:0">
+      <img src="assets/term-codegraph.png" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:12px">
+    </div>
+    <p class="italic" style="color:var(--navy);font-size:.4em;margin-top:8px">Antes: grep y abrir archivo por archivo. Ahora: una consulta.</p>
+  </div>
+</section>
+
+<!-- 15 SKILLS EXPLORER -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green)">Las manos · mi repertorio</div>
+    <h2>No uso una skill: uso <span data-count="skill_count" data-fmt="raw">16</span>, en <span data-count="skill_families" data-fmt="raw">8</span> familias</h2>
+    <p class="lead" style="font-size:.46em">Filtra por familia.</p>
+    <div class="chiprow" id="skill-filters" style="margin:10px 0"></div>
+    <div id="skills-explorer" style="flex:1;overflow:auto"></div>
+  </div>
+</section>
+
+<!-- 16 CLI VS MCP -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">CLI vs MCP</div>
+    <h2><span data-count="bash_calls" data-fmt="int">83.140</span> comandos de shell. <span data-count="codegraph.calls" data-fmt="int">1.667</span> consultas a codegraph.</h2>
+    <div style="display:grid;grid-template-columns:1fr 1.07fr;gap:20px;margin-top:12px;flex:1;min-height:0">
+      <div style="position:relative;min-height:0"><canvas data-chart="toolsBar"></canvas></div>
+      <div class="card a-navy" style="justify-content:center;gap:.5em">
+        <div>
+          <div class="label" style="font-size:.32em">Antes de tu primer prompt</div>
+          <div class="value" style="font-size:.9em;color:var(--red)">hasta ~50%</div>
+          <p style="font-size:.42em;margin:.15em 0 0">Un puñado de servidores MCP carga sus herramientas al contexto; lo pagas en cada request, los uses o no.</p>
+        </div>
+        <div>
+          <div class="label" style="font-size:.32em">Mi regla</div>
+          <div class="value" style="font-size:.8em;color:var(--navy)">CLI primero</div>
+          <p style="font-size:.42em;margin:.15em 0 0">gh, docker, psql, pytest ya están autenticados y no cargan nada hasta que los llamo.</p>
+        </div>
+        <div>
+          <div class="label" style="font-size:.32em">MCP</div>
+          <div class="value" style="font-size:.8em;color:var(--cyan)">solo lo justo</div>
+          <p style="font-size:.42em;margin:.15em 0 0">codegraph (leer código) y Linear (issues); se habilitan por agente.</p>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:.46em;margin-top:10px"><strong style="color:var(--navy)">MCP por excepción, no por costumbre.</strong> Se habilita por agente, para que solo pague contexto quien lo usa.</p>
+  </div>
+</section>
+
+<!-- 17 NÚMEROS + CACHÉ -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--navy)">Mis números, sin maquillaje</div>
+    <h2>Cinco meses en una pantalla</h2>
+    <div class="grid g4" style="margin-top:16px">
+      <div class="card a-navy"><div class="label">Sesiones</div><div class="value count" data-count="totals.sessions">4.341</div><p>28 abr – 30 sep</p></div>
+      <div class="card a-cyan"><div class="label">Tool calls</div><div class="value count" data-count="total_tool_calls">285.000</div><p>acciones reales</p></div>
+      <div class="card a-green"><div class="label">Tokens entrada</div><div class="value count" data-count="totals.tokens_input" data-fmt="m">990 M</div><p>≈ 990 millones</p></div>
+      <div class="card a-amber"><div class="label">Costo total</div><div class="value">$<span class="count" data-count="totals.cost">463</span></div><p>≈ $0,11 por sesión</p></div>
+      <div class="card a-navy"><div class="label">Días activos</div><div class="value count" data-count="active_days">124</div><p>de 156 posibles</p></div>
+      <div class="card a-cyan"><div class="label">Modelos</div><div class="value count" data-count="model_count">21</div><p>probados</p></div>
+      <div class="card a-green"><div class="label">Proyectos</div><div class="value count" data-count="totals.projects">20</div><p>repos tocados</p></div>
+      <div class="card a-amber"><div class="label">Sesión más cara</div><div class="value">$<span class="count" data-count="top_cost">25.55</span></div><p>auditoría Vue 2</p></div>
+    </div>
+    <div class="card n a-cyan" style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+      <div>
+        <div class="label" style="font-size:.34em">Caché leída</div>
+        <div class="value" style="font-size:1.1em;color:var(--cyan-l)">24.400 M</div>
+        <p style="font-size:.44em;margin:.15em 0 0">25× lo que envié (990 M)</p>
+      </div>
+      <div>
+        <div class="label" style="font-size:.34em">En deepseek</div>
+        <div class="value" style="font-size:1.1em;color:var(--green)">hasta 50×</div>
+        <p style="font-size:.44em;margin:.15em 0 0">más barato que un token nuevo</p>
+      </div>
+    </div>
+    <p class="italic" style="color:var(--cyan-l);font-size:.44em;margin-top:8px">El costo no está en el modelo: está en cuánto contexto reenvías.</p>
+  </div>
+</section>
+
+<!-- 18 ROI -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--amber)">¿Ahorré tiempo o lo perdí?</div>
+    <h2>La eficiencia no es menos sesiones: es menos correcciones</h2>
+    <div class="grid g3" style="margin-top:22px">
+      <div class="card a-red"><div class="label">Mayo · pico</div><div class="value">1.086</div><p>sesiones y mucho retrabajo. Velocidad sin método: sentía ir rápido y corregía el doble.</p></div>
+      <div class="card a-green"><div class="label">Septiembre · método</div><div class="value">649</div><p>menos sesiones, plan &gt; build, PRPs y codegraph. Cada sesión apunta mejor.</p></div>
+      <div class="card a-navy"><div class="label">Costo real</div><div class="value">$463</div><p>cinco meses, veinte proyectos. ≈ $0,11 por sesión. Menos que una hora de desarrollo.</p></div>
+    </div>
+    <p class="mt" style="color:var(--navy);font-weight:700;font-size:.5em">No bajé el número de sesiones porque trabajara menos: subí la calidad de cada una. Eso es el arnés.</p>
+  </div>
+</section>
+
+<!-- 19 LECCIONES -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--amber)">Lecciones honestas</div>
+    <h2>Los tres errores que me costaron mayo</h2>
+    <p class="lead" style="font-size:.6em">Si volviera al 28 de abril, no cambiaría el modelo: cambiaría estas tres cosas.</p>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card a-red" style="min-height:270px"><div class="num" style="color:var(--red)">1</div><h3 style="font-size:.6em;margin-top:.25em">Creí que era el modelo</h3><p>Probé 21 modelos en un mes. El que fallaba era yo, por no darle contexto.</p></div>
+      <div class="card a-amber" style="min-height:270px"><div class="num" style="color:var(--amber)">2</div><h3 style="font-size:.6em;margin-top:.25em">Escribí un AGENTS.md que lo contaba todo</h3><p>734 líneas de deuda. Hoy enlaza, no explica.</p></div>
+      <div class="card a-navy" style="min-height:270px"><div class="num" style="color:var(--navy)">3</div><h3 style="font-size:.6em;margin-top:.25em">Confundí velocidad con avance</h3><p>1.086 sesiones en mayo y el doble de correcciones.</p></div>
+    </div>
+    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.66em">Ninguno se arreglaba con un modelo mejor. Los tres, con orden.</p>
+  </div>
+</section>
+
+<!-- 20 FAQ -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--red)">Preguntas incómodas</div>
+    <h2>Las que siempre me hacen</h2>
+    <div class="grid g2" style="margin-top:20px">
+      <div class="card a-navy"><h3 style="font-size:.6em">¿La IA me va a reemplazar?</h3><p>No en tu trabajo, sí en tus tareas. El agente propone; el merge lo firmas tú. La responsabilidad no se delega.</p></div>
+      <div class="card a-green"><h3 style="font-size:.6em">¿Esto es solo para seniors?</h3><p>Al contrario. El arnés obliga a escribir contexto y convenciones, que es donde se aprende.</p></div>
+      <div class="card a-cyan"><h3 style="font-size:.6em">¿Y el código de mis clientes?</h3><p>opencode corre en tu máquina. Tú controlas permisos, MCP y contexto. Nada sale si no lo autorizas.</p></div>
+      <div class="card a-amber"><h3 style="font-size:.6em">¿Tengo que pagar mucho?</h3><p>Empecé gratis y terminé en once centavos por sesión. El arnés se arma con archivos de texto.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 21 CÓMO EMPEZAR -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green)">Para el lunes · lo que yo haría</div>
+    <h2>El arnés mínimo: tres archivos.</h2>
+    <p class="lead" style="font-size:.6em">No necesitas 21 modelos ni 16 skills. Necesitas tres archivos que puedes crear hoy.</p>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card a-cyan" style="min-height:270px">
+        <div class="mono" style="font-size:.62em;font-weight:700;color:var(--cyan)">AGENTS.md</div>
+        <div class="label" style="margin-top:.45em">guía</div>
+        <p style="margin-top:.55em">El contexto que enlaza: cómo se corre, cómo se prueba y a qué specs apunta.</p>
+      </div>
+      <div class="card a-green" style="min-height:270px">
+        <div class="mono" style="font-size:.62em;font-weight:700;color:var(--green)">Makefile</div>
+        <div class="label" style="margin-top:.45em">sensor</div>
+        <p style="margin-top:.55em">La verificación que corre el agente: <code>make test</code>, ruff y mypy. Si no pasa, no cuenta.</p>
+      </div>
+      <div class="card a-cyan" style="min-height:270px">
+        <div class="mono" style="font-size:.62em;font-weight:700;color:var(--cyan)">skills-lock.json</div>
+        <div class="label" style="margin-top:.45em">guía</div>
+        <p style="margin-top:.55em">Una skill adoptada y fijada: casi ninguna la escribirás tú. Así tu equipo hereda la misma.</p>
+      </div>
+    </div>
+    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.66em">Empieza por tu repo, no por el prompt perfecto.</p>
+  </div>
+</section>
+
+<!-- 22 CIERRE -->
+<section class="navy" data-transition="fade">
+  <div class="pad" style="justify-content:center">
+    <h1 style="font-size:2.3em">Dejé de programar.<br>Empecé a orquestar.</h1>
+    <p class="lead" style="color:#9FB4D4;margin-top:.6em">El modelo se alquila. El criterio no.</p>
+    <p style="color:var(--cyan-l);font-family:'Montserrat';font-weight:800;font-size:1.1em;margin-top:.8em">Muchas gracias.</p>
+    <div style="width:180px;height:4px;background:#3A5490;margin:.8em 0"></div>
+    <p style="font-size:.46em"><strong style="color:#fff">José Miguel Amaya Camacho</strong><br><span style="color:var(--cyan-l)">linkedin.com/in/miguelamaya99 · github.com/joseamaya · joseamaya.github.io</span></p>
+  </div>
+</section>
+
+</div></div>
+
+<script src="vendor/reveal/reveal.js"></script>
+<script src="vendor/reveal/notes.js"></script>
+<script src="vendor/reveal/highlight.js"></script>
+<script src="vendor/reveal/search.js"></script>
+<script src="vendor/reveal/zoom.js"></script>
+<script src="vendor/chartjs/chart.umd.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/deck.js"></script>
+</body>
+</html>
