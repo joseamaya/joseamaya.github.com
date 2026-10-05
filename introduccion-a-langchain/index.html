@@ -312,9 +312,9 @@
     <div class="kicker">Chat Models</div>
     <h2>El modelo de chat</h2>
     <ul style="font-size:.56em;line-height:1.7;margin:0;padding-left:1.1em">
-      <li>Convención de nombres con prefijo “Chat”: <span class="mono">ChatOpenAI</span>, <span class="mono">ChatAnthropic</span>, <span class="mono">ChatOllama</span>.</li>
-      <li>Heredan de <span class="mono">BaseChatModel</span>: todos comparten una funcionalidad básica.</li>
-      <li>Interfaz estándar de streaming, asincronía y batching.</li>
+      <li><span class="mono">init_chat_model("proveedor:modelo")</span> crea un modelo de cualquier proveedor con una sola función.</li>
+      <li>Por debajo, cada proveedor expone una clase con prefijo “Chat”: <span class="mono">ChatOpenAI</span>, <span class="mono">ChatAnthropic</span>, <span class="mono">ChatOllama</span>.</li>
+      <li>Todas heredan de <span class="mono">BaseChatModel</span>: misma interfaz de streaming, asincronía y batching.</li>
     </ul>
     <div class="cap" style="margin-top:14px">python</div>
     <pre><code class="language-python">model = init_chat_model("gpt-5-nano", model_provider="openai", temperature=0)
@@ -326,7 +326,7 @@ for chunk in model.stream("Cuéntame un cuento"):
 
 model.batch(["Hola", "Adiós", "Gracias"])      # varias a la vez</code></pre>
   </div>
-  <aside class="notes">⏱ 1.5 min · Comparar invoke, stream y batch con una misma metáfora: llamada, llamada con respuesta en vivo, y llamada en paralelo. Preguntar quién ha integrado streaming en una interfaz de chat.</aside>
+  <aside class="notes">⏱ 1.5 min · Aclarar que init_chat_model devuelve por dentro una clase ChatXxx (ChatOpenAI, ChatAnthropic…), por eso conviene conocer ambas formas. Comparar invoke, stream y batch con una misma metáfora: llamada, llamada con respuesta en vivo, y llamada en paralelo. Preguntar quién ha integrado streaming en una interfaz de chat.</aside>
 </section>
 
 <!-- 17 Parámetros -->
