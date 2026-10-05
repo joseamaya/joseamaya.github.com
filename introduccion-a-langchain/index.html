@@ -85,7 +85,7 @@
         <li>CTO y socio fundador de <strong>Xprende Tech</strong>. Full Stack Engineer en Efilm Online.</li>
         <li>Fundador de <strong>Piura AI</strong>, <strong>Tallanix</strong>, <strong>Python Piura</strong> y <strong>VICUX</strong>.</li>
         <li>Especialista en Python, Django/FastAPI e IA (LangChain, LangGraph, RAG).</li>
-        <li>Autor de esta charla y de “Memoria Persistente para Chatbots en Telegram”.</li>
+        <li>Autor de charlas y talleres de IA aplicada en Python Piura y Piura AI.</li>
       </ul>
     </div>
     <div style="display:flex;gap:60px;align-items:end;margin-top:8px">
@@ -383,7 +383,7 @@ model.batch(["Hola", "Adiós", "Gracias"])      # varias a la vez</code></pre>
     </div>
     <p style="font-size:.5em;margin-top:16px">En código se usan las clases <span class="mono">SystemMessage</span>, <span class="mono">HumanMessage</span>, <span class="mono">AIMessage</span> y <span class="mono">ToolMessage</span>, o su forma abreviada en dict (<span class="mono">{"role": "user"}</span>) y en tuplas (<span class="mono">("system", …)</span>). Los mensajes pueden incluir imágenes o video.</p>
   </div>
-  <aside class="notes">⏱ 1 min · Explicar que el historial completo se reenvía en cada turno y que el rol tool lleva el resultado de una herramienta de vuelta al modelo. Esto conecta con la charla de memoria: sin una capa que gestione el historial, el modelo olvida.</aside>
+  <aside class="notes">⏱ 1 min · Explicar que el historial completo se reenvía en cada turno y que el rol tool lleva el resultado de una herramienta de vuelta al modelo. Sin una capa que gestione el historial, el modelo olvida.</aside>
 </section>
 
 <!-- 21 Prompt Templates -->
@@ -418,9 +418,9 @@ prompt = ChatPromptTemplate.from_messages([
     MessagesPlaceholder("historial"),
     ("human", "{pregunta}"),
 ])</code></pre>
-    <div class="callout" style="margin-top:12px">Aquí es donde la charla de “memoria persistente” empieza: el historial se recupera y se coloca en este hueco.</div>
+    <div class="callout" style="margin-top:12px">El historial de la conversación se pasa a la plantilla. Eso es memoria de corto plazo; la memoria persistente añade un almacén que la recupera entre sesiones.</div>
   </div>
-  <aside class="notes">⏱ 1.5 min · Momento clave para enlazar con la charla de memoria. Mostrar que la memoria de corto plazo es simplemente inyectar el historial en el placeholder; la de largo plazo, recuperarlo de una base vectorial.</aside>
+  <aside class="notes">⏱ 1.5 min · Mostrar la diferencia: inyectar el historial en la plantilla es memoria de corto plazo; la de largo plazo añade un almacén que lo recupera. El historial es una lista de mensajes que se reenvía en cada turno.</aside>
 </section>
 
 <!-- 23 Ejemplo traducción -->
@@ -594,7 +594,7 @@ print(datos.nombre, datos.edad, datos.empresa)</code></pre>
       <div class="card a-amber" style="justify-content:flex-start"><div class="label">Vector store</div><div class="value" style="font-size:.85em">Almacenar</div><p style="margin-top:.5em">Base de datos especializada en guardar vectores y buscar por similitud.</p></div>
     </div>
   </div>
-  <aside class="notes">⏱ 1 min · Orden lógico: cargar → vectorizar → almacenar → buscar. Cada concepto corresponde a un objeto de LangChain. Conectar con la charla de memoria, donde usamos MongoDB Atlas como vector store.</aside>
+  <aside class="notes">⏱ 1 min · Orden lógico: cargar → vectorizar → almacenar → buscar. Cada concepto corresponde a un objeto de LangChain; MongoDB Atlas es un vector store válido para producción.</aside>
 </section>
 
 <!-- 34 RAG -->
@@ -716,7 +716,7 @@ agente = create_agent(
 agente.invoke({"messages": [{"role": "user", "content": "¿Clima en Piura?"}]})</code></pre>
     <div class="callout" style="margin-top:10px">Opcional: <span class="mono">response_format=</span> devuelve datos validados en <span class="mono">structured_response</span>; <span class="mono">checkpointer</span> + <span class="mono">thread_id</span> conservan la conversación entre turnos.</div>
   </div>
-  <aside class="notes">⏱ 2.5 min · Cerrar el círculo: create_agent combina el modelo, las herramientas y el prompt del bloque 3, y usa bind_tools por dentro. Por dentro usa LangGraph: no hace falta dominar grafos para empezar. La charla de memoria profundiza en grafos, estado y persistencia.</aside>
+  <aside class="notes">⏱ 2.5 min · Cerrar el círculo: create_agent combina el modelo, las herramientas y el prompt del bloque 3, y usa bind_tools por dentro. Por dentro usa LangGraph: no hace falta dominar grafos para empezar, pero permite profundizar en grafos, estado y persistencia.</aside>
 </section>
 
 <!-- 40 Recapitulación -->
