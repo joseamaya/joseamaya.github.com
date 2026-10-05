@@ -16,7 +16,7 @@ python3 -m http.server 8000
 - Three self-contained Reveal.js talk decks, each with its own `index.html`, `css/`, `js/deck.js`, `assets/` and `vendor/`:
   - `como-deje-de-programar-y-empece-a-orquestar/` — opencode/orchestration talk. `charla-opencode/` is only a redirect stub to this path.
   - `memoria-persistente-chatbots-telegram/` — Telegram + LangChain/LangGraph + MongoDB memory talk.
-  - `introduccion-a-langchain/` — LangChain v1 intro talk (LLMs, components, chat models, prompts, structured outputs, RAG).
+  - `introduccion-a-langchain/` — LangChain intro talk (LLMs, components, chat models, prompts, structured outputs, RAG).
 - `vendor/` lives inside each deck (Reveal, and Chart.js/fonts for the opencode one). Do not edit.
 
 ## Decks
