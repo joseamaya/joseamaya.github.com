@@ -134,9 +134,9 @@
       <li>Montar un motor de búsqueda semántica y una cadena RAG<span>conocimiento</span></li>
       <li>Construir un agente con herramientas en un bucle<span>agentes</span></li>
     </ul>
-    <div class="callout" style="margin-top:16px">45 minutos, con código que puedes copiar y ejecutar. Cada bloque cierra con un ejemplo y un reto.</div>
+    <div class="callout" style="margin-top:16px">45 minutos, con código que puedes copiar y ejecutar. Cada bloque cierra con un ejemplo.</div>
   </div>
-  <aside class="notes">⏱ 1 min · Presentar resultados de aprendizaje, no temas. Avisar del ritmo: 6 bloques, ejemplos de código y dos retos cortos. Decir que las diapositivas y el código quedan disponibles.</aside>
+  <aside class="notes">⏱ 1 min · Presentar resultados de aprendizaje, no temas. Avisar del ritmo: 6 bloques y ejemplos de código. Decir que las diapositivas y el código quedan disponibles.</aside>
 </section>
 
 <!-- 5 DIVISOR 1 -->
@@ -447,21 +447,7 @@ cadena.invoke({"idioma": "español", "texto": "LangChain simplifies LLM apps."})
   <aside class="notes">⏱ 2 min · Recorrer el código línea por línea, ahora que cada pieza está explicada: init_chat_model, ChatPromptTemplate y el operador pipe, el corazón de LCEL. Ejecutar mentalmente con “español”.</aside>
 </section>
 
-<!-- 24 RETO 1 -->
-<section class="light">
-  <div class="pad">
-    <div class="kicker" style="color:var(--green-ink)">Reto</div>
-    <h2>Tu turno · 2 minutos</h2>
-    <div class="grid g2" style="margin-top:18px">
-      <div class="card a-cyan" style="justify-content:flex-start"><div class="label">Reto</div><div class="value" style="font-size:.85em">Cambia el idioma</div><p style="margin-top:.5em">Modifica la variable <span class="mono">{idioma}</span> y traduce a tres idiomas en un solo <span class="mono">batch</span>.</p></div>
-      <div class="card a-green" style="justify-content:flex-start"><div class="label">Extra</div><div class="value" style="font-size:.85em">Prueba streaming</div><p style="margin-top:.5em">Reemplaza <span class="mono">invoke</span> por <span class="mono">stream</span> e imprime los fragmentos en vivo.</p></div>
-    </div>
-    <div class="callout" style="margin-top:16px">Pista: reutiliza el mismo prompt; solo cambian los datos de entrada.</div>
-  </div>
-  <aside class="notes">⏱ 1.5 min · Dar 2 minutos reales para intentarlo. No resolverlo en pantalla: dejar que exploren y compartir una solución al cerrar el bloque. Refuerza que el prompt es reutilizable.</aside>
-</section>
-
-<!-- 25 DIVISOR 4 -->
+<!-- 24 DIVISOR 4 -->
 <section class="navy">
   <div class="pad" style="align-items:flex-start">
     <div class="kicker" style="color:#8FB3E0">Parte 4</div>
@@ -472,7 +458,7 @@ cadena.invoke({"idioma": "español", "texto": "LangChain simplifies LLM apps."})
   <aside class="notes">⏱ 15 s · Repaso: el operador pipe. Este bloque es el que más impacto tiene en aplicaciones reales: convertir texto libre en datos que tu sistema entiende.</aside>
 </section>
 
-<!-- 26 Outputs estructurados -->
+<!-- 25 Outputs estructurados -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Salidas estructuradas</div>
@@ -485,7 +471,7 @@ cadena.invoke({"idioma": "español", "texto": "LangChain simplifies LLM apps."})
   <aside class="notes">⏱ 1 min · Sin structured output, parsear texto libre es frágil: un día el modelo añade “¡Claro! Aquí está el JSON:” y rompe tu parser. Con esquema, el proveedor garantiza el formato. Conectar con el gancho inicial.</aside>
 </section>
 
-<!-- 27 Implementación -->
+<!-- 26 Implementación -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Salidas estructuradas</div>
@@ -498,7 +484,7 @@ cadena.invoke({"idioma": "español", "texto": "LangChain simplifies LLM apps."})
   <aside class="notes">⏱ 1 min · El resultado es un objeto validado: se accede con atributos y el editor autocompleta. Eso significa que el error se detecta en desarrollo, no en producción.</aside>
 </section>
 
-<!-- 28 Ejemplo clasificación -->
+<!-- 27 Ejemplo clasificación -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">Ejemplo</div>
@@ -521,7 +507,7 @@ clasificador.invoke("El nuevo lanzamiento superó todas mis expectativas")</code
   <aside class="notes">⏱ 2 min · Explicar que el modelo ya no devuelve texto suelto, sino un objeto validado. Literal restringe los valores posibles; Field documenta cada campo. temperature 0 para consistencia.</aside>
 </section>
 
-<!-- 29 Ejemplo extracción -->
+<!-- 28 Ejemplo extracción -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">Ejemplo</div>
@@ -543,22 +529,7 @@ print(datos.nombre, datos.edad, datos.empresa)</code></pre>
   <aside class="notes">⏱ 1.5 min · Insistir en el patrón: definir el esquema una vez y reutilizarlo. Los campos opcionales (None) permiten que el texto no traiga toda la información sin romper la validación.</aside>
 </section>
 
-<!-- 30 RETO 2 -->
-<section class="light">
-  <div class="pad">
-    <div class="kicker" style="color:var(--green-ink)">Reto</div>
-    <h2>Tu turno · modelo propio</h2>
-    <p style="font-size:.56em;max-width:62ch">Define un esquema <span class="mono">Pydantic</span> para un caso tuyo: una factura, un ticket o un currículum, y extrae los campos con <span class="mono">with_structured_output</span>.</p>
-    <div class="grid g3" style="margin-top:18px">
-      <div class="card a-cyan"><div class="label">Paso 1</div><div class="value" style="font-size:.8em">Esquema</div><p>Campos y tipos del dato que quieres.</p></div>
-      <div class="card a-green"><div class="label">Paso 2</div><div class="value" style="font-size:.8em">Modelo</div><p>Usa <span class="mono">temperature=0</span> para consistencia.</p></div>
-      <div class="card a-amber"><div class="label">Paso 3</div><div class="value" style="font-size:.8em">Validar</div><p>Comprueba que el objeto cumple el esquema.</p></div>
-    </div>
-  </div>
-  <aside class="notes">⏱ 1.5 min · Reto de transferencia: que apliquen el patrón a un dato propio. Si el tiempo aprieta, dejarlo como ejercicio para casa y mostrarlo al final.</aside>
-</section>
-
-<!-- 31 DIVISOR 5 -->
+<!-- 29 DIVISOR 5 -->
 <section class="navy">
   <div class="pad" style="align-items:flex-start">
     <div class="kicker" style="color:#8FB3E0">Parte 5</div>
@@ -569,7 +540,7 @@ print(datos.nombre, datos.edad, datos.empresa)</code></pre>
   <aside class="notes">⏱ 15 s · Repaso: with_structured_output. El bloque más pedido en proyectos reales. Antes de empezar, preguntar quién tiene un documento o base de conocimiento que le gustaría consultar con un chatbot.</aside>
 </section>
 
-<!-- 32 Búsqueda semántica -->
+<!-- 30 Búsqueda semántica -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Búsqueda semántica</div>
@@ -583,7 +554,7 @@ print(datos.nombre, datos.edad, datos.empresa)</code></pre>
   <aside class="notes">⏱ 1 min · Ejemplo concreto para que se entienda: buscar “formas de aumentar ingresos” y encontrar un fragmento sobre “estrategias de crecimiento” que no usa ninguna de esas palabras. Eso es el significado.</aside>
 </section>
 
-<!-- 33 Conceptos -->
+<!-- 31 Conceptos -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Búsqueda semántica</div>
@@ -597,7 +568,7 @@ print(datos.nombre, datos.edad, datos.empresa)</code></pre>
   <aside class="notes">⏱ 1 min · Orden lógico: cargar → vectorizar → almacenar → buscar. Cada concepto corresponde a un objeto de LangChain; MongoDB Atlas es un vector store válido para producción.</aside>
 </section>
 
-<!-- 34 RAG -->
+<!-- 32 RAG -->
 <section class="light">
   <div class="pad">
     <div class="kicker">RAG</div>
@@ -617,7 +588,7 @@ print(datos.nombre, datos.edad, datos.empresa)</code></pre>
   <aside class="notes">⏱ 1.5 min · Definición en una frase: RAG = buscar primero, responder después. La ventaja es que reduces alucinaciones y puedes citar la fuente. Es más barato y rápido que reentrenar un modelo.</aside>
 </section>
 
-<!-- 35 RAG paso 1 -->
+<!-- 33 RAG paso 1 -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">RAG · paso 1</div>
@@ -638,7 +609,7 @@ chunks = splitter.split_documents(docs)</code></pre>
   <aside class="notes">⏱ 1.5 min · Cargar el PDF en objetos Document y partirlo. Explicar el solapamiento con una frase: evita cortar una idea por la mitad. add_start_index guarda la posición original para citar.</aside>
 </section>
 
-<!-- 36 RAG paso 2 -->
+<!-- 34 RAG paso 2 -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">RAG · paso 2</div>
@@ -656,7 +627,7 @@ retriever = vectorstore.as_retriever(search_kwargs={"k": 4})</code></pre>
   <aside class="notes">⏱ 1.5 min · Indexar: cada chunk se convierte en vector y se guarda en MongoDB Atlas. Recuperar: el retriever busca por similitud. Recordar que Atlas Vector Search requiere un índice nombrado.</aside>
 </section>
 
-<!-- 37 RAG chain -->
+<!-- 35 RAG chain -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">RAG · cadena</div>
@@ -682,7 +653,7 @@ rag.invoke("¿Cómo reinicio el equipo?")</code></pre>
   <aside class="notes">⏱ 2 min · Señalar que es la misma composición con pipe de la parte 3: el retriever entra como una pieza más. El parser final convierte la respuesta en string. Insistir en “usa solo este contexto” para reducir alucinaciones.</aside>
 </section>
 
-<!-- 38 DIVISOR 6 -->
+<!-- 36 DIVISOR 6 -->
 <section class="navy">
   <div class="pad" style="align-items:flex-start">
     <div class="kicker" style="color:#8FB3E0">Parte 6</div>
@@ -693,7 +664,7 @@ rag.invoke("¿Cómo reinicio el equipo?")</code></pre>
   <aside class="notes">⏱ 15 s · Repaso: recuperar y generar. Último bloque: el agente junta todo lo anterior (modelo, prompts, herramientas) en un bucle. Es el cierre natural de la charla.</aside>
 </section>
 
-<!-- 39 create_agent -->
+<!-- 37 create_agent -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Agentes</div>
@@ -719,7 +690,7 @@ agente.invoke({"messages": [{"role": "user", "content": "¿Clima en Piura?"}]})<
   <aside class="notes">⏱ 2.5 min · Cerrar el círculo: create_agent combina el modelo, las herramientas y el prompt del bloque 3, y usa bind_tools por dentro. Por dentro usa LangGraph: no hace falta dominar grafos para empezar, pero permite profundizar en grafos, estado y persistencia.</aside>
 </section>
 
-<!-- 40 Recapitulación -->
+<!-- 38 Recapitulación -->
 <section class="light">
   <div class="pad">
     <div class="kicker" style="color:var(--navy)">Cierre</div>
@@ -734,7 +705,7 @@ agente.invoke({"messages": [{"role": "user", "content": "¿Clima en Piura?"}]})<
   <aside class="notes">⏱ 1 min · Repaso de 30 segundos. Si el público solo recuerda una cosa, que sea el operador pipe y la idea de que LangChain compone piezas.</aside>
 </section>
 
-<!-- 41 Chuleta -->
+<!-- 39 Chuleta -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">Chuleta</div>
@@ -751,7 +722,7 @@ agente = create_agent(model=model, tools=[clima])        # 6. agente</code></pre
   <aside class="notes">⏱ 1 min · Slide para fotografiar. Repetir el patrón mental: modelo + prompt + composición. La forma completa de la cadena RAG, con el mapeo de contexto y pregunta, está en la diapositiva 37.</aside>
 </section>
 
-<!-- 42 Recursos -->
+<!-- 40 Recursos -->
 <section class="light">
   <div class="pad">
     <div class="kicker" style="color:var(--navy)">Para seguir</div>
@@ -762,12 +733,12 @@ agente = create_agent(model=model, tools=[clima])        # 6. agente</code></pre
       <div class="card" style="justify-content:flex-start"><div class="label">Observabilidad</div><div class="value" style="font-size:.8em">smith.langchain.com</div><p style="margin-top:.5em">Trazas para depurar tus cadenas.</p></div>
       <div class="card" style="justify-content:flex-start"><div class="label">Comunidad</div><div class="value" style="font-size:.8em">Python Piura · Piura AI</div><p style="margin-top:.5em">Talleres y proyectos colaborativos en la región.</p></div>
     </div>
-    <div class="callout" style="margin-top:14px">Reto final: construye un mini RAG con tus propios documentos esta semana y compártelo en Python Piura.</div>
+    <div class="callout" style="margin-top:14px">Para practicar: construye un mini RAG con tus propios documentos esta semana y compártelo en Python Piura.</div>
   </div>
-  <aside class="notes">⏱ 1 min · Compartir estos enlaces por el chat o el QR. Invitar a la comunidad de Piura AI y Python Piura: es el mejor lugar para practicar y preguntar. Lanzar el reto final como deber.</aside>
+  <aside class="notes">⏱ 1 min · Compartir estos enlaces por el chat o el QR. Invitar a la comunidad de Piura AI y Python Piura: es el mejor lugar para practicar y preguntar. Proponer un mini RAG propio como ejercicio para casa.</aside>
 </section>
 
-<!-- 43 Gracias -->
+<!-- 41 Gracias -->
 <section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.16" data-background-transition="fade">
   <div class="pad">
     <div class="kicker" style="color:#8FB3E0">Gracias</div>
