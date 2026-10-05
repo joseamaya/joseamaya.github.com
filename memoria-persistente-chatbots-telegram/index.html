@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arquitectura de Memoria Persistente para Chatbots en Telegram · José Miguel Amaya</title>
+<meta name="description" content="Cómo dar memoria de corto y largo plazo a un chatbot de Telegram con LangChain, LangGraph y MongoDB Atlas Vector Search.">
+<link rel="canonical" href="https://joseamaya.github.io/memoria-persistente-chatbots-telegram/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Arquitectura de Memoria Persistente para Chatbots en Telegram">
+<meta property="og:description" content="LangChain + LangGraph + MongoDB Atlas Vector Search. Charla de José Miguel Amaya (Python Piura · Piura AI).">
+<meta property="og:image" content="https://joseamaya.github.io/memoria-persistente-chatbots-telegram/assets/og-memoria.png">
+<meta property="og:url" content="https://joseamaya.github.io/memoria-persistente-chatbots-telegram/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://joseamaya.github.io/memoria-persistente-chatbots-telegram/assets/og-memoria.png">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="vendor/reveal/reset.css">
+<link rel="stylesheet" href="vendor/reveal/reveal.css">
+<link rel="stylesheet" href="vendor/reveal/highlight-theme.css">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  .shot{border:1px solid var(--line);border-radius:12px;max-width:100%;box-shadow:0 8px 24px rgba(15,27,51,.12)}
+  section.dark .shot,section.navy .shot{border-color:var(--dark-line)}
+  .diagram{max-width:100%;max-height:58vh;object-fit:contain;display:block;margin:0 auto}
+  .big-q{font-family:'Montserrat',sans-serif;font-weight:800;font-size:1.5em;color:var(--ink);line-height:1.08;margin:0}
+  .agenda{list-style:none;counter-reset:a;padding:0;margin:0}
+  .agenda li{counter-increment:a;position:relative;padding:.3em 0 .3em 2.3em;font-size:.56em;border-bottom:1px solid var(--line);color:var(--body)}
+  .agenda li::before{content:counter(a,decimal-leading-zero);position:absolute;left:0;top:.24em;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--cyan);font-size:.82em}
+  .agenda li span{float:right;font-family:'JetBrains Mono',monospace;font-size:.78em;color:var(--muted)}
+  section.dark .agenda li{border-color:var(--dark-line);color:#A9BAD4}
+  .callout{background:#EAF4FC;border:1px solid #CDE6F7;border-radius:12px;padding:12px 16px;font-size:.5em;color:var(--body)}
+  section.dark .callout{background:#131D31;border-color:var(--dark-line);color:#A9BAD4}
+  .prebox{background:#0E1626;color:#D7E2F0;border:1px solid #23324a;border-radius:12px;padding:16px 20px;font-family:'JetBrains Mono',monospace;line-height:1.5;white-space:pre;overflow:auto}
+  .nodegraph{display:flex;flex-direction:column;align-items:center;gap:0}
+  .node{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 24px;min-width:360px;text-align:center;position:relative}
+  .node::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;border-radius:12px 0 0 12px;background:var(--cyan)}
+  .node b{font-family:'Montserrat',sans-serif;font-weight:800;color:var(--ink);font-size:.6em}
+  .node small{display:block;font-size:.42em;color:var(--muted)}
+  .node.start::before{background:var(--navy)}.node.end::before{background:var(--green)}.node.amber::before{background:var(--amber)}
+  .arrow-d{font-size:.6em;color:var(--cyan);line-height:1;margin:2px 0}
+  section.dark .node{background:#131D31;border-color:var(--dark-line)}
+  section.dark .node b{color:#fff}section.dark .node small{color:#A9BAD4}
+  .compare td:first-child{font-weight:700;color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:.9em}
+  section.dark .compare td:first-child{color:#fff}
+  .grid > *{min-width:0}
+  .cl{display:block}
+  .cl.hl{background:rgba(41,171,226,.16);box-shadow:-8px 0 0 rgba(41,171,226,.16);border-radius:4px}
+  .cap{font-family:'JetBrains Mono',monospace;font-size:.4em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:.35em 0 .15em}
+  section.dark .cap{color:#8FB3E0}
+  :root{--cyan-ink:#1779A8;--green-ink:#3D8124;--amber-ink:#A36208;--red-ink:#C94141}
+  section.light .kicker{color:var(--cyan-ink)}
+  @media (prefers-reduced-motion: reduce){
+    .reveal .fragment{transition:none!important}
+    .reveal .slides section{transition:none!important}
+  }
+</style>
+</head>
+<body>
+<noscript>
+  <style>
+    .reveal{position:static;height:auto}
+    .reveal .slides{position:static;width:auto;height:auto;transform:none!important}
+    .reveal .slides>section{display:block;position:relative;min-height:0;height:auto;padding:40px 24px;border-bottom:1px solid #dfe6f0}
+    .reveal .foot{display:none}
+  </style>
+  <p style="font-family:sans-serif;padding:16px;background:#12245B;color:#fff;margin:0">Esta presentación usa JavaScript (Reveal.js) para navegar. Aquí está el contenido completo.</p>
+</noscript>
+<div class="reveal"><div class="slides">
+
+<!-- 1 PORTADA -->
+<section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.18" data-background-transition="fade">
+  <div class="pad">
+    <div class="kicker" style="color:#8FB3E0">Python Piura · Piura AI</div>
+    <h1 style="font-size:1.9em;line-height:1.03">Arquitectura de Memoria Persistente<br><span style="color:var(--cyan-l)">para Chatbots en Telegram</span></h1>
+    <p class="lead" style="color:#D7E2F0;font-size:.64em;margin-top:.6em">LangChain + LangGraph + MongoDB Atlas Vector Search</p>
+    <div style="margin-top:1.1em">
+      <strong style="color:#fff;font-size:.6em;display:block">Ing. José Miguel Amaya Camacho</strong>
+      <span style="color:#9FB4D4;font-size:.48em">CTO &amp; Socio Fundador · Xprende Tech · Fundador de Piura AI y Python Piura</span>
+    </div>
+  </div>
+  <aside class="notes">Bienvenida y presentación en una frase: quién eres, dónde trabajas y por qué te apasiona este tema. Deja claro que hoy no hablamos de “chatbots que responden”, sino de “chatbots que recuerdan”.</aside>
+</section>
+
+<!-- 2 QUIÉN SOY -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--navy)">Quién les habla</div>
+    <h2>José Miguel Amaya — construyendo software con IA</h2>
+    <div class="grid g2" style="margin-top:18px;align-items:start;grid-template-columns:260px 1fr">
+      <img loading="lazy" decoding="async" src="assets/miguel-square.jpg" alt="José Miguel Amaya" style="width:100%;border-radius:14px;border:3px solid var(--cyan-l)">
+      <ul style="font-size:.56em;line-height:1.6;margin:0;padding-left:1.1em">
+        <li>CTO y socio fundador de <strong>Xprende Tech</strong>. Full Stack Engineer en Efilm Online.</li>
+        <li>Fundador de <strong>Piura AI</strong>, <strong>Tallanix</strong>, <strong>Python Piura</strong> y <strong>VICUX</strong>.</li>
+        <li>Especialista en Python, Django/FastAPI e IA (LangChain, LangGraph, RAG).</li>
+        <li>Construí este bot de Telegram con memoria persistente que verán hoy.</li>
+      </ul>
+    </div>
+    <div class="grow" style="display:flex;gap:60px;align-items:end;margin-top:8px">
+      <div>
+        <div class="muted" style="font-family:'JetBrains Mono';font-size:.36em">comunidad</div>
+        <div style="display:flex;gap:22px;align-items:center;margin-top:6px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-pythonpiura.jpg" alt="" style="height:66px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-piuraai.png" alt="" style="height:62px">
+        </div>
+      </div>
+      <div>
+        <div class="muted" style="font-family:'JetBrains Mono';font-size:.36em">empresa</div>
+        <div style="display:flex;gap:22px;align-items:center;margin-top:6px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-tallanix.png" alt="" style="height:54px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-xprende.png" alt="" style="height:38px">
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Treinta segundos de credibilidad. No leas la lista: elige dos logros relevantes para el público. Menciona que el código que veremos es de un proyecto real, no de un tutorial.</aside>
+</section>
+
+<!-- 3 HOOK -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--navy)">Levantemos la mano</div>
+    <p class="big-q">“¿Quién ha usado un chatbot que olvida todo lo que le acabas de decir?”</p>
+    <div class="grid g3" style="margin-top:22px">
+      <div class="card a-red"><div class="label">Sin memoria</div><div class="value" style="font-size:.85em">“¿Cómo te llamas?”</div><p>Pregunta lo mismo una y otra vez. El usuario repite sus datos en cada mensaje.</p></div>
+      <div class="card a-amber"><div class="label">Con poca memoria</div><div class="value" style="font-size:.85em">“Pierde el hilo”</div><p>Recuerda el último mensaje, pero olvida el contexto de la conversación.</p></div>
+      <div class="card a-green"><div class="label">Con memoria persistente</div><div class="value" style="font-size:.85em">“Te recuerda”</div><p>Retoma la charla y conserva datos entre sesiones. De eso trata esta charla.</p></div>
+    </div>
+    <p class="italic" style="color:var(--navy);font-size:.5em;margin-top:16px">Hoy veremos cómo darle a un bot de Telegram memoria de corto y largo plazo.</p>
+  </div>
+  <aside class="notes">Pide que levanten la mano y deja que alguien cuente su experiencia. Usa las tres tarjetas para anticipar el problema: sin memoria, con poca memoria y con memoria persistente. No entres aún en tecnicismos.</aside>
+</section>
+
+<!-- 4 AGENDA -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Hoja de ruta</div>
+    <h2>Qué veremos hoy</h2>
+    <ul class="agenda" style="margin-top:10px">
+      <li>Por qué un chatbot necesita memoria<span>~4 min</span></li>
+      <li>El flujo: Telegram → FastAPI → grafo → MongoDB<span>~4 min</span></li>
+      <li>LangChain: prompts y chains<span>~6 min</span></li>
+      <li>LangGraph: estado, nodos y checkpointer<span>~6 min</span></li>
+      <li>MongoDB Atlas: checkpoints y búsqueda vectorial<span>~8 min</span></li>
+      <li>El grafo en acción y sus costos<span>~6 min</span></li>
+      <li>Resultados, gotchas y cierre<span>~5 min</span></li>
+    </ul>
+    <p class="italic" style="font-size:.46em;color:#8FB3E0;margin-top:10px">Total ~40 min + preguntas. El código está en la rama <code>develop</code> del repo.</p>
+  </div>
+  <aside class="notes">Recorrido rápido con tiempos para que el público sepa qué esperar. Avisa que habrá código real de producción y que al final está el enlace para descargarlo.</aside>
+</section>
+
+<!-- 5 INTRODUCCIÓN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green-ink)">Introducción</div>
+    <h2>Chatbots y la importancia de la memoria</h2>
+    <p class="lead">Los chatbots deben dar respuestas coherentes y útiles. Sin memoria, un chatbot “olvida” lo que el usuario le dijo antes y lo obliga a repetir datos en cada mensaje.</p>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card a-cyan"><div class="num" style="color:var(--cyan)">1</div><h3 style="margin-top:.3em">Respuestas coherentes</h3><p>Recordar el contexto y los detalles permite respuestas más relevantes.</p></div>
+      <div class="card a-green"><div class="num" style="color:var(--green)">2</div><h3 style="margin-top:.3em">La memoria es una función cognitiva</h3><p>Ayuda al bot a adaptarse y a ofrecer respuestas más útiles.</p></div>
+      <div class="card a-navy"><div class="num" style="color:var(--navy)">3</div><h3 style="margin-top:.3em">Corto + largo plazo</h3><p>Incorporaremos ambas en un chatbot de Telegram con LangChain, LangGraph y MongoDB.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Enfatiza la analogía humana: la memoria es una función cognitiva. Un bot sin memoria es como atender a alguien con amnesia en cada mensaje. Resolveremos esto en dos escalas: corto plazo (el hilo) y largo plazo (los hechos).</aside>
+</section>
+
+<!-- 6 FLUJO DE TRABAJO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">Flujo de trabajo</div>
+    <h2>De un mensaje en Telegram a una respuesta con memoria</h2>
+    <div class="nodegraph" style="margin-top:12px">
+      <div class="node start"><b>🧑 Usuario</b><small>escribe en Telegram</small></div>
+      <div class="arrow-d">▼</div>
+      <div class="node"><b>💬 Telegram Bot</b><small>webhook FastAPI · POST /webhook/{token}</small></div>
+      <div class="arrow-d">▼</div>
+      <div class="node amber"><b>📦 GraphBot (orquestador)</b><small>memoria corto + largo plazo · LangGraph + LangChain</small></div>
+      <div class="arrow-d">▼</div>
+      <div class="node end"><b>📩 Respuesta al usuario</b><small>generada con contexto y memoria</small></div>
+    </div>
+    <p class="italic" style="font-size:.46em;color:var(--muted);margin-top:10px">La memoria vive en MongoDB: tanto la de corto como la de largo plazo.</p>
+  </div>
+  <aside class="notes">Este es el mapa mental de toda la charla. Vuelve a él al final de cada bloque para ubicar al público. Nota clave: la memoria vive en MongoDB, tanto la de corto como la de largo plazo.</aside>
+</section>
+
+<!-- 7 TELEGRAM -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">Telegram</div>
+    <h2>¿Por qué Telegram?</h2>
+    <div class="grid g2" style="align-items:center;margin-top:14px">
+      <div>
+        <p class="lead">Telegram es una app de mensajería que permite crear bots conversacionales fácilmente.</p>
+        <p class="lead">Usamos un <strong>webhook en FastAPI</strong> que recibe las actualizaciones de Telegram en tiempo real.</p>
+        <div class="prebox" style="font-size:.4em;margin-top:10px">Usuario  →  Telegram  →  Webhook (POST /webhook/{token})
+                                   │
+                                   ▼
+                                 Bot (procesa)
+                                   │
+                                   ▼
+                    Respuesta al usuario por Telegram</div>
+      </div>
+      <img loading="lazy" decoding="async" class="shot" src="assets/telegram-webhook.png" alt="Flujo del webhook de Telegram con FastAPI">
+    </div>
+  </div>
+  <aside class="notes">Explica por qué webhook y no polling: menor latencia y menos consumo. Menciona que FastAPI encaja bien por ser async, que es justo lo que necesitamos para LangGraph asíncrono.</aside>
+</section>
+
+<!-- 8 QUÉ ES LANGCHAIN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">LangChain</div>
+    <h2>¿Qué es LangChain?</h2>
+    <p class="lead"><strong>LangChain</strong> es una herramienta para construir aplicaciones que usan LLMs (grandes modelos de lenguaje). Hace fácil conectar el modelo con otras cosas:</p>
+    <div class="grid g4" style="margin-top:18px">
+      <div class="card a-navy"><div class="label">Datos</div><div class="value" style="font-size:.85em">🔗 Bases de datos</div><p>Conecta el modelo con fuentes externas.</p></div>
+      <div class="card a-cyan"><div class="label">Contexto</div><div class="value" style="font-size:.85em">🧠 Memoria</div><p>Gestiona la memoria de conversación.</p></div>
+      <div class="card a-green"><div class="label">Conocimiento</div><div class="value" style="font-size:.85em">📄 Documentos</div><p>Lee y usa documentos como contexto.</p></div>
+      <div class="card a-amber"><div class="label">Acciones</div><div class="value" style="font-size:.85em">🧰 Herramientas</div><p>APIs, buscadores y más.</p></div>
+    </div>
+  </div>
+  <aside class="notes">No vendas LangChain como magia: es una capa de integración. El modelo no trabaja solo; se conecta con datos, memoria y herramientas.</aside>
+</section>
+
+<!-- 9 LANGCHAIN ANALOGÍA -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">LangChain</div>
+    <h2>Piensa en LangChain como “cerebro + conectores”</h2>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card n a-cyan"><div class="label">Tú defines</div><div class="value" style="font-size:.8em">Qué información darle al modelo</div><p>El contexto correcto en el momento correcto.</p></div>
+      <div class="card n a-green"><div class="label">Tú defines</div><div class="value" style="font-size:.8em">Qué hacer con su respuesta</div><p>Guardarla, mostrarla, encadenarla con otro paso.</p></div>
+    </div>
+    <p class="lead" style="margin-top:18px">📦 Ejemplos de lo que puedes crear: <strong>chatbots</strong>, <strong>agentes autónomos</strong> y <strong>asistentes que leen PDFs</strong>.</p>
+    <p class="italic" style="font-size:.5em;color:#A9BAD4;margin-top:10px">El modelo es el cerebro. LangChain son los cables.</p>
+  </div>
+  <aside class="notes">Usa la analogía del cerebro y los conectores. Recalca que la calidad del resultado depende mucho de lo que le das al modelo, no solo del modelo.</aside>
+</section>
+
+<!-- 10 PROMPT -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">LangChain</div>
+    <h2>¿Qué es un Prompt?</h2>
+    <p class="lead">Un prompt es el texto que le das al modelo para guiar su respuesta. Piensa en él como la <strong>personalidad + instrucciones</strong> del bot.</p>
+    <pre style="font-size:.36em;margin-top:12px"><code class="language-python" data-hl="10">CHARACTER_PROMPT = """
+Estás a punto de jugar a un juego de prueba de Turing como parte de un experimento.
+Te emparejarán con un humano en una conversación de chat.
+Tu tarea es interpretar al siguiente personaje, convenciendo al humano de que eres un humano real.
+
+## Biografía de Lucía
+
+## Personalidad de Lucía
+
+## Antecedentes del usuario
+
+Esto es lo que sabes sobre el usuario gracias a conversaciones anteriores:
+
+{memory_context}
+
+Proporciona respuestas de texto simple, sin indicadores de formato ni metacomentarios.
+"""</code></pre>
+    <div class="callout" style="margin-top:10px">Fíjate en <code>{memory_context}</code>: ahí inyectaremos los recuerdos recuperados de MongoDB.</div>
+  </div>
+  <aside class="notes">Aquí aparece la primera pieza clave: el prompt tiene un hueco, memory_context, que se rellena con la memoria de largo plazo. Es el puente entre la base de datos y el modelo.</aside>
+</section>
+
+<!-- 11 PROMPT DE MEMORIA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">LangChain</div>
+    <h2>Prompt de memoria</h2>
+    <p class="lead">Usamos otro prompt para <strong>extraer</strong> los datos relevantes del usuario y guardarlos en la memoria de largo plazo.</p>
+    <pre style="font-size:.36em;margin-top:10px"><code class="language-python" data-hl="17,18">MEMORY_ANALYSIS_PROMPT = """Extraiga y formatee datos personales importantes del usuario a partir de su mensaje.
+Céntrese en la información real, no en metacomentarios ni solicitudes.
+
+Los datos importantes incluyen:
+- Datos personales (nombre, edad, ubicación)
+- Información profesional (trabajo, formación, habilidades)
+- Preferencias (gustos, disgustos, favoritos)
+- Circunstancias vitales (familia, relaciones)
+- Experiencias o logros significativos
+- Metas o aspiraciones personales
+
+Examples:
+Input: "Oye, ¿podrías recordar que me encanta Star Wars?"
+Output: {{
+    "is_important": true,
+    "formatted_memory": "Le encanta Star Wars"
+}}
+"""</code></pre>
+    <div class="callout" style="margin-top:10px">Salida estructurada: el modelo decide <code>is_important</code> y devuelve un recuerdo limpio y corto.</div>
+  </div>
+  <aside class="notes">Explica la diferencia entre los dos prompts: uno da personalidad (character), el otro actúa como un filtro que decide qué merece guardarse. La salida estructurada evita parsear texto libre.</aside>
+</section>
+
+<!-- 12 CHAINS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">LangChain</div>
+    <h2>¿Qué es una cadena (chain)?</h2>
+    <p class="lead">Las chains son secuencias de operaciones que procesan y transforman entradas para producir salidas. Son como <strong>tuberías</strong> que conectan componentes.</p>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card a-amber"><div class="label">Memory chain</div><div class="value" style="font-size:.85em">Extrae lo importante</div><p>Analiza cada mensaje y decide qué vale la pena recordar.</p></div>
+      <div class="card a-navy"><div class="label">Character chain</div><div class="value" style="font-size:.85em">Responde en personaje</div><p>Genera la respuesta final usando el contexto de memoria.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Analogía de la tubería: cada etapa transforma la información. En nuestro proyecto solo hay dos chains, lo que mantiene el diseño simple y fácil de depurar.</aside>
+</section>
+
+<!-- 13 CHAINS CODE -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">LangChain</div>
+    <h2>Chains en código</h2>
+    <div class="fragment"><div class="cap">Memory chain · extracción estructurada</div>
+    <pre style="font-size:.44em"><code class="language-python" data-hl="2">def get_memory_chain():
+    model = ChatOpenAI(model="gpt-4o", temperature=0).with_structured_output(MemoryAnalysis)
+    prompt = ChatPromptTemplate.from_template(MEMORY_ANALYSIS_PROMPT)
+    return prompt | model</code></pre></div>
+    <div class="fragment" style="margin-top:6px"><div class="cap">Character chain · responde en personaje</div>
+    <pre style="font-size:.44em"><code class="language-python" data-hl="10">def get_character_chain():
+    model = ChatOpenAI(model="gpt-4o", temperature=0.5)
+    system_message = CHARACTER_PROMPT
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", system_message),
+            MessagesPlaceholder(variable_name="messages"),
+        ]
+    )
+    return prompt | model</code></pre></div>
+    <div class="callout fragment" style="margin-top:8px">Hoy cambiaríamos <code>gpt-4o</code> por el modelo que prefieras: LangChain es agnóstico del proveedor.</div>
+  </div>
+  <aside class="notes">Revela primero la memory chain y luego la character chain. Señala el operador | (pipe) de LangChain Expression Language: encadena prompt y modelo. temperature=0 para extracción determinista; 0.5 para respuestas con algo de creatividad.</aside>
+</section>
+
+<!-- 14 QUÉ ES LANGGRAPH -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--amber-ink)">LangGraph</div>
+    <h2>¿Qué es LangGraph?</h2>
+    <p class="lead"><strong>LangGraph</strong> es una extensión de LangChain para crear <strong>agentes con lógica compleja</strong>. Usa grafos para definir flujos de decisión entre pasos.</p>
+    <div class="grid g4" style="margin-top:18px">
+      <div class="card a-cyan"><div class="label">Nodo</div><div class="value" style="font-size:.8em">Llama al modelo</div><p>Genera texto o decide.</p></div>
+      <div class="card a-green"><div class="label">Nodo</div><div class="value" style="font-size:.8em">Consulta memoria</div><p>Busca en MongoDB.</p></div>
+      <div class="card a-amber"><div class="label">Nodo</div><div class="value" style="font-size:.8em">Toma decisiones</div><p>Elige el siguiente paso.</p></div>
+      <div class="card a-navy"><div class="label">Nodo</div><div class="value" style="font-size:.8em">Guarda estado</div><p>Persiste el avance del grafo.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Si LangChain son tuberías, LangGraph son diagramas de flujo con decisiones. Cada nodo es una función; las aristas dicen qué sigue. Nuestro grafo es lineal, pero la arquitectura permite ramificar.</aside>
+</section>
+
+<!-- 15 LANGGRAPH ANALOGÍA -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">LangGraph</div>
+    <h2>Un diagrama de flujo inteligente</h2>
+    <p class="lead">El modelo elige el camino según el contexto.</p>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card n a-green"><div class="label">Ventaja</div><div class="value" style="font-size:.8em">Memoria de largo plazo</div><p>Integrada en el propio flujo del agente.</p></div>
+      <div class="card n a-cyan"><div class="label">Ventaja</div><div class="value" style="font-size:.8em">Fácil de depurar</div><p>Se puede visualizar como un grafo.</p></div>
+      <div class="card n a-amber"><div class="label">Ventaja</div><div class="value" style="font-size:.8em">Múltiples habilidades</div><p>Ideal para bots con varias tareas.</p></div>
+    </div>
+    <p class="italic" style="font-size:.5em;color:#A9BAD4;margin-top:14px">Puedes dibujar tu agente antes de programarlo.</p>
+  </div>
+  <aside class="notes">La gran ventaja para nosotros: el estado del grafo se puede persistir con un checkpointer. Eso es exactamente lo que nos da la memoria de corto plazo casi gratis.</aside>
+</section>
+
+<!-- 16 GRAFO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">Grafo</div>
+    <h2>Flujo definido por nodos y aristas</h2>
+    <div class="grid g2" style="align-items:center;margin-top:10px;grid-template-columns:0.78fr 1.22fr">
+      <div class="nodegraph">
+        <div class="node start" style="min-width:280px"><b>START</b></div>
+        <div class="arrow-d">▼</div>
+        <div class="node amber" style="min-width:280px"><b>memory_extraction_node</b><small>aprende</small></div>
+        <div class="arrow-d">▼</div>
+        <div class="node" style="min-width:280px"><b>memory_injection_node</b><small>recuerda</small></div>
+        <div class="arrow-d">▼</div>
+        <div class="node end" style="min-width:280px"><b>generate_response</b><small>responde</small></div>
+        <div class="arrow-d">▼</div>
+        <div class="node start" style="min-width:280px"><b>END</b></div>
+      </div>
+      <div>
+        <div class="fragment"><div class="cap">1 · Nodos</div>
+        <pre style="font-size:.38em"><code class="language-python" data-hl="2,3,4">def create_workflow_graph():
+    g = StateGraph(StateBot, context_schema=Context)
+    g.add_node("memory_extraction_node", memory_extraction_node)
+    g.add_node("memory_injection_node", memory_injection_node)
+    g.add_node("generate_response", generate_response)</code></pre></div>
+        <div class="fragment" style="margin-top:4px"><div class="cap">2 · Aristas y retorno</div>
+        <pre style="font-size:.38em"><code class="language-python" data-hl="1,2,3">    g.add_edge(START, "memory_extraction_node")
+    g.add_edge("memory_extraction_node", "memory_injection_node")
+    g.add_edge("memory_injection_node", "generate_response")
+    g.add_edge("generate_response", END)
+    return g</code></pre></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Lee el grafo en voz alta: START → extracción → inyección → generación → END. Es lineal a propósito: primero aprende, luego recuerda, luego responde. El context_schema inyecta el user_id en los nodos; la compilación con checkpointer y store se hace una vez al arrancar (slide siguiente).</aside>
+</section>
+
+<!-- 17 ESTADO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">Estado</div>
+    <h2>El estado de la conversación</h2>
+    <div class="grid g2" style="align-items:center;margin-top:14px">
+      <div>
+        <p class="lead">El estado hereda de <code>MessagesState</code> de LangGraph y almacena:</p>
+        <ul style="font-size:.56em;line-height:1.6">
+          <li>El historial de mensajes (heredado).</li>
+          <li>El contexto de memoria personalizado (<code>memory_context</code>).</li>
+        </ul>
+        <p class="lead">El <code>Context</code> (schema) inyecta el <code>user_id</code> en cada nodo para separar la memoria por usuario.</p>
+      </div>
+      <pre style="font-size:.4em"><code class="language-python" data-hl="4,8">from dataclasses import dataclass
+from langgraph.graph import MessagesState
+
+
+@dataclass
+class Context:
+    user_id: str
+
+
+class StateBot(MessagesState):
+    memory_context: str</code></pre>
+    </div>
+  </div>
+  <aside class="notes">El estado es la pizarra compartida del grafo. MessagesState ya trae la lista de mensajes; nosotros le añadimos memory_context. El Context es distinto del State: no se persiste en el hilo, se pasa en cada invocación y sirve para resolver el namespace de largo plazo.</aside>
+</section>
+
+<!-- 18 NODOS -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Nodos</div>
+    <h2>Los tres nodos del grafo</h2>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card n a-amber"><div class="label">1 · Memory extraction</div><div class="value" style="font-size:.72em">Aprende</div><p>Analiza el último mensaje. Si es importante, lo guarda en el store (que vectoriza solo).</p></div>
+      <div class="card n a-cyan"><div class="label">2 · Memory injection</div><div class="value" style="font-size:.72em">Recuerda</div><p>Toma el último mensaje, busca por similitud semántica y construye el contexto de memoria.</p></div>
+      <div class="card n a-green"><div class="label">3 · Generate response</div><div class="value" style="font-size:.72em">Responde</div><p>Usa el character chain, incorpora la memoria y mantiene la consistencia.</p></div>
+    </div>
+    <p class="italic" style="font-size:.5em;color:#A9BAD4;margin-top:14px">Aprender → recordar → responder. Simple y ordenado.</p>
+  </div>
+  <aside class="notes">Este es el corazón de la charla. Cada nodo tiene una única responsabilidad, lo que hace el sistema fácil de testear y de extender.</aside>
+</section>
+
+<!-- 19 TABLA COMPARATIVA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--navy)">Memoria</div>
+    <h2>Corto plazo vs. largo plazo</h2>
+    <table class="compare" style="margin-top:12px">
+      <tr><th></th><th>Corto plazo</th><th>Largo plazo</th></tr>
+      <tr><td>Alcance</td><td>Un solo hilo</td><td>Entre conversaciones</td></tr>
+      <tr><td>Qué guarda</td><td>Estado del grafo (mensajes)</td><td>Hechos y preferencias del usuario</td></tr>
+      <tr><td>Mecanismo</td><td>Checkpointer</td><td>Store</td></tr>
+      <tr><td>Vida</td><td>La conversación</td><td>Permanente</td></tr>
+      <tr><td>Acceso</td><td><code>thread_id</code> en el config</td><td><code>namespace (user_id, "memories")</code></td></tr>
+      <tr><td>Para qué</td><td>Continuidad, human-in-the-loop</td><td>Preferencias, conocimiento compartido</td></tr>
+    </table>
+  </div>
+  <aside class="notes">Usa esta tabla como resumen del modelo mental. Si el público se pierde, vuelve aquí: checkpointer = hilo, store = hechos. Esta tabla está basada en la documentación oficial de LangGraph.</aside>
+</section>
+
+<!-- 20 SHORT TERM -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green-ink)">Short term</div>
+    <h2>Memoria a corto plazo</h2>
+    <div class="grid g2" style="align-items:center;margin-top:10px">
+      <div>
+        <p class="lead">Es el contexto y los mensajes recientes de <strong>una sola conversación</strong>.</p>
+        <p class="lead">LangGraph la trata como parte del <strong>estado interno</strong> del agente, persistido con un <strong>checkpointer</strong> por cada hilo de conversación.</p>
+        <div class="callout" style="margin-top:12px">En desarrollo: <code>InMemorySaver</code> (antes <code>MemorySaver</code>). En producción: <code>MongoDBSaver</code> de <code>langgraph.checkpoint.mongodb</code>.</div>
+      </div>
+      <img loading="lazy" decoding="async" class="shot diagram" src="assets/memoria-corto-plazo.png" alt="Memoria de corto plazo persistida por hilo">
+    </div>
+  </div>
+  <aside class="notes">El checkpointer guarda el estado completo del grafo. La clave es el thread_id: cada chat_id de Telegram es un hilo distinto. Nota técnica: InMemorySaver es solo para desarrollo; en producción usamos MongoDBSaver (el mismo saver expone métodos async, ya no hay un AsyncMongoDBSaver aparte).</aside>
+</section>
+
+<!-- NUEVA: GESTIÓN DEL CONTEXTO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green-ink)">Short term</div>
+    <h2>La ventana de contexto no es infinita</h2>
+    <p class="lead">Con memoria de corto plazo activada, las conversaciones largas superan la ventana del LLM. La doc oficial recomienda gestionarla:</p>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-cyan"><div class="label">Recortar</div><div class="value" style="font-size:.78em">trim_messages</div><p>Conservar solo los últimos N tokens antes de llamar al modelo.</p></div>
+      <div class="card a-amber"><div class="label">Resumir</div><div class="value" style="font-size:.78em">SummarizationNode</div><p>Resumir los mensajes antiguos y reemplazarlos por el resumen.</p></div>
+      <div class="card a-red"><div class="label">Borrar</div><div class="value" style="font-size:.78em">RemoveMessage</div><p>Eliminar mensajes del estado de forma permanente.</p></div>
+    </div>
+    <div class="callout" style="margin-top:16px">Y del lado de la persistencia: <code>prune(...)</code> y TTL en el checkpointer evitan que los checkpoints crezcan sin control.</div>
+  </div>
+  <aside class="notes">Punto que se suele omitir: la memoria de corto plazo se llena. Menciona trim_messages, summarization y RemoveMessage, y que el checkpointer de MongoDB soporta ttl y prune para no acumular checkpoints. Enlaza con la slide de gotchas.</aside>
+</section>
+
+<!-- 21 LONG TERM -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--navy)">Long term</div>
+    <h2>Memoria a largo plazo</h2>
+    <div class="grid g2" style="align-items:center;margin-top:10px">
+      <div>
+        <p class="lead">Son conocimientos que se <strong>comparten entre conversaciones distintas</strong>: datos permanentes como el perfil del usuario o hechos guardados.</p>
+        <p class="lead">LangGraph provee la <strong>API de Store</strong> (<code>put</code>, <code>get</code>, <code>search</code>), organizada por <code>namespace</code>. Con <code>index_config</code>, el <code>search</code> es semántico.</p>
+        <pre class="prebox" style="font-size:.36em;margin-top:10px">from langgraph.store.mongodb import MongoDBStore, create_vector_index_config
+
+store = MongoDBStore.from_conn_string(
+    settings.MONGO_DB_URL, collection_name="memories",
+    index_config=create_vector_index_config(embed=embeddings, dims=1536),
+)
+ns = (user_id, "memories")
+store.put(ns, memory_id, {"data": "Le encanta Star Wars"})
+store.search(ns, query="¿qué le gusta?", limit=5)</pre>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;align-items:center">
+        <img loading="lazy" decoding="async" class="shot" src="assets/memoria-largo-plazo.png" alt="Memoria de largo plazo en un store externo" style="max-width:56%">
+        <img loading="lazy" decoding="async" class="shot" src="assets/memoria-largo-plazo-2.png" alt="Recuperación semántica de recuerdos" style="max-width:40%">
+      </div>
+    </div>
+  </div>
+  <aside class="notes">La diferencia práctica: aunque borres las tablas de corto plazo, el bot sigue sabiendo tu nombre. Eso lo demostraremos en la slide de resultados. Explica que el namespace normalmente es (user_id, "memories") para aislar por usuario.</aside>
+</section>
+
+<!-- 22 BÚSQUEDA SEMÁNTICA -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Long term</div>
+    <h2>Búsqueda semántica</h2>
+    <p class="lead">Buscar por <strong>significado</strong>, no por palabras exactas. En vez de comparar texto literal, convertimos frases en <strong>vectores</strong> (embeddings) y encontramos los que se parecen en sentido.</p>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card n a-red"><div class="label">Búsqueda normal</div><div class="value" style="font-size:.85em">❌ “auto” ≠ “carro”</div><p>Coincidencia literal de palabras.</p></div>
+      <div class="card n a-green"><div class="label">Búsqueda semántica</div><div class="value" style="font-size:.85em">✅ “auto” ≈ “carro”</div><p>Coincidencia por significado.</p></div>
+    </div>
+    <p class="italic" style="font-size:.5em;color:#A9BAD4;margin-top:14px">Por eso el usuario puede decir “mi nombre” o “cómo me llamo” y aun así lo encontramos.</p>
+  </div>
+  <aside class="notes">Esta es la razón técnica por la que usamos un vector store y no un LIKE de SQL. Los embeddings convierten el significado en geometría: cerca = parecido.</aside>
+</section>
+
+<!-- 23 CÓMO MODELA LANGGRAPH LA MEMORIA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">Memoria</div>
+    <h2>¿Cómo modela LangGraph la memoria?</h2>
+    <div class="grid g2" style="align-items:center;margin-top:10px">
+      <div>
+        <p class="lead">Memoria <strong>corta</strong>: <strong>checkpointer</strong> que guarda el estado al ejecutar el grafo.</p>
+        <p class="lead">Memoria <strong>larga</strong>: <strong>Store</strong> de larga duración que el agente consulta cuando hace falta.</p>
+        <div class="callout" style="margin-top:12px">Implementaciones: <code>InMemorySaver</code>/<code>MongoDBSaver</code> para el hilo y <code>MongoDBStore</code> para los hechos.</div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;align-items:center">
+        <img loading="lazy" decoding="async" class="shot" src="assets/langgraph-memoria-1.png" alt="Checkpointers de LangGraph" style="max-width:62%">
+        <img loading="lazy" decoding="async" class="shot" src="assets/langgraph-memoria-2.png" alt="Store de largo plazo de LangGraph" style="max-width:34%">
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Resume el modelo mental: checkpointer para el hilo, store para los hechos. LangGraph te da los ganchos; nosotros decidimos qué guardar y cuándo buscarlo. Menciona MongoDBStore como la implementación oficial para producción.</aside>
+</section>
+
+<!-- NUEVA: TIPOS DE MEMORIA -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Memoria · teoría</div>
+    <h2>No toda la memoria es igual</h2>
+    <p class="lead">La doc de LangGraph clasifica la memoria de largo plazo según <strong>qué</strong> recuerda y <strong>cuándo</strong> se escribe.</p>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="card n a-cyan"><div class="label">Semántica</div><div class="value" style="font-size:.78em">Hechos</div><p>“Al usuario le encanta Star Wars”. Es la que implementamos.</p></div>
+      <div class="card n a-green"><div class="label">Episódica</div><div class="value" style="font-size:.78em">Experiencias</div><p>Acciones pasadas del agente; suele ir a few-shot examples.</p></div>
+      <div class="card n a-amber"><div class="label">Procedimental</div><div class="value" style="font-size:.78em">Reglas</div><p>El prompt/sistema, refinable con feedback.</p></div>
+    </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card n a-navy"><div class="label">Escritura · hot path</div><div class="value" style="font-size:.74em">En línea</div><p>El agente decide recordar antes de responder. Inmediato, pero suma latencia. <strong>Es lo que usamos.</strong></p></div>
+      <div class="card n a-red"><div class="label">Escritura · background</div><div class="value" style="font-size:.74em">Asíncrona</div><p>Un proceso aparte genera memorias: no afecta la respuesta, pero llega con retraso.</p></div>
+    </div>
+    <p class="italic" style="font-size:.46em;color:#A9BAD4;margin-top:12px">Nuestro diseño es <strong>semántica + hot path</strong>: hechos sobre el usuario, escritos al vuelo.</p>
+  </div>
+  <aside class="notes">Sube el nivel teórico. Explica los tres tipos con ejemplos y los dos modos de escritura. Aclara que la analogía “semantic memory” (psicología) es distinta de “semantic search” (embeddings). Justifica tu elección: hechos del usuario, escritos en el hot path, aceptando la latencia extra.</aside>
+</section>
+
+<!-- 24 MONGODB -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green-ink)">MongoDB</div>
+    <h2>MongoDB, la base de datos</h2>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card a-green"><div class="label">NoSQL</div><div class="value" style="font-size:.85em">Documentos</div><p>Orientada a documentos, guarda información en formato JSON flexible (BSON).</p></div>
+      <div class="card a-cyan"><div class="label">Flexible</div><div class="value" style="font-size:.85em">Sin esquemas fijos</div><p>No necesita relaciones tradicionales ni migraciones rígidas.</p></div>
+      <div class="card a-navy"><div class="label">Escalable</div><div class="value" style="font-size:.85em">Grandes volúmenes</div><p>Rápida para mucha data e ideal para memoria persistente.</p></div>
+    </div>
+    <p class="lead" style="margin-top:18px">Soporta búsqueda de texto (<strong>Search</strong>) y <strong>similitud vectorial</strong> con <strong>Atlas Vector Search</strong>.</p>
+  </div>
+  <aside class="notes">Aclara un punto que suele confundir: en el deck original las etiquetas decían “Supabase” por herencia de un tutorial, pero el stack real de este proyecto es MongoDB Atlas. Corregido.</aside>
+</section>
+
+<!-- 25 MONGODB CORTO PLAZO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green-ink)">MongoDB</div>
+    <h2>Compilar el grafo una sola vez</h2>
+    <p class="lead" style="font-size:.54em">El checkpointer y el store se crean al arrancar la app. El grafo se compila <strong>una vez</strong> con ambos y se reutiliza en cada mensaje.</p>
+    <div class="fragment"><div class="cap">1 · Setup (una vez, en el lifespan)</div>
+    <pre style="font-size:.36em"><code class="language-python" data-hl="3,6">from langgraph.checkpoint.mongodb import MongoDBSaver
+
+with MongoDBSaver.from_conn_string(
+    settings.MONGO_DB_URL, db_name=settings.MONGO_DB_NAME,
+) as checkpointer:
+    graph = create_workflow_graph().compile(
+        checkpointer=checkpointer,
+        store=store,
+    )</code></pre></div>
+    <div class="fragment" style="margin-top:4px"><div class="cap">2 · Por mensaje</div>
+    <pre style="font-size:.38em"><code class="language-python" data-hl="2,6,8">async def reply(self, chat_id, user_id, text):
+    config = {"configurable": {"thread_id": str(chat_id)}}
+    await self.graph.ainvoke(
+        {"messages": [HumanMessage(content=text)]},
+        config,
+        context=Context(user_id=str(user_id)),
+    )
+    state = await self.graph.aget_state(config)
+    return state.values["messages"][-1].content</code></pre></div>
+  </div>
+  <aside class="notes">Revela en dos pasos. Clave de rendimiento: no crear el checkpointer ni recompilar el grafo por mensaje (eso abriría un MongoClient nuevo cada vez). thread_id aísla el hilo; user_id alimenta el namespace de largo plazo. ainvoke ejecuta el grafo y aget_state recupera el estado final.</aside>
+</section>
+
+<!-- 26 QUÉ SE GUARDA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green-ink)">MongoDB</div>
+    <h2>¿Qué se guarda?</h2>
+    <div class="grid g2" style="align-items:center;margin-top:10px;grid-template-columns:1.1fr 1fr">
+      <div>
+        <p class="lead" style="font-size:.54em">Al usar <code>checkpointer=</code>, LangGraph genera y administra sus propias colecciones. No escribimos el esquema a mano.</p>
+        <table style="margin-top:10px">
+          <tr><th>Colección</th><th>Qué guarda</th></tr>
+          <tr><td><code>checkpoints</code></td><td>Snapshot del estado por hilo (mensajes y canales)</td></tr>
+          <tr><td><code>checkpoint_writes</code></td><td>Escrituras pendientes de cada nodo</td></tr>
+        </table>
+      </div>
+      <div class="callout">El hilo de la conversación y el estado del grafo se guardan automáticamente. Nosotros solo definimos el estado.</div>
+    </div>
+  </div>
+  <aside class="notes">Muestra que no escribimos el esquema a mano: el checkpointer crea y administra sus colecciones. Nos concentramos en el negocio. Si preguntan, los checkpoints crecen con el tiempo y conviene una política de retención (lo veremos en gotchas).</aside>
+</section>
+
+<!-- 27 ATLAS VECTOR SEARCH -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green-ink)">MongoDB</div>
+    <h2>Atlas Vector Search</h2>
+    <p class="lead">Es el motor de búsqueda <strong>vectorial</strong> de MongoDB Atlas: indexa embeddings y hace KNN por similitud con el stage <code>$vectorSearch</code>. No confundir con <strong>Atlas Search</strong>, que es búsqueda de texto (BM25).</p>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card a-green"><div class="label">Vectorial</div><div class="value" style="font-size:.8em">🧠 $vectorSearch</div><p>KNN aproximado (HNSW) sobre el campo de embeddings.</p></div>
+      <div class="card a-cyan"><div class="label">Filtros</div><div class="value" style="font-size:.8em">⚙️ Campos del índice</div><p>Filtra por metadatos declarados, como <code>user_id</code>.</p></div>
+      <div class="card a-navy"><div class="label">Híbrida</div><div class="value" style="font-size:.8em">🔠 Texto + vector</div><p>Combina BM25 y similitud con Reciprocal Rank Fusion.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Aclara la confusión más común: Atlas Search (texto/facetas) y Atlas Vector Search ($vectorSearch) son motores distintos. El índice de embeddings que usamos es de Vector Search, y los filtros por campo hay que declararlos en ese índice.</aside>
+</section>
+
+<!-- 28 ATLAS LARGO PLAZO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green-ink)">MongoDB</div>
+    <h2>Vector Search como memoria de largo plazo</h2>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-navy"><div class="label">1 · Configurar</div><div class="value" style="font-size:.78em">MongoDBStore</div><p>Definimos colección e <code>index_config</code> (modelo de embeddings y dimensiones).</p></div>
+      <div class="card a-cyan"><div class="label">2 · Guardar</div><div class="value" style="font-size:.78em">store.put</div><p>Guardamos el hecho; el store calcula y almacena el embedding.</p></div>
+      <div class="card a-green"><div class="label">3 · Recuperar</div><div class="value" style="font-size:.78em">store.search</div><p>Buscamos por similitud con <code>query=</code> y limitamos con <code>limit=</code>.</p></div>
+    </div>
+    <div class="callout" style="margin-top:16px">La dimensión depende del modelo: 1536 con <code>text-embedding-3-small</code>, 3072 con <code>large</code>. Alternativas 2026: <strong>Voyage AI</strong> (p. ej. voyage-4-lite, 1024 dims) y <strong>Automated Embeddings</strong> de Atlas (server-side).</div>
+  </div>
+  <aside class="notes">Ciclo de la memoria de largo plazo. Insiste en el namespace por usuario: sin él, el bot mezclaría recuerdos. Menciona que MongoDB puede generar los embeddings server-side (Automated Embeddings) sin pipeline externo, y que Voyage AI es la opción nativa de Atlas.</aside>
+</section>
+
+<!-- NUEVA: CONFIG MONGODBSTORE -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">Store</div>
+    <h2>Configurar MongoDBStore</h2>
+    <p class="lead" style="font-size:.54em">El store oficial crea el índice vectorial al abrir la conexión (no hay <code>setup()</code> aparte). Definimos colección, <code>index_config</code> y, opcionalmente, TTL.</p>
+    <div class="fragment"><div class="cap">1 · Store con búsqueda semántica</div>
+    <pre style="font-size:.36em"><code class="language-python" data-hl="1,5,6">from langgraph.store.mongodb import MongoDBStore, create_vector_index_config
+
+store = MongoDBStore.from_conn_string(
+    settings.MONGO_DB_URL,
+    collection_name="memories",
+    index_config=create_vector_index_config(embed=embeddings, dims=1536),
+)</code></pre></div>
+    <div class="fragment" style="margin-top:4px"><div class="cap">2 · TTL opcional: expira memorias viejas</div>
+    <pre style="font-size:.4em"><code class="language-python" data-hl="1">ttl_config = {"default_ttl": 43200, "refresh_on_read": True}</code></pre></div>
+    <div class="callout fragment" style="margin-top:8px">Una sola instancia, creada al arrancar. Igual que el checkpointer, no se recrea por mensaje.</div>
+  </div>
+  <aside class="notes">Reemplazo del vector store custom: MongoDBStore oficial. from_conn_string crea los índices al abrir; no hay que llamar setup(). index_config habilita el search semántico. ttl_config hace que las memorias expiren solas (índice TTL sobre updated_at); revisa la unidad de default_ttl según tu versión.</aside>
+</section>
+
+<!-- NUEVA: HÍBRIDA + RERANKING -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Long term · calidad</div>
+    <h2>Mejorar el recall: híbrida + reranking</h2>
+    <p class="lead">La similitud vectorial sola no siempre basta. Atlas y LangChain ofrecen dos mejoras.</p>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card n a-cyan"><div class="label">Búsqueda híbrida</div><div class="value" style="font-size:.8em">BM25 + vector</div><p>Combina coincidencia de texto y semántica con Reciprocal Rank Fusion.</p></div>
+      <div class="card n a-green"><div class="label">Reranking</div><div class="value" style="font-size:.8em">Voyage AI</div><p>Un reranker reordena los candidatos por relevancia real.</p></div>
+    </div>
+    <pre class="prebox" style="font-size:.36em;margin-top:14px">store = MongoDBStore(
+    collection,
+    index_config=create_vector_index_config(embed=embeddings, dims=1536),
+    rerank_config=RerankConfig(model="rerank-2.5-lite", top_k=3),
+)</pre>
+    <p class="italic" style="font-size:.44em;color:#A9BAD4;margin-top:10px">El reranking nativo requiere Atlas 8.3+ y Native Reranking habilitado.</p>
+  </div>
+  <aside class="notes">Mejoras opcionales de recuperación. La híbrida (texto + vector con RRF) ayuda cuando el usuario usa términos exactos; el reranking reordena el top-k con un modelo de Voyage. Menciona que MongoDBStore lo soporta vía rerank_config, pero requiere Atlas 8.3+.</aside>
+</section>
+
+<!-- 34 EXTRACCIÓN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--amber-ink)">Extracción</div>
+    <h2>Nodo de extracción de memoria</h2>
+    <p class="lead" style="font-size:.54em">Guardamos el hecho en el store con <code>aput</code>. El store calcula el embedding solo; nosotros damos namespace, key y valor.</p>
+    <div class="fragment"><div class="cap">1 · Analizar el mensaje</div>
+    <pre style="font-size:.4em"><code class="language-python" data-hl="2,3">async def memory_extraction_node(state, runtime: Runtime[Context]):
+    response = await get_memory_chain().ainvoke(
+        {"message": state["messages"][-1]}
+    )
+    if response.is_important:</code></pre></div>
+    <div class="fragment" style="margin-top:4px"><div class="cap">2 · Guardar en el store</div>
+    <pre style="font-size:.4em"><code class="language-python" data-hl="3,5">        ns = (runtime.context.user_id, "memories")
+        try:
+            await runtime.store.aput(
+                ns, str(uuid.uuid4()),
+                {"data": response.formatted_memory},
+            )
+        except Exception as e:
+            print(f"Error almacenando memoria: {e}")
+    return {}</code></pre></div>
+    <div class="callout fragment" style="margin-top:8px">En el repo se implementó un vector store custom equivalente; aquí mostramos el patrón oficial con <code>MongoDBStore</code>.</div>
+  </div>
+  <aside class="notes">Fíjate que el nodo no devuelve cambios al estado (return {}): es un efecto secundario controlado. El namespace (user_id, "memories") aísla los recuerdos por usuario. El try/except evita romper la conversación, pero falla en silencio: loguea. Nota: el repo usa un vector store custom; este es el patrón oficial con MongoDBStore.</aside>
+</section>
+
+<!-- 35 INYECCIÓN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--amber-ink)">Inyección</div>
+    <h2>Nodo de inyección de memoria</h2>
+    <p class="lead" style="font-size:.54em">Buscamos por similitud semántica con <code>asearch</code>; el namespace por usuario garantiza que cada quien recupere solo sus recuerdos.</p>
+    <div class="fragment"><div class="cap">1 · Namespace y último mensaje</div>
+    <pre style="font-size:.42em"><code class="language-python" data-hl="2,3">async def memory_injection_node(state, runtime: Runtime[Context]):
+    ns = (runtime.context.user_id, "memories")
+    last_message = state["messages"][-1].content</code></pre></div>
+    <div class="fragment" style="margin-top:4px"><div class="cap">2 · Buscar y construir el contexto</div>
+    <pre style="font-size:.42em"><code class="language-python" data-hl="3,6">    try:
+        items = await runtime.store.asearch(
+            ns, query=last_message, limit=5,
+        )
+        memory_context = "\n".join(i.value["data"] for i in items)
+        return {"memory_context": memory_context}
+    except Exception as e:
+        print(f"Error recuperando memorias: {e}")
+        return {"memory_context": ""}</code></pre></div>
+  </div>
+  <aside class="notes">El namespace (user_id, "memories") es crítico: garantiza que cada usuario recupere solo sus recuerdos. Este nodo sí actualiza el estado con memory_context, que luego consume la generación. limit=5 es el k: más contexto vs. más tokens y ruido.</aside>
+</section>
+
+<!-- 36 COLECCIÓN MEMORIES -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--navy)">Documents</div>
+    <h2>La colección <code>memories</code></h2>
+    <div class="grid g2" style="align-items:center;margin-top:10px;grid-template-columns:1fr 1.05fr">
+      <div>
+        <p class="lead">El store guarda cada recuerdo como un documento JSON con namespace, key y value. Con <code>index_config</code>, agrega el embedding para la búsqueda semántica.</p>
+        <div class="callout" style="margin-top:12px">namespace + key + value (+ embedding) = un recuerdo recuperable.</div>
+      </div>
+      <pre class="prebox" style="font-size:.42em">{
+  "namespace": ["68412097", "memories"],
+  "key": "b1f2c3d4-...",
+  "value": { "data": "Le encanta Star Wars" },
+  "created_at": "2026-09-30T...",
+  "updated_at": "2026-09-30T..."
+}</pre>
+    </div>
+  </div>
+  <aside class="notes">Muestra en vivo (si puedes) un documento real. El namespace es un array (user_id, "memories"). El embedding no se ve en el value: el store lo calcula y lo guarda aparte para el índice vectorial.</aside>
+</section>
+
+<!-- 37 GENERACIÓN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--green-ink)">Generación</div>
+    <h2>Nodo de generación de respuesta</h2>
+    <p class="lead" style="font-size:.54em">La memoria de largo plazo se inserta junto con los mensajes del estado (memoria de corto plazo) para entregar una respuesta coherente.</p>
+    <div class="fragment"><div class="cap">1 · Recuperar memoria y chain</div>
+    <pre style="font-size:.44em"><code class="language-python" data-hl="2">async def generate_response(state: StateBot, config: RunnableConfig):
+    memory_context = state.get('memory_context')
+    chain = get_character_chain()</code></pre></div>
+    <div class="fragment" style="margin-top:4px"><div class="cap">2 · Invocar con ambas memorias</div>
+    <pre style="font-size:.44em"><code class="language-python" data-hl="4,5">    response = await chain.ainvoke(
+        {
+            "messages": state['messages'],
+            "memory_context": memory_context,
+        },
+        config,
+    )
+    return {"messages": response}</code></pre></div>
+    <div class="callout fragment" style="margin-top:8px">Corto plazo (mensajes) + largo plazo (<code>memory_context</code>) = respuesta con contexto.</div>
+  </div>
+  <aside class="notes">Aquí se juntan las dos memorias: la lista de mensajes (hilo) y el contexto recuperado (hechos). El character chain recibe ambos y responde en personaje.</aside>
+</section>
+
+<!-- 38 COSTO DE RECORDAR -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Lo que nadie te cuenta</div>
+    <h2>El costo de recordar</h2>
+    <p class="lead">Cada mensaje del usuario dispara trabajo extra además de la respuesta.</p>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card n a-amber"><div class="label">+1 llamada al LLM</div><div class="value" style="font-size:.78em">Memory chain</div><p>Analiza si el mensaje merece guardarse. Es una llamada adicional por mensaje.</p></div>
+      <div class="card n a-cyan"><div class="label">+1 embedding</div><div class="value" style="font-size:.78em">Vectorizar</div><p>El store lo calcula al hacer <code>put</code>; es una llamada al modelo de embeddings.</p></div>
+      <div class="card n a-green"><div class="label">+1 búsqueda vectorial</div><div class="value" style="font-size:.78em">limit=5</div><p>Recuperar los recuerdos relevantes antes de responder.</p></div>
+    </div>
+    <div class="callout" style="margin-top:16px">Mitigaciones: extraer solo si <code>is_important</code>, cachear embeddings, acotar el <code>limit</code> y usar <strong>TTL</strong>/<code>prune</code>. La memoria no es gratis, pero se paga sola.</div>
+  </div>
+  <aside class="notes">Slide de honestidad técnica: la memoria añade latencia y costo. Explica las mitigaciones. Este es el punto que suele generar las mejores preguntas.</aside>
+</section>
+
+<!-- 39 RESULTADOS 1 -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">Resultados</div>
+    <h2>El bot recuerda tu nombre</h2>
+    <p class="lead" style="font-size:.54em">Le pregunté mi nombre sin habérselo dado en esa conversación; cuando se lo di, lo recordó perfectamente.</p>
+    <div style="display:flex;gap:16px;justify-content:center;margin-top:14px">
+      <img loading="lazy" decoding="async" class="shot" src="assets/resultado-nombre-1.png" alt="El bot no sabe el nombre al inicio" style="max-height:44vh">
+      <img loading="lazy" decoding="async" class="shot" src="assets/resultado-nombre-2.png" alt="El bot recuerda el nombre en otro mensaje" style="max-height:44vh">
+    </div>
+  </div>
+  <aside class="notes">Momento “wow”: la memoria de largo plazo funciona. Explica que el dato se guardó en un mensaje anterior y se recuperó por similitud semántica.</aside>
+</section>
+
+<!-- 40 RESULTADOS 2 -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--cyan-ink)">Resultados</div>
+    <h2>Sobrevive al borrado de la memoria corta</h2>
+    <p class="lead" style="font-size:.54em">Borré las tablas que guardan la memoria de corto plazo y dejé intactas las de largo plazo. El bot siguió recordando.</p>
+    <div style="display:flex;gap:16px;justify-content:center;margin-top:14px">
+      <img loading="lazy" decoding="async" class="shot" src="assets/resultado-persistencia-1.png" alt="Tablas de corto plazo eliminadas" style="max-height:44vh">
+      <img loading="lazy" decoding="async" class="shot" src="assets/resultado-persistencia-2.png" alt="El bot conserva la memoria de largo plazo" style="max-height:44vh">
+    </div>
+  </div>
+  <aside class="notes">La prueba definitiva: separar las dos memorias. Aunque se pierda el hilo, los hechos persisten. Cierra el argumento de por qué importa la arquitectura.</aside>
+</section>
+
+<!-- 41 GOTCHAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker" style="color:var(--red-ink)">Lo que aprendí</div>
+    <h2>Gotchas de la memoria persistente</h2>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="card a-red"><div class="label">Privacidad</div><div class="value" style="font-size:.72em">PII en la DB</div><p>Estás guardando datos personales. Define qué se guarda, por cuánto y cómo se borra.</p></div>
+      <div class="card a-amber"><div class="label">Duplicados</div><div class="value" style="font-size:.72em">Sin dedup</div><p>El mismo hecho puede guardarse muchas veces. Normaliza o deduplica.</p></div>
+      <div class="card a-navy"><div class="label">Aislamiento</div><div class="value" style="font-size:.72em">user_id / namespace</div><p>Sin namespace por usuario, los recuerdos se mezclan entre conversaciones.</p></div>
+      <div class="card a-cyan"><div class="label">Checkpoints</div><div class="value" style="font-size:.72em">Crecen sin parar</div><p>MongoDB soporta <code>ttl</code> y <code>prune</code> nativos: úsalos en lugar de limpiar a mano.</p></div>
+      <div class="card a-green"><div class="label">Embeddings</div><div class="value" style="font-size:.72em">Cambiar = reconstruir</div><p>Otro modelo o dimensión invalida el índice vectorial existente.</p></div>
+      <div class="card a-amber"><div class="label">Errores silenciosos</div><div class="value" style="font-size:.72em">try/except</div><p>Devolver vacío ante un fallo evita romper, pero oculta el problema: loguea.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Esta slide es oro para el público: son los problemas reales que no aparecen en los tutoriales. Cuenta una anécdota concreta de cada uno si puedes.</aside>
+</section>
+
+<!-- 42 RECAP -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Para llevarse</div>
+    <h2>Lo que aprendimos hoy</h2>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card n a-cyan"><div class="num" style="color:var(--cyan-l)">01</div><h3 style="margin-top:.3em">Dos memorias</h3><p>Corto plazo con un checkpointer; largo plazo con un Store (<code>MongoDBStore</code>). No son lo mismo ni se guardan igual.</p></div>
+      <div class="card n a-green"><div class="num" style="color:#7AC943">02</div><h3 style="margin-top:.3em">Guardar y buscar</h3><p>La memoria de largo plazo es escribir embeddings y recuperarlos por similitud semántica.</p></div>
+      <div class="card n a-amber"><div class="num" style="color:#F0A93B">03</div><h3 style="margin-top:.3em">Arquitectura &gt; modelo</h3><p>La estructura del grafo y del almacenamiento importa más que qué LLM uses.</p></div>
+    </div>
+    <p class="italic" style="font-size:.5em;color:#A9BAD4;margin-top:16px">Un bot sin memoria repite; un bot con memoria entiende.</p>
+  </div>
+  <aside class="notes">Recapitula los tres mensajes. Si el público solo recuerda una cosa, que sea la separación corto/largo plazo y que la arquitectura pesa más que el modelo.</aside>
+</section>
+
+<!-- 43 GRACIAS -->
+<section class="dark" data-background-image="assets/bg-thanks.jpg" data-background-opacity="0.22" data-background-transition="fade">
+  <div class="pad">
+    <div class="kicker">Gracias</div>
+    <h2 style="font-size:1.6em">¿Preguntas?</h2>
+    <p class="lead" style="font-size:.6em">Un bot sin memoria repite; un bot con memoria entiende.</p>
+    <div class="grid g2" style="margin-top:18px;align-items:start">
+      <div>
+        <div class="label" style="color:#8FB3E0">Código</div>
+        <p style="font-size:.5em"><a href="https://github.com/joseamaya/telegram-multibot/tree/develop" target="_blank" rel="noopener noreferrer" style="color:var(--cyan-l)">github.com/joseamaya/telegram-multibot</a></p>
+        <div class="label" style="color:#8FB3E0;margin-top:10px">Recursos</div>
+        <ul style="font-size:.46em;line-height:1.6;color:#A9BAD4">
+          <li><a href="https://docs.langchain.com/oss/python/integrations/memory/mongodb-long-term-memory" target="_blank" rel="noopener noreferrer" style="color:var(--cyan-l)">LangGraph · Long-term memory con MongoDB</a></li>
+          <li><a href="https://docs.langchain.com/oss/python/concepts/memory" target="_blank" rel="noopener noreferrer" style="color:var(--cyan-l)">Memory overview (tipos y estrategias)</a></li>
+          <li><a href="https://www.mongodb.com/docs/atlas/ai-integrations/langchain/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan-l)">MongoDB Atlas + LangChain (híbrida/rerank)</a></li>
+        </ul>
+      </div>
+      <div>
+        <strong style="color:#fff;font-size:.6em;display:block">Ing. José Miguel Amaya Camacho</strong>
+        <span style="color:#9FB4D4;font-size:.46em">linkedin.com/in/miguelamaya99 · github.com/joseamaya</span>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Agradece, comparte el enlace del repo y deja un minuto para preguntas. Si preguntan por otros proveedores de vectores, la arquitectura es portable (Pinecone, pgvector, etc.).</aside>
+</section>
+
+</div></div>
+
+<script src="vendor/reveal/reveal.js"></script>
+<script src="vendor/reveal/notes.js"></script>
+<script src="vendor/reveal/highlight.js"></script>
+<script src="vendor/reveal/search.js"></script>
+<script src="vendor/reveal/zoom.js"></script>
+<script src="js/deck.js"></script>
+</body>
+</html>

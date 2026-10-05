@@ -1,0 +1,27 @@
+# AGENTS.md
+
+Static personal site for GitHub Pages (`joseamaya.github.io`). No build, test, lint, or package manager. Push to `master` deploys the repo root as-is.
+
+## Preview
+
+Pages reference absolute paths (`/images/...`, `/como-deje-de-programar-y-empece-a-orquestar/`), so serve the **repo root** over HTTP; opening files directly breaks images and the redirect.
+
+```
+python3 -m http.server 8000
+```
+
+## Layout
+
+- `index.html` + `css/styles.css` + `js/main.js` — portfolio/CV. Bilingual via `data-es`/`data-en` attributes; `main.js` toggles them (localStorage `language`, default `es`; also `theme`). PDF export is client-side in `main.js`.
+- Two self-contained Reveal.js talk decks, each with its own `index.html`, `css/`, `js/deck.js`, `assets/` and `vendor/`:
+  - `como-deje-de-programar-y-empece-a-orquestar/` — opencode/orchestration talk. `charla-opencode/` is only a redirect stub to this path.
+  - `memoria-persistente-chatbots-telegram/` — Telegram + LangChain/LangGraph + MongoDB memory talk.
+- `vendor/` lives inside each deck (Reveal, and Chart.js/fonts for the opencode one). Do not edit.
+
+## Decks
+
+- Slides are inline `<section>` elements in each deck's `index.html`; interactivity is that deck's `js/deck.js`.
+- opencode deck only: `js/data.js` is a **generated snapshot** of opencode usage stats (single line assigning `window.DECK`). There is no generator in this repo — regenerate externally or edit the JSON by hand. Numbers use `data-count="<path.into.DECK>"` (plus optional `data-fmt="money|m|int|raw"`); add computed values in the `extra` object in `deck.js`, not inline.
+- memory deck only: speaker notes live in `<aside class="notes">` per slide (Reveal notes plugin); code blocks use highlight.js (`language-python`).
+- Both decks share the same visual theme (`css/theme.css`, copied per deck) and `css/fonts.css`.
+- PDF/print export: load a deck URL with `?print-pdf`; `deck.js` detects this and skips animations/typing.
