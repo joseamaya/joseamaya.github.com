@@ -157,7 +157,7 @@
     <p style="font-size:.58em;max-width:60ch">Los modelos de lenguaje a gran escala son modelos de machine learning que sobresalen en tareas relacionadas con el lenguaje: generación de texto, traducción, resumen, respuesta a preguntas, entre otras.</p>
     <p style="font-size:.58em;max-width:60ch">Suelen usarse a través de una <strong>interfaz de modelo de chat</strong>: recibe una lista de mensajes y devuelve un mensaje como salida.</p>
     <div class="flow" style="margin-top:20px">
-      <div class="step"><div class="n">1</div><h4>Mensajes</h4><small>system · user · assistant</small></div>
+      <div class="step"><div class="n">1</div><h4>Mensajes</h4><small>system · user · assistant · tool</small></div>
       <div class="arrow">→</div>
       <div class="step"><div class="n">2</div><h4>Modelo</h4><small>procesa el contexto</small></div>
       <div class="arrow">→</div>
@@ -221,7 +221,7 @@
     <div class="grid g3" style="margin-top:18px">
       <div class="card a-cyan"><div class="label">Un solo API</div><div class="value" style="font-size:.85em">Multi-proveedor</div><p>OpenAI, Anthropic, Ollama, Azure, Vertex, Bedrock, Hugging Face y más.</p></div>
       <div class="card a-green"><div class="label">Salidas</div><div class="value" style="font-size:.85em">Estructuradas</div><p>Esquemas validados con Pydantic en lugar de parsear texto.</p></div>
-      <div class="card a-amber"><div class="label">Producción</div><div class="value" style="font-size:.85em">Streaming y async</div><p>Streaming, lotes, caché y trazas con LangSmith.</p></div>
+      <div class="card a-amber"><div class="label">Producción</div><div class="value" style="font-size:.85em">Streaming y async</div><p>Streaming, lotes y trazas con LangSmith.</p></div>
     </div>
     <div class="callout" style="margin-top:16px">La misma aplicación puede usar un modelo local en desarrollo y otro proveedor en producción, sin cambiar el resto del código.</div>
   </div>
@@ -257,7 +257,7 @@
       </div>
     </div>
   </div>
-  <aside class="notes">⏱ 1 min · Analogía: langchain-core es el idioma común; los paquetes de integración son los traductores de cada proveedor. Por eso se instala solo langchain-openai en el ejemplo.</aside>
+  <aside class="notes">⏱ 1 min · Analogía: langchain-core es el idioma común; los paquetes de integración son los traductores de cada proveedor. Por eso instalas solo los paquetes que usas: en el ejemplo, langchain-openai, langchain-mongodb y langchain-text-splitters.</aside>
 </section>
 
 <!-- 13 Componentes langchain/community -->
@@ -381,7 +381,7 @@ model.batch(["Hola", "Adiós", "Gracias"])      # varias a la vez</code></pre>
       <div class="card a-green"><div class="label">assistant</div><div class="value" style="font-size:.72em">Modelo</div><p>Respuestas y llamadas a herramientas.</p></div>
       <div class="card a-amber"><div class="label">tool</div><div class="value" style="font-size:.72em">Herramienta</div><p>Resultado de una herramienta invocada.</p></div>
     </div>
-    <p style="font-size:.5em;margin-top:16px">En código son <span class="mono">SystemMessage</span>, <span class="mono">HumanMessage</span>, <span class="mono">AIMessage</span> y <span class="mono">ToolMessage</span>. Los mensajes pueden incluir imágenes o video.</p>
+    <p style="font-size:.5em;margin-top:16px">En código se usan las clases <span class="mono">SystemMessage</span>, <span class="mono">HumanMessage</span>, <span class="mono">AIMessage</span> y <span class="mono">ToolMessage</span>, o su forma abreviada en dict (<span class="mono">{"role": "user"}</span>) y en tuplas (<span class="mono">("system", …)</span>). Los mensajes pueden incluir imágenes o video.</p>
   </div>
   <aside class="notes">⏱ 1 min · Explicar que el historial completo se reenvía en cada turno y que el rol tool lleva el resultado de una herramienta de vuelta al modelo. Esto conecta con la charla de memoria: sin una capa que gestione el historial, el modelo olvida.</aside>
 </section>
@@ -397,7 +397,7 @@ model.batch(["Hola", "Adiós", "Gracias"])      # varias a la vez</code></pre>
       <li>Devuelven un <span class="mono">PromptValue</span>, que se pasa al modelo; también se puede convertir a string o a lista de mensajes.</li>
     </ul>
     <div class="grid g2" style="margin-top:16px">
-      <div class="card"><div class="label">String PromptTemplate</div><div class="value" style="font-size:.8em">Una cadena</div><p>Para entradas simples.</p></div>
+      <div class="card"><div class="label">String PromptTemplate</div><div class="value" style="font-size:.8em">Una cadena</div><p>Para entradas simples: <span class="mono">PromptTemplate.from_template("Traduce {texto}")</span>.</p></div>
       <div class="card"><div class="label">ChatPromptTemplate</div><div class="value" style="font-size:.8em">Lista de mensajes</div><p>Plantillas individuales por rol.</p></div>
     </div>
   </div>
@@ -467,7 +467,7 @@ cadena.invoke({"idioma": "español", "texto": "LangChain simplifies LLM apps."})
     <div class="kicker" style="color:#8FB3E0">Parte 4</div>
     <h1 style="font-size:1.6em">Salidas estructuradas</h1>
     <p class="lead" style="color:#D7E2F0;font-size:.6em">Clasificar y extraer con Pydantic</p>
-    <div class="callout" style="margin-top:18px">Repaso: ¿qué operador conecta prompt, modelo y parser?</div>
+    <div class="callout" style="margin-top:18px">Repaso: ¿qué operador conecta el prompt con el modelo?</div>
   </div>
   <aside class="notes">⏱ 15 s · Repaso: el operador pipe. Este bloque es el que más impacto tiene en aplicaciones reales: convertir texto libre en datos que tu sistema entiende.</aside>
 </section>
@@ -491,7 +491,7 @@ cadena.invoke({"idioma": "español", "texto": "LangChain simplifies LLM apps."})
     <div class="kicker">Salidas estructuradas</div>
     <h2>Cómo se implementa</h2>
     <div class="kv"><b>Pydantic</b><span>Define el esquema y valida la respuesta del modelo.</span></div>
-    <div class="kv"><b>Parsers</b><span>LangChain incluye parsers para transformar la salida según el esquema.</span></div>
+    <div class="kv"><b>Parsers</b><span>Transforman la salida del modelo; <span class="mono">with_structured_output</span> los usa por dentro.</span></div>
     <div class="kv"><b>with_structured_output</b><span>Interactúa directamente con los modelos que soportan la funcionalidad.</span></div>
     <div class="kv"><b>structured_response</b><span>En agentes, <span class="mono">response_format=</span> devuelve el resultado validado en este campo.</span></div>
   </div>
@@ -503,7 +503,7 @@ cadena.invoke({"idioma": "español", "texto": "LangChain simplifies LLM apps."})
   <div class="pad">
     <div class="kicker">Ejemplo</div>
     <h2>Clasificar texto en etiquetas</h2>
-    <p style="font-size:.5em">Asignamos etiquetas a un texto según categorías relevantes: sentimiento, idioma, estilo, temas tratados o tendencias políticas.</p>
+    <p style="font-size:.5em">Asignamos etiquetas a un texto según categorías relevantes: sentimiento, idioma y temas tratados.</p>
     <div class="cap">python</div>
     <pre><code class="language-python" data-hl="11">from typing import Literal
 from pydantic import BaseModel, Field
@@ -528,7 +528,7 @@ clasificador.invoke("El nuevo lanzamiento superó todas mis expectativas")</code
     <h2>Extracción de información</h2>
     <p style="font-size:.5em">Reutilizamos el mismo <span class="mono">model</span> del ejemplo anterior y extraemos datos de texto no estructurado.</p>
     <div class="cap">python</div>
-    <pre><code class="language-python" data-hl="7">class Persona(BaseModel):
+    <pre><code class="language-python" data-hl="6">class Persona(BaseModel):
     nombre: str
     edad: int | None = None
     empresa: str | None = None
@@ -589,7 +589,7 @@ print(datos.nombre, datos.edad, datos.empresa)</code></pre>
     <div class="kicker">Búsqueda semántica</div>
     <h2>Tres conceptos</h2>
     <div class="grid g3" style="margin-top:18px">
-      <div class="card a-cyan" style="justify-content:flex-start"><div class="label">Document loader</div><div class="value" style="font-size:.85em">Cargar</div><p style="margin-top:.5em">Carga documentos (PDF, texto, bases de datos) en un formato procesable.</p></div>
+      <div class="card a-cyan" style="justify-content:flex-start"><div class="label">Carga</div><div class="value" style="font-size:.85em">Documentos</div><p style="margin-top:.5em">De un PDF, texto o base de datos a objetos <span class="mono">Document</span>.</p></div>
       <div class="card a-green" style="justify-content:flex-start"><div class="label">Embeddings</div><div class="value" style="font-size:.85em">Vectorizar</div><p style="margin-top:.5em">Convierten el texto en un vector que captura su significado.</p></div>
       <div class="card a-amber" style="justify-content:flex-start"><div class="label">Vector store</div><div class="value" style="font-size:.85em">Almacenar</div><p style="margin-top:.5em">Base de datos especializada en guardar vectores y buscar por similitud.</p></div>
     </div>
@@ -661,8 +661,9 @@ retriever = vectorstore.as_retriever(search_kwargs={"k": 4})</code></pre>
   <div class="pad">
     <div class="kicker">RAG · cadena</div>
     <h2>La cadena completa</h2>
+    <p style="font-size:.5em">Reutilizamos el <span class="mono">model</span> de la parte 3 y definimos el prompt con el contexto recuperado.</p>
     <div class="cap">python</div>
-    <pre><code class="language-python" data-hl="12">from langchain_core.runnables import RunnablePassthrough
+    <pre><code class="language-python" data-hl="10">from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
 prompt = ChatPromptTemplate.from_messages([
@@ -697,9 +698,9 @@ rag.invoke("¿Cómo reinicio el equipo?")</code></pre>
   <div class="pad">
     <div class="kicker">Agentes</div>
     <h2>Agentes con create_agent</h2>
-    <p style="font-size:.5em">Un agente es un modelo que decide qué herramienta usar en un bucle hasta resolver la tarea. <span class="mono">create_agent</span> usa <span class="mono">bind_tools</span> por dentro.</p>
+    <p style="font-size:.5em">Un agente es un modelo que decide qué herramienta usar en un bucle hasta resolver la tarea. Reutilizamos el <span class="mono">model</span> de antes; <span class="mono">create_agent</span> usa <span class="mono">bind_tools</span> por dentro.</p>
     <div class="cap">python</div>
-    <pre><code class="language-python" data-hl="12">from langchain.agents import create_agent
+    <pre><code class="language-python" data-hl="9">from langchain.agents import create_agent
 from langchain.tools import tool
 
 @tool
@@ -713,7 +714,7 @@ agente = create_agent(
     system_prompt="Eres un asistente útil y breve.",
 )
 agente.invoke({"messages": [{"role": "user", "content": "¿Clima en Piura?"}]})</code></pre>
-    <div class="callout" style="margin-top:10px"><span class="mono">response_format=</span> devuelve datos validados en <span class="mono">structured_response</span>; <span class="mono">checkpointer</span> + <span class="mono">thread_id</span> conservan la conversación entre turnos.</div>
+    <div class="callout" style="margin-top:10px">Opcional: <span class="mono">response_format=</span> devuelve datos validados en <span class="mono">structured_response</span>; <span class="mono">checkpointer</span> + <span class="mono">thread_id</span> conservan la conversación entre turnos.</div>
   </div>
   <aside class="notes">⏱ 2.5 min · Cerrar el círculo: create_agent combina el modelo, las herramientas y el prompt del bloque 3, y usa bind_tools por dentro. Por dentro usa LangGraph: no hace falta dominar grafos para empezar. La charla de memoria profundiza en grafos, estado y persistencia.</aside>
 </section>
@@ -737,17 +738,17 @@ agente.invoke({"messages": [{"role": "user", "content": "¿Clima en Piura?"}]})<
 <section class="dark">
   <div class="pad">
     <div class="kicker">Chuleta</div>
-    <h2>Todo en cinco líneas</h2>
+    <h2>Todo en seis líneas</h2>
     <div class="cap">python</div>
-    <pre><code class="language-python">model = init_chat_model("openai:gpt-5-nano")              # 1. modelo
-prompt = ChatPromptTemplate.from_messages([...])          # 2. prompt
-chain  = prompt | model | StrOutputParser()               # 3. cadena (pipe)
-datos  = model.with_structured_output(Analisis)           # 4. datos validados
-rag    = {"contexto": retriever, "pregunta": RunnablePassthrough()} | prompt | model
-agente = create_agent(model=model, tools=[clima])         # 5. agente</code></pre>
+    <pre style="font-size:.38em"><code class="language-python">model  = init_chat_model("openai:gpt-5-nano")            # 1. modelo
+prompt = ChatPromptTemplate.from_messages([...])         # 2. prompt
+chain  = prompt | model | StrOutputParser()              # 3. cadena (pipe)
+datos  = model.with_structured_output(Analisis)          # 4. datos validados
+rag    = {"contexto": retriever, "pregunta": RunnablePassthrough()} | prompt | model | StrOutputParser()  # 5. RAG
+agente = create_agent(model=model, tools=[clima])        # 6. agente</code></pre>
     <div class="callout" style="margin-top:12px">Llévate esta diapositiva: es el 90% de lo que usarás el primer día.</div>
   </div>
-  <aside class="notes">⏱ 1 min · Slide para fotografiar. Repetir el patrón mental: modelo + prompt + composición. Todo lo demás son variaciones de estas líneas.</aside>
+  <aside class="notes">⏱ 1 min · Slide para fotografiar. Repetir el patrón mental: modelo + prompt + composición. La forma completa de la cadena RAG, con el mapeo de contexto y pregunta, está en la diapositiva 37.</aside>
 </section>
 
 <!-- 42 Recursos -->
