@@ -1,0 +1,1241 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Introducción a FastAPI · José Miguel Amaya</title>
+<meta name="description" content="De cero a una API en producción con Python y FastAPI: REST, rutas, validación con Pydantic, dependencias, base de datos, seguridad y testing. Caso práctico: Tienda API. Charla de José Miguel Amaya (Python Piura · Piura AI).">
+<link rel="canonical" href="https://joseamaya.github.io/introduccion-a-fastapi/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Introducción a FastAPI">
+<meta property="og:description" content="REST, rutas, validación con Pydantic, dependencias, base de datos, seguridad y testing construyendo una Tienda API.">
+<meta property="og:url" content="https://joseamaya.github.io/introduccion-a-fastapi/">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="vendor/reveal/reset.css">
+<link rel="stylesheet" href="vendor/reveal/reveal.css">
+<link rel="stylesheet" href="vendor/reveal/highlight-theme.css">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  .reveal pre{font-size:.46em}
+  .ide pre{font-size:.44em}
+  .cl{display:block}
+  .cl.hl{background:rgba(0,150,136,.18);box-shadow:-8px 0 0 rgba(0,150,136,.18);border-radius:4px}
+  .cap{font-family:'JetBrains Mono',monospace;font-size:.4em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:.35em 0 .15em}
+  section.dark .cap,section.navy .cap{color:#7FD8CD}
+  .kv{display:flex;gap:10px;align-items:baseline;font-size:.5em;padding:.28em 0;border-bottom:1px solid var(--line)}
+  .kv b{font-family:'JetBrains Mono',monospace;color:var(--teal-ink);min-width:8em;font-size:.92em}
+  section.dark .kv,section.navy .kv{border-color:var(--dark-line)}
+  section.dark .kv b,section.navy .kv b{color:var(--teal-l)}
+  .big-q{font-family:'Montserrat',sans-serif;font-weight:800;font-size:1.5em;color:var(--ink);line-height:1.08;margin:0}
+  .docsmock{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 10px 26px rgba(11,18,32,.08)}
+  .docsmock .dm-top{display:flex;align-items:center;gap:10px;background:#EEF3F2;padding:10px 16px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:.4em;color:var(--muted)}
+  .docsmock .dm-top .dot{width:10px;height:10px;border-radius:50%;background:var(--teal-l)}
+  .docsmock .dm-head{padding:14px 20px;border-bottom:1px solid var(--line)}
+  .docsmock .dm-head b{font-family:'Montserrat',sans-serif;font-size:.7em;color:var(--ink)}
+  .docsmock .dm-head small{display:block;font-family:'JetBrains Mono',monospace;font-size:.4em;color:var(--muted)}
+  .docsmock .dm-row{display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--line)}
+  .docsmock .dm-row:last-child{border-bottom:0}
+  .docsmock .dm-row code{font-family:'JetBrains Mono',monospace;font-size:.46em;color:var(--ink)}
+  .docsmock .dm-desc{margin-left:auto;font-size:.42em;color:var(--muted)}
+  .layers{display:flex;flex-direction:column;gap:10px}
+  .layers .ly{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:#fff}
+  .layers .ly b{font-family:'JetBrains Mono',monospace;font-size:.44em;color:var(--teal-ink);min-width:9em}
+  .layers .ly span{font-size:.46em;color:var(--body)}
+  section.light .kicker{color:var(--teal-ink)}
+  @media (prefers-reduced-motion: reduce){
+    .reveal .fragment{transition:none!important}
+    .reveal .slides section{transition:none!important}
+  }
+</style>
+</head>
+<body>
+<noscript>
+  <style>
+    .reveal{position:static;height:auto}
+    .reveal .slides{position:static;width:auto;height:auto;transform:none!important}
+    .reveal .slides>section{display:block;position:relative;min-height:0;height:auto;padding:40px 24px;border-bottom:1px solid #dfe6f0}
+    .reveal .foot{display:none}
+  </style>
+  <p style="font-family:sans-serif;padding:16px;background:#0B1220;color:#fff;margin:0">Esta presentación usa JavaScript (Reveal.js) para navegar. Aquí está el contenido completo.</p>
+</noscript>
+<div class="reveal"><div class="slides">
+
+<!-- 1 PORTADA -->
+<section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.16" data-background-transition="fade">
+  <div class="pad">
+    <div class="kicker" style="color:#7FD8CD">Python Piura · Piura AI</div>
+    <h1 style="font-size:1.9em;line-height:1.03">Introducción a <span style="color:var(--teal-l)">FastAPI</span></h1>
+    <p class="lead" style="color:#CFE6E1;font-size:.64em;margin-top:.6em">De cero a una API en producción con Python: caso Tienda API</p>
+    <div style="margin-top:1.1em">
+      <strong style="color:#fff;font-size:.6em;display:block">Ing. José Miguel Amaya Camacho</strong>
+      <span style="color:#9FB4D4;font-size:.48em">CTO &amp; Socio Fundador · Xprende Tech · Fundador de Piura AI y Python Piura</span>
+    </div>
+  </div>
+  <aside class="notes">⏱ 30 s · Bienvenida y promesa: hoy construimos, pieza por pieza, una API real con FastAPI. Al final sabrán modelar rutas, validar datos, inyectar dependencias, conectar una base de datos, proteger endpoints y escribir tests.</aside>
+</section>
+
+<!-- 2 QUIÉN SOY -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Quién les habla</div>
+    <h2>José Miguel Amaya — APIs en Python</h2>
+    <div class="grid g2" style="margin-top:18px;align-items:start;grid-template-columns:260px 1fr">
+      <img loading="lazy" decoding="async" src="assets/miguel-square.jpg" alt="José Miguel Amaya" style="width:100%;border-radius:14px;border:3px solid var(--teal-l)">
+      <ul style="font-size:.56em;line-height:1.6;margin:0;padding-left:1.1em">
+        <li>CTO y socio fundador de <strong>Xprende Tech</strong>. Full Stack Engineer en Efilm Online.</li>
+        <li>Fundador de <strong>Piura AI</strong>, <strong>Tallanix</strong>, <strong>Python Piura</strong> y <strong>VICUX</strong>.</li>
+        <li>Especialista en Python, Django/FastAPI e IA (LangChain, LangGraph, RAG).</li>
+        <li>Autor de charlas y talleres de desarrollo web y IA aplicada en Python Piura y Piura AI.</li>
+      </ul>
+    </div>
+    <div style="display:flex;gap:60px;align-items:end;margin-top:8px">
+      <div>
+        <div class="muted" style="font-family:'JetBrains Mono';font-size:.36em">comunidad</div>
+        <div style="display:flex;gap:22px;align-items:center;margin-top:6px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-pythonpiura.jpg" alt="" style="height:66px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-piuraai.png" alt="" style="height:62px">
+        </div>
+      </div>
+      <div>
+        <div class="muted" style="font-family:'JetBrains Mono';font-size:.36em">empresa</div>
+        <div style="display:flex;gap:22px;align-items:center;margin-top:6px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-tallanix.png" alt="" style="height:54px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-xprende.png" alt="" style="height:38px">
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 30 s · Treinta segundos de credibilidad. No leer la lista: elegir dos logros relevantes para devs. Mencionar que el caso Tienda API es un proyecto real simplificado.</aside>
+</section>
+
+<!-- 3 AGENDA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Agenda · 60 minutos</div>
+    <h2>El recorrido de hoy</h2>
+    <ul class="agenda" style="margin-top:14px">
+      <li><b>01</b> Fundamentos web: qué es una API REST <span>8 min</span></li>
+      <li><b>02</b> FastAPI: qué es y por qué <span>6 min</span></li>
+      <li><b>03</b> Primeros pasos: hola mundo y docs <span>8 min</span></li>
+      <li><b>04</b> Rutas, parámetros y validación <span>16 min</span></li>
+      <li><b>05</b> Dependencias y tareas en segundo plano <span>6 min</span></li>
+      <li><b>06</b> Base de datos y seguridad <span>10 min</span></li>
+      <li><b>07</b> Testing y despliegue <span>6 min</span></li>
+    </ul>
+  </div>
+  <aside class="notes">⏱ 30 s · Mostrar el mapa completo para que sepan a dónde vamos. Aclarar que cada bloque termina con algo ejecutable: nada queda en el aire.</aside>
+</section>
+
+<!-- 4 QUÉ CONSTRUIREMOS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El caso</div>
+    <h2>Tienda API</h2>
+    <p class="lead">Una API para una tienda en línea. Todo el taller gira alrededor de estos recursos.</p>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-cyan"><div class="label">recurso</div><div class="value">Producto</div><p>id, nombre, precio, categoría, stock.</p></div>
+      <div class="card a-green"><div class="label">recurso</div><div class="value">Pedido</div><p>productos, cantidad, cliente, total.</p></div>
+      <div class="card a-amber"><div class="label">recurso</div><div class="value">Usuario</div><p>credenciales, perfil, permisos.</p></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center">
+      <span class="method get">GET</span><code style="font-size:.44em">/productos</code>
+      <span class="method post">POST</span><code style="font-size:.44em">/productos</code>
+      <span class="method put">PUT</span><code style="font-size:.44em">/productos/{id}</code>
+      <span class="method delete">DELETE</span><code style="font-size:.44em">/productos/{id}</code>
+    </div>
+  </div>
+  <aside class="notes">⏱ 45 s · Presentar el caso una sola vez. Insistir: cada concepto nuevo se aplica a la Tienda API, así no hay ejemplos sueltos.</aside>
+</section>
+
+<!-- 5 DIVISOR 01 -->
+<section class="navy">
+  <div class="pad">
+    <div class="sectionnum">01</div>
+    <h2 style="font-size:1.6em">Fundamentos web</h2>
+    <p class="lead" style="color:#CFE6E1;font-size:.6em">Qué es una API REST y por qué el mundo habla HTTP</p>
+  </div>
+  <aside class="notes">⏱ 10 s · Divisor. Recordar que REST no es una tecnología sino un conjunto de convenciones.</aside>
+</section>
+
+<!-- 6 QUÉ ES REST -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Punto de partida</div>
+    <h2 class="big-q">¿Qué es una API REST?</h2>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card a-cyan"><div class="label">API</div><div class="value" style="font-size:.9em">Contrato</div><p>Interfaz que permite que dos programas se comuniquen: el cliente pide, el servidor responde.</p></div>
+      <div class="card a-cyan"><div class="label">REST</div><div class="value" style="font-size:.9em">Convenciones</div><p><b>RE</b>presentational <b>S</b>tate <b>T</b>ransfer: reglas para diseñar esos servicios de forma uniforme sobre HTTP.</p></div>
+    </div>
+    <div class="callout" style="margin-top:16px"><span class="ic">i</span><div>Se apoya en el protocolo <b>HTTP</b> y se usa en casi toda aplicación web moderna: móviles, frontends, microservicios.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Definir API y REST con la analogía del restaurante: el menú es el contrato, el mesero es HTTP. No entrar aún en verbos ni códigos.</aside>
+</section>
+
+<!-- 7 RECURSOS Y ENDPOINTS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Característica 1</div>
+    <h2>Recursos y endpoints</h2>
+    <p class="lead">Todo se modela como un <b>recurso</b>: una entidad con nombre. Cada recurso vive en una URL única.</p>
+    <div class="kv" style="margin-top:14px"><b>/productos</b> la colección de productos</div>
+    <div class="kv"><b>/productos/42</b> un producto concreto</div>
+    <div class="kv"><b>/pedidos/42/items</b> los ítems de un pedido</div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Nombra recursos con <b>sustantivos en plural</b> (<code>productos</code>), no con acciones (<code>obtenerProductos</code>).</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · El endpoint es la URL. La jerarquía /pedidos/42/items muestra relaciones. Regla práctica: sustantivos, plural, minúsculas.</aside>
+</section>
+
+<!-- 8 VERBOS HTTP -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Característica 2</div>
+    <h2>Verbos HTTP</h2>
+    <p class="lead">La <b>acción</b> no va en la URL: va en el método HTTP.</p>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="kv"><span class="method get">GET</span> leer / recuperar datos</div>
+      <div class="kv"><span class="method post">POST</span> crear un recurso nuevo</div>
+      <div class="kv"><span class="method put">PUT</span> reemplazar un recurso completo</div>
+      <div class="kv"><span class="method patch">PATCH</span> actualizar parcialmente</div>
+      <div class="kv"><span class="method delete">DELETE</span> eliminar un recurso</div>
+      <div class="kv"><span class="method get">GET</span> <span class="muted">/productos?categoria=ropa</span></div>
+    </div>
+    <div class="callout" style="margin-top:16px"><span class="ic">i</span><div>Mismo endpoint <code>/productos</code>, distinto verbo: <b>GET</b> lo lista, <b>POST</b> lo crea.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Insistir en la separación acción/recurso. PUT vs PATCH es la duda clásica: reemplazo total vs parcial.</aside>
+</section>
+
+<!-- 9 STATELESS Y JSON -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Característica 3</div>
+    <h2>Sin estado y en JSON</h2>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card a-cyan"><div class="label">stateless</div><div class="value" style="font-size:.9em">Sin estado</div><p>Cada petición lleva toda la información necesaria (incluida la identidad). El servidor no recuerda al cliente entre peticiones.</p></div>
+      <div class="card a-cyan"><div class="label">formato</div><div class="value" style="font-size:.9em">JSON</div><p>Los datos viajan en un formato estándar: <code>application/json</code>. Fácil de leer por humanos y máquinas.</p></div>
+    </div>
+    <div class="cap" style="margin-top:14px">respuesta típica</div>
+    <pre><code class="language-json" data-hl="2">{
+  "id": 42, "nombre": "Mouse", "precio": 25.9, "en_stock": true
+}</code></pre>
+  </div>
+  <aside class="notes">⏱ 90 s · Stateless habilita escalar horizontalmente: cualquier servidor puede atender cualquier petición. JSON es el idioma franco actual.</aside>
+</section>
+
+<!-- 10 CÓDIGOS DE ESTADO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Característica 4</div>
+    <h2>Códigos de estado</h2>
+    <p class="lead">HTTP responde con un número que cuenta qué pasó. Se agrupan por familia.</p>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div><div style="margin-bottom:8px"><span class="status s2">2xx</span></div><div style="font-size:.46em">Éxito. <span class="muted">200 OK · 201 Created · 204 No Content</span></div></div>
+      <div><div style="margin-bottom:8px"><span class="status s3">3xx</span></div><div style="font-size:.46em">Redirección. <span class="muted">301 Moved · 304 Not Modified</span></div></div>
+      <div><div style="margin-bottom:8px"><span class="status s4">4xx</span></div><div style="font-size:.46em">Error del cliente. <span class="muted">400 · 401 · 403 · 404 · 422</span></div></div>
+      <div><div style="margin-bottom:8px"><span class="status s5">5xx</span></div><div style="font-size:.46em">Error del servidor. <span class="muted">500 · 503</span></div></div>
+    </div>
+    <div class="callout warn" style="margin-top:16px"><span class="ic">!</span><div>El <b>422</b> es la estrella de FastAPI: datos válidos como JSON pero que no cumplen el esquema.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · No memorizar todos: entender familias. 4xx culpa del cliente, 5xx culpa del servidor. El 422 se usará en la validación con Pydantic.</aside>
+</section>
+
+<!-- 11 VENTAJAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Por qué REST</div>
+    <h2>Ventajas para el desarrollo</h2>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card a-green"><div class="value" style="font-size:.85em">Desacople</div><p>Frontend y backend evolucionan por separado; pueden vivir en servidores distintos.</p></div>
+      <div class="card a-green"><div class="value" style="font-size:.85em">Escalable</div><p>Sin estado: se replican servidores y balanceadores con facilidad.</p></div>
+      <div class="card a-green"><div class="value" style="font-size:.85em">Universal</div><p>Independiente del lenguaje y la plataforma del cliente o del servidor.</p></div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Un mismo backend sirve a la web, a la app móvil y a otros servicios internos.</div></div>
+  </div>
+  <aside class="notes">⏱ 60 s · Cerrar la parte teórica conectando con FastAPI: un framework que hace estas convenciones fáciles de implementar.</aside>
+</section>
+
+<!-- 12 DIVISOR 02 -->
+<section class="navy">
+  <div class="pad">
+    <div class="sectionnum">02</div>
+    <h2 style="font-size:1.6em">FastAPI</h2>
+    <p class="lead" style="color:#CFE6E1;font-size:.6em">El framework moderno para construir APIs con Python</p>
+  </div>
+  <aside class="notes">⏱ 10 s · Divisor. Prometer: en pocas líneas ya tendremos una API con documentación incluida.</aside>
+</section>
+
+<!-- 13 QUÉ ES FASTAPI -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El framework</div>
+    <h2 class="big-q">¿Qué es FastAPI?</h2>
+    <p class="lead">Un framework web moderno y de alto rendimiento para construir APIs con Python 3.10+, basado en las <b>anotaciones de tipos</b> del lenguaje.</p>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card a-cyan"><div class="label">velocidad</div><div class="value" style="font-size:.85em">ASGI</div><p>Asíncrono de verdad, comparable a Node.js y Go.</p></div>
+      <div class="card a-cyan"><div class="label">tipado</div><div class="value" style="font-size:.85em">Type hints</div><p>Los tipos son la fuente de verdad: validación y docs salen de ahí.</p></div>
+      <div class="card a-cyan"><div class="label">adopción</div><div class="value" style="font-size:.85em">Empresas</div><p>Usado por Microsoft, Uber, Netflix y miles de equipos.</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 90 s · Enfatizar que FastAPI no inventa un lenguaje: aprovecha el tipado de Python. Eso es lo que lo hace distinto a Flask o Django para APIs.</aside>
+</section>
+
+<!-- 14 CARACTERÍSTICAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Qué trae de fábrica</div>
+    <h2>Características</h2>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="kv"><b>Validación</b> automática con Pydantic</div>
+      <div class="kv"><b>Docs</b> interactivas (OpenAPI)</div>
+      <div class="kv"><b>Async</b> nativo con <code>async</code>/<code>await</code></div>
+      <div class="kv"><b>Dependencias</b> con inyección</div>
+      <div class="kv"><b>Seguridad</b> OAuth2, JWT, API keys</div>
+      <div class="kv"><b>ORM</b> compatible (SQLAlchemy, etc.)</div>
+    </div>
+    <div class="callout" style="margin-top:16px"><span class="ic">i</span><div>Menos código repetido: describes <b>qué</b> datos esperas y FastAPI se encarga del resto.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · No leer como lista: elegir dos o tres y adelantar dónde se verán (validación en bloque 04, dependencias en 05, seguridad en 06).</aside>
+</section>
+
+<!-- 15 SOBRE HOMBROS DE GIGANTES -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Arquitectura</div>
+    <h2>Sobre hombros de gigantes</h2>
+    <p class="lead">FastAPI es una capa delgada y bien pensada sobre dos bibliotecas maduras.</p>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card a-cyan"><div class="label">web</div><div class="value" style="font-size:.9em">Starlette</div><p>Toolkit ASGI (el sucesor de WSGI) para las partes web: rutas, peticiones, respuestas, WebSockets.</p></div>
+      <div class="card a-green"><div class="label">datos</div><div class="value" style="font-size:.9em">Pydantic</div><p>Validación y serialización de datos basada en tipos. El corazón del tipado de FastAPI.</p></div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Entender estas dos piezas hace que FastAPI deje de ser magia y pase a ser predecible.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Starlette = web, Pydantic = datos. Cada mensaje de error de validación viene de Pydantic; cada respuesta y middleware viene de Starlette.</aside>
+</section>
+
+<!-- 16 INSTALACIÓN -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Puesta en marcha</div>
+    <h2 style="color:#fff">Instalación</h2>
+    <p class="lead">Python 3.10+ y un entorno virtual. La forma moderna es un solo comando.</p>
+    <div class="grid g2" style="margin-top:16px;align-items:start">
+      <div>
+        <div class="cap">crear entorno</div>
+        <div class="term">
+          <div class="bar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span>bash</span></div>
+          <div class="body"><span class="d">$</span> python -m venv .venv
+<span class="d">$</span> source .venv/bin/activate
+<span class="d">$</span> pip install <span class="g">"fastapi[standard]"</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="cap">qué incluye</div>
+        <div class="kv" style="border-color:var(--dark-line)"><b>fastapi</b> el framework</div>
+        <div class="kv" style="border-color:var(--dark-line)"><b>uvicorn</b> el servidor ASGI</div>
+        <div class="kv" style="border-color:var(--dark-line)"><b>fastapi-cli</b> el comando <code>fastapi</code></div>
+        <div class="kv" style="border-color:var(--dark-line)"><b>pydantic</b> validación de datos</div>
+      </div>
+    </div>
+    <div class="callout warn" style="margin-top:14px"><span class="ic">!</span><div>Ya no hace falta instalar <code>uvicorn</code> por separado: viene en <code>fastapi[standard]</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Mostrar que el entorno virtual es higiene, no opcional. El comando fastapi[standard] es la recomendación oficial actual.</aside>
+</section>
+
+<!-- 17 DIVISOR 03 -->
+<section class="navy">
+  <div class="pad">
+    <div class="sectionnum">03</div>
+    <h2 style="font-size:1.6em">Primeros pasos</h2>
+    <p class="lead" style="color:#CFE6E1;font-size:.6em">De cero a una API documentada en cinco minutos</p>
+  </div>
+  <aside class="notes">⏱ 10 s · Divisor. Aquí empieza lo ejecutable.</aside>
+</section>
+
+<!-- 18 HOLA MUNDO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El mínimo</div>
+    <h2>Hola mundo</h2>
+    <div class="ide" style="margin-top:14px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,3,5,6">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"mensaje": "Hola mundo"}</code></pre>
+    </div>
+    <div class="callout" style="margin-top:14px"><span class="ic">i</span><div>Siete líneas: importamos, creamos la app, declaramos una ruta y devolvemos un diccionario.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Escribirlo en vivo si es posible. Señalar que el diccionario se convierte a JSON automáticamente.</aside>
+</section>
+
+<!-- 19 ANALICEMOS EL CÓDIGO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Disección</div>
+    <h2>Analicemos el código</h2>
+    <div class="grid g2" style="margin-top:16px;align-items:start;gap:20px">
+      <div>
+        <div class="cap">app</div>
+        <pre><code class="language-python" data-hl="1,3">from fastapi import FastAPI
+
+app = FastAPI()</code></pre>
+      </div>
+      <div>
+        <div class="cap">ruta</div>
+        <pre><code class="language-python" data-hl="1,2">@app.get("/")
+async def root():
+    return {"mensaje": "Hola mundo"}</code></pre>
+      </div>
+    </div>
+    <div class="layers" style="margin-top:14px">
+      <div class="ly"><b>FastAPI()</b><span>la clase que provee toda la funcionalidad; <code>app</code> es la instancia con la que se registran rutas.</span></div>
+      <div class="ly"><b>@app.get("/")</b><span>decorador de operación: la función de abajo atiende <b>GET /</b>.</span></div>
+      <div class="ly"><b>async def</b><span>función de operación; se llama en cada petición y devuelve el cuerpo de la respuesta.</span></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 120 s · Nombrar los tres conceptos: instancia, decorador de operación y función de operación. Son el vocabulario que usaremos todo el taller.</aside>
+</section>
+
+<!-- 20 EJECUTAR -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">A correr</div>
+    <h2 style="color:#fff">Levantar el servidor</h2>
+    <div class="term" style="margin-top:14px">
+      <div class="bar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span>bash</span></div>
+      <div class="body"><span class="d">$</span> fastapi dev main.py
+
+ <span class="c">INFO</span>  Uvicorn running on <span class="g">http://127.0.0.1:8000</span>
+ <span class="c">INFO</span>  Application startup complete.
+ <span class="c">INFO</span>  GET / <span class="g">200 OK</span></div>
+    </div>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="kv" style="border-color:var(--dark-line)"><b>fastapi dev</b> desarrollo + recarga</div>
+      <div class="kv" style="border-color:var(--dark-line)"><b>fastapi run</b> producción</div>
+    </div>
+    <div class="callout" style="margin-top:14px"><span class="ic">i</span><div>Con <code>--reload</code> (incluido en <code>dev</code>) el servidor se reinicia al guardar cada cambio.</div></div>
+  </div>
+  <aside class="notes">⏱ 60 s · Mostrar el log: puerto 8000, y el acceso GET / con 200. Explicar la diferencia entre dev y run.</aside>
+</section>
+
+<!-- 21 DOCS AUTOMÁTICAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Regalo de FastAPI</div>
+    <h2>Documentación automática</h2>
+    <p class="lead">Con solo definir las rutas, FastAPI genera una interfaz interactiva para probar la API.</p>
+    <div class="docsmock" style="margin-top:14px">
+      <div class="dm-top"><span class="dot"></span><span>http://127.0.0.1:8000/docs</span></div>
+      <div class="dm-head"><b>Tienda API</b><small>FastAPI · OpenAPI 3.1 · swagger-ui</small></div>
+      <div class="dm-row"><span class="method get">GET</span><code>/productos</code><span class="dm-desc">Listar productos</span></div>
+      <div class="dm-row"><span class="method post">POST</span><code>/productos</code><span class="dm-desc">Crear producto</span></div>
+      <div class="dm-row"><span class="method get">GET</span><code>/productos/{id}</code><span class="dm-desc">Obtener uno</span></div>
+      <div class="dm-row"><span class="method delete">DELETE</span><code>/productos/{id}</code><span class="dm-desc">Eliminar</span></div>
+    </div>
+    <div class="callout tip" style="margin-top:14px"><span class="ic">✓</span><div><code>/docs</code> usa Swagger UI y <code>/redoc</code> una versión de lectura. Se pueden probar los endpoints sin Postman.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Momento "wow": la documentación no se escribe, se deriva del código. Mencionar /redoc y el esquema OpenAPI en /openapi.json.</aside>
+</section>
+
+<!-- 22 TYPE HINTS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">La base de todo</div>
+    <h2>Type hints</h2>
+    <p class="lead">Todo FastAPI se apoya en las anotaciones de tipo de Python. No son obligatorias, pero lo cambian todo.</p>
+    <div class="grid g2" style="margin-top:16px;align-items:start;gap:20px">
+      <div>
+        <div class="cap">sin tipos</div>
+        <pre><code class="language-python">nombre = "Mouse"
+precio = 25.9
+en_stock = True</code></pre>
+      </div>
+      <div>
+        <div class="cap">con tipos (moderno)</div>
+        <pre><code class="language-python" data-hl="1,2,3">nombre: str = "Mouse"
+precio: float = 25.9
+en_stock: bool = True</code></pre>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:14px"><span class="ic">i</span><div>Desde Python 3.9+ se usan los genéricos nativos: <code>list[str]</code>, <code>dict[str, int]</code>. Y desde 3.10, <code>str | None</code> en lugar de <code>Optional[str]</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Mostrar que list[str] reemplaza a typing.List[str]. Este cambio moderno es una de las actualizaciones clave frente a las charlas antiguas.</aside>
+</section>
+
+<!-- 23 DIVISOR 04 -->
+<section class="navy">
+  <div class="pad">
+    <div class="sectionnum">04</div>
+    <h2 style="font-size:1.6em">Rutas y parámetros</h2>
+    <p class="lead" style="color:#CFE6E1;font-size:.6em">El corazón de una API: recibir datos y validarlos</p>
+  </div>
+  <aside class="notes">⏱ 10 s · Divisor. El bloque más largo y el más importante.</aside>
+</section>
+
+<!-- 24 PATH Y OPERACIONES -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Vocabulario</div>
+    <h2>Path y operaciones</h2>
+    <div class="grid g2" style="margin-top:16px;align-items:start;gap:20px">
+      <div>
+        <div class="kv"><b>Path</b> última parte de la URL, desde el primer <code>/</code></div>
+        <div class="kv"><b>Operación</b> el método HTTP aplicado a ese path</div>
+        <div class="kv"><b>Endpoint</b> la combinación path + operación</div>
+      </div>
+      <div>
+        <div class="cap">todas las operaciones</div>
+        <pre><code class="language-python" data-hl="1,2,3,4,5">@app.get("/")
+@app.post("/")
+@app.put("/")
+@app.patch("/")
+@app.delete("/")
+@app.options("/")
+@app.head("/")</code></pre>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 90 s · Explicar que el path separa "intereses" y el verbo la acción. En la práctica usaremos sobre todo GET, POST, PUT y DELETE.</aside>
+</section>
+
+<!-- 25 PARÁMETROS DE RUTA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Datos en la URL</div>
+    <h2>Parámetros de ruta</h2>
+    <p class="lead">Un segmento variable se declara entre llaves y llega como argumento de la función.</p>
+    <div class="ide" style="margin-top:14px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,2,3">@app.get("/productos/{producto_id}")
+async def obtener_producto(producto_id: int):
+    return {"producto_id": producto_id}</code></pre>
+    </div>
+    <div class="callout" style="margin-top:14px"><span class="ic">i</span><div>Al pedir <code>/productos/42</code>, FastAPI llama a la función con <code>producto_id=42</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · El nombre entre llaves debe coincidir con el argumento. Es la primera vez que aparece un dato dinámico.</aside>
+</section>
+
+<!-- 26 RUTA CON TIPOS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Validación gratis</div>
+    <h2>Parámetros con tipos</h2>
+    <p class="lead">Declarar el tipo activa el <b>parseo y la validación</b> automáticos.</p>
+    <div class="ide" style="margin-top:14px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="2">@app.get("/productos/{producto_id}")
+async def obtener(producto_id: int):
+    return {"producto_id": producto_id}</code></pre>
+    </div>
+    <div class="grid g2" style="margin-top:14px;gap:14px">
+      <div class="callout tip" style="margin:0"><span class="ic">✓</span><div><code>/productos/42</code> → <b>200 OK</b>, <code>producto_id</code> es un <code>int</code>.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div><code>/productos/abc</code> → <b>422</b> con un error explicando el tipo.</div></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 90 s · Aquí se ve el valor del tipado: no escribimos validación manual. Mostrar el JSON de error de Pydantic si se puede.</aside>
+</section>
+
+<!-- 27 ENUM -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Valores predefinidos</div>
+    <h2>Enum: valores permitidos</h2>
+    <p class="lead">Cuando un parámetro solo admite ciertos valores, usa <code>Enum</code>.</p>
+    <div class="ide" style="margin-top:14px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="3,4,5,6,8">from enum import Enum
+
+class Categoria(str, Enum):
+    electronica = "electronica"
+    ropa = "ropa"
+    hogar = "hogar"
+
+@app.get("/productos/categoria/{categoria}")
+async def por_categoria(categoria: Categoria):
+    return {"categoria": categoria}</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>La documentación mostrará un desplegable con las opciones válidas. Cualquier otro valor da <b>422</b>.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Enum convierte reglas de negocio en tipos. Heredar de str hace que el valor serialice como texto en el JSON.</aside>
+</section>
+
+<!-- 28 PARÁMETROS DE CONSULTA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Datos en la query</div>
+    <h2>Parámetros de consulta</h2>
+    <p class="lead">Van después del <code>?</code> en la URL, separados por <code>&amp;</code>. Se usan para filtrar, paginar u ordenar.</p>
+    <div class="cap" style="margin-top:12px">URL</div>
+    <pre><code class="language-text">GET /productos?skip=0&amp;limit=10</code></pre>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="2">@app.get("/productos")
+async def listar_productos(skip: int = 0, limit: int = 10):
+    return productos[skip : skip + limit]</code></pre>
+    </div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>Todo argumento que <b>no</b> está en el path y tiene un tipo simple se interpreta como parámetro de consulta.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Diferencia clave path vs query: path identifica el recurso, query lo modula. skip/limit es el patrón clásico de paginación.</aside>
+</section>
+
+<!-- 29 QUERY: DEFAULT / OPCIONAL / REQUERIDO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Tres casos</div>
+    <h2>Por defecto, opcional o requerido</h2>
+    <div class="grid g3" style="margin-top:16px;align-items:start;gap:16px">
+      <div>
+        <div class="cap">por defecto</div>
+        <pre><code class="language-python" data-hl="1">skip: int = 0
+limit: int = 10</code></pre>
+      </div>
+      <div>
+        <div class="cap">opcional</div>
+        <pre><code class="language-python" data-hl="1">q: str | None = None</code></pre>
+      </div>
+      <div>
+        <div class="cap">requerido</div>
+        <pre><code class="language-python" data-hl="1">q: str</code></pre>
+      </div>
+    </div>
+    <div class="grid g3" style="margin-top:12px;gap:16px;font-size:.44em">
+      <div class="callout" style="margin:0"><span class="ic">i</span><div>Si no se envía, toma el valor por defecto.</div></div>
+      <div class="callout" style="margin:0"><span class="ic">i</span><div>Puede faltar; llega como <code>None</code>.</div></div>
+      <div class="callout warn" style="margin:0"><span class="ic">!</span><div>Si falta, FastAPI responde <b>422</b>.</div></div>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Regla de oro: sin valor por defecto = requerido.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Este trío se pregunta siempre. Insistir: la ausencia de default es lo que marca "requerido". Mostrar str | None como reemplazo moderno de Optional[str].</aside>
+</section>
+
+<!-- 30 REQUEST BODY + PYDANTIC -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Enviar datos</div>
+    <h2>Request body con Pydantic</h2>
+    <p class="lead">Los datos que envía el cliente se modelan con una clase de Pydantic.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,3,4,5,6,7,9,10">from pydantic import BaseModel, Field
+
+class Producto(BaseModel):
+    nombre: str
+    descripcion: str | None = None
+    precio: float = Field(gt=0)
+    en_stock: bool = True
+
+@app.post("/productos")
+async def crear_producto(producto: Producto):
+    return producto</code></pre>
+    </div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>FastAPI lee el JSON, lo convierte, lo valida y te entrega un objeto <code>Producto</code> listo para usar.</div></div>
+  </div>
+  <aside class="notes">⏱ 150 s · Aquí está el superpoder. Field(gt=0) es una regla declarativa. El mismo modelo alimenta la validación y la documentación.</aside>
+</section>
+
+<!-- 31 VALIDACIÓN PYDANTIC -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Cuando los datos no cuadran</div>
+    <h2>Validación automática</h2>
+    <p class="lead">Si el cuerpo no cumple el esquema, FastAPI responde <b>422</b> con el detalle exacto.</p>
+    <div class="grid g2" style="margin-top:14px;align-items:start;gap:20px">
+      <div>
+        <div class="cap">enviamos</div>
+        <pre><code class="language-json" data-hl="2">{
+  "nombre": "Mouse", "precio": -5
+}</code></pre>
+      </div>
+      <div>
+        <div class="cap">respuesta 422</div>
+        <pre><code class="language-json" data-hl="3,4">{
+  "detail": [{
+    "loc": ["body", "precio"],
+    "msg": "Input should be greater than 0"
+  }]
+}</code></pre>
+      </div>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>No escribimos ni un <code>if</code>: la regla vive en el modelo y el error indica campo y motivo.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Este es el gran diferenciador frente a validar a mano. Mostrar que el mensaje dice el campo exacto (loc) y por qué falló.</aside>
+</section>
+
+<!-- 32 BODY + PATH + QUERY -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Todo junto</div>
+    <h2>Body + path + query</h2>
+    <p class="lead">FastAPI decide de dónde tomar cada parámetro según su tipo y su nombre.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="2,3,4">@app.put("/productos/{producto_id}")
+async def actualizar(
+    producto_id: int,
+    producto: Producto,
+    notificar: bool = False,
+):
+    return {"id": producto_id, **producto.model_dump()}</code></pre>
+    </div>
+    <div class="grid g3" style="margin-top:12px;gap:14px;font-size:.44em">
+      <div class="callout" style="margin:0"><span class="ic">i</span><div><code>producto_id</code> → viene del <b>path</b>.</div></div>
+      <div class="callout" style="margin:0"><span class="ic">i</span><div><code>producto</code> (Pydantic) → del <b>body</b>.</div></div>
+      <div class="callout" style="margin:0"><span class="ic">i</span><div><code>notificar</code> (simple) → de la <b>query</b>.</div></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 120 s · Regla mental: path si está en la URL, body si es un modelo Pydantic, query si es un tipo simple. model_dump() reemplaza al antiguo .dict() de Pydantic v2.</aside>
+</section>
+
+<!-- 33 RESPONSE MODEL -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Controlar la salida</div>
+    <h2>response_model</h2>
+    <p class="lead">Define qué se devuelve. FastAPI filtra los campos que no estén en el modelo de salida.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="3,6,8">class UsuarioIn(BaseModel):
+    username: str
+    password: str
+
+class UsuarioOut(BaseModel):
+    username: str
+
+@app.post("/usuarios", response_model=UsuarioOut)
+async def crear_usuario(usuario: UsuarioIn):
+    return usuario  # la contraseña nunca se expone</code></pre>
+    </div>
+    <div class="callout err" style="margin-top:12px"><span class="ic">×</span><div>Nunca devuelvas el modelo de entrada si contiene datos sensibles: usa un modelo de salida.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Caso real de seguridad: entrada y salida son modelos distintos. FastAPI descarta los campos extra automáticamente.</aside>
+</section>
+
+<!-- 34 STATUS CODE -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Comunicar el resultado</div>
+    <h2>Códigos de estado explícitos</h2>
+    <p class="lead">Por defecto todo responde 200. Indica el código correcto con <code>status_code</code>.</p>
+    <div class="ide" style="margin-top:14px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,3">from fastapi import status
+
+@app.post("/productos", status_code=status.HTTP_201_CREATED)
+async def crear_producto(producto: Producto):
+    return producto</code></pre>
+    </div>
+    <div class="grid g2" style="margin-top:14px;gap:14px">
+      <div class="kv"><span class="status s2">201</span> recurso creado</div>
+      <div class="kv"><span class="status s2">204</span> sin contenido (DELETE)</div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 90 s · Usar las constantes status.HTTP_* en vez de números mágicos. Es parte de un buen contrato de API.</aside>
+</section>
+
+<!-- 35 ERRORES COMUNES -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Para no tropezar</div>
+    <h2>Errores comunes</h2>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Olvidar <code>async</code> o el tipo en un parámetro: pierdes validación y docs.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Devolver el modelo de entrada con la contraseña incluida.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Usar <code>.dict()</code> (Pydantic v1) en vez de <code>.model_dump()</code>.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Bloquear el event loop con código síncrono pesado dentro de <code>async def</code>.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Confundir path y query: si está en la URL es path; si es filtro, query.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>No declarar <code>response_model</code> y filtrar datos sensibles.</div></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 120 s · Repaso activo: preguntar a la audiencia por qué cada uno es un error. Es el resumen del bloque 04.</aside>
+</section>
+
+<!-- 36 DIVISOR 05 -->
+<section class="navy">
+  <div class="pad">
+    <div class="sectionnum">05</div>
+    <h2 style="font-size:1.6em">Más allá de lo básico</h2>
+    <p class="lead" style="color:#CFE6E1;font-size:.6em">Dependencias y tareas en segundo plano</p>
+  </div>
+  <aside class="notes">⏱ 10 s · Divisor. Dos patrones que separan una demo de una app real.</aside>
+</section>
+
+<!-- 37 INYECCIÓN DE DEPENDENCIAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Patrón clave</div>
+    <h2>Inyección de dependencias</h2>
+    <p class="lead">Una dependencia es una función que FastAPI resuelve y entrega a tu ruta automáticamente.</p>
+    <div class="grid g3" style="margin-top:16px;gap:14px">
+      <div class="card a-cyan"><div class="value" style="font-size:.8em">Reutilizar</div><p>Defines una vez y la usas en muchas rutas.</p></div>
+      <div class="card a-cyan"><div class="value" style="font-size:.8em">Testear</div><p>Fácil de reemplazar por una versión de prueba.</p></div>
+      <div class="card a-cyan"><div class="value" style="font-size:.8em">Ordenar</div><p>Separa la lógica de las operaciones externas.</p></div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>La usaremos para paginación, conexión a la base de datos y el usuario autenticado.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · No es magia: FastAPI mira las dependencias declaradas y las resuelve antes de llamar a la función. Anticipar que es la misma herramienta para get_db y get_current_user.</aside>
+</section>
+
+<!-- 38 DI EJEMPLO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">En código</div>
+    <h2>Una dependencia en acción</h2>
+    <div class="ide" style="margin-top:14px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,3,4,6,7">from fastapi import Depends
+
+def paginacion(skip: int = 0, limit: int = 10):
+    return {"skip": skip, "limit": limit}
+
+@app.get("/productos")
+async def listar(pag: dict = Depends(paginacion)):
+    return pag</code></pre>
+    </div>
+    <div class="callout" style="margin-top:14px"><span class="ic">i</span><div><code>Depends(paginacion)</code> le dice a FastAPI: resuelve esa función (incluidos sus query params) y pásame el resultado.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Mostrar que la dependencia puede tener sus propios parámetros de query, que también aparecen en /docs. Composición de dependencias es el siguiente paso natural.</aside>
+</section>
+
+<!-- 39 BACKGROUND TASKS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Trabajo diferido</div>
+    <h2>Tareas en segundo plano</h2>
+    <p class="lead">Para cosas que deben pasar <b>después</b> de responder: correos, notificaciones, logs.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,3,6,7,10">from fastapi import BackgroundTasks
+
+def enviar_correo(email: str, mensaje: str):
+    ...
+
+@app.post("/pedidos")
+async def crear_pedido(email: str, background_tasks: BackgroundTasks):
+    background_tasks.add_task(enviar_correo, email, "Pedido confirmado")
+    return {"estado": "creado"}</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>El cliente recibe la respuesta al instante; el correo se envía después, sin bloquearlo.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Aclarar que corre en el mismo proceso tras enviar la respuesta. Sirve para trabajo ligero; para pesado, ver la siguiente slide.</aside>
+</section>
+
+<!-- 40 BACKGROUND + DEPENDENCIAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Combinando patrones</div>
+    <h2>BackgroundTasks + dependencias</h2>
+    <p class="lead"><code>BackgroundTasks</code> también funciona dentro de una dependencia; todas las tareas se fusionan y se ejecutan juntas al final.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,2,6">def auditar(background_tasks: BackgroundTasks, q: str | None = None):
+    if q:
+        background_tasks.add_task(registrar_busqueda, q)
+    return q
+
+@app.get("/productos")
+async def listar(q: str = Depends(auditar)):
+    return {"q": q}</code></pre>
+    </div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>Se pueden declarar tareas en la ruta, en una dependencia o en una subdependencia: FastAPI reutiliza el mismo objeto.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Patrón útil para auditoría. Enfatizar que el mismo BackgroundTasks circula por toda la cadena de dependencias.</aside>
+</section>
+
+<!-- 41 CUÁNDO CELERY -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Límites</div>
+    <h2>¿Y si la tarea es pesada?</h2>
+    <div class="grid g2" style="margin-top:18px;align-items:stretch">
+      <div class="card a-cyan"><div class="label">background tasks</div><div class="value" style="font-size:.9em">Simple</div><p>Mismo proceso, tras la respuesta. Ideal para correos, notificaciones y logs.</p></div>
+      <div class="card a-amber"><div class="label">cola de tareas</div><div class="value" style="font-size:.9em">Celery / RQ</div><p>Otro proceso, con broker (Redis/RabbitMQ). Para trabajo pesado, reintentos y varios servidores.</p></div>
+    </div>
+    <div class="callout warn" style="margin-top:16px"><span class="ic">!</span><div>Si la tarea puede tardar minutos o debe sobrevivir a un reinicio, usa una cola, no <code>BackgroundTasks</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Criterio de decisión, no dogmatismo. BackgroundTasks cubre el 80% de los casos; las colas son para lo serio.</aside>
+</section>
+
+<!-- 42 DIVISOR 06 -->
+<section class="navy">
+  <div class="pad">
+    <div class="sectionnum">06</div>
+    <h2 style="font-size:1.6em">Datos y seguridad</h2>
+    <p class="lead" style="color:#CFE6E1;font-size:.6em">Base de datos y autenticación</p>
+  </div>
+  <aside class="notes">⏱ 10 s · Divisor. Aquí la API deja de tener datos en memoria y se vuelve una app real.</aside>
+</section>
+
+<!-- 43 BASE DE DATOS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Persistencia</div>
+    <h2>Base de datos con SQLAlchemy</h2>
+    <p class="lead">FastAPI no impone un ORM. El estándar de facto es SQLAlchemy 2.0.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">database.py</span></div>
+      <pre><code class="language-python" data-hl="1,2,4,6,9,10">from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
+
+DATABASE_URL = "postgresql+psycopg://tienda:tienda@localhost/tienda"
+
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine, autoflush=False)
+
+class Base(DeclarativeBase):
+    pass</code></pre>
+    </div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>Instala el driver con <code>pip install "psycopg[binary]"</code>. El prefijo <code>postgresql+psycopg</code> selecciona el driver moderno (psycopg 3).</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Mostrar la evolución: psycopg2 → psycopg3, y declarative_base() → DeclarativeBase (SQLAlchemy 2.0).</aside>
+</section>
+
+<!-- 44 MODELOS Y ESQUEMAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Dos capas</div>
+    <h2>Modelo ORM vs esquema Pydantic</h2>
+    <div class="grid g2" style="margin-top:14px;align-items:start;gap:20px">
+      <div>
+        <div class="cap">models.py · tabla</div>
+        <pre style="font-size:.37em"><code class="language-python" data-hl="1,4,5,6">from sqlalchemy.orm import Mapped, mapped_column
+from database import Base
+
+class Producto(Base):
+    __tablename__ = "productos"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    nombre: Mapped[str]
+    precio: Mapped[float]</code></pre>
+      </div>
+      <div>
+        <div class="cap">schemas.py · API</div>
+        <pre style="font-size:.37em"><code class="language-python" data-hl="1,5,7,8">from pydantic import BaseModel, ConfigDict
+
+class ProductoOut(BaseModel):
+    id: int
+    nombre: str
+    precio: float
+    model_config = ConfigDict(from_attributes=True)</code></pre>
+      </div>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>El modelo ORM describe la <b>tabla</b>; el esquema Pydantic describe lo que entra y sale por la <b>API</b>. No los mezcles.</div></div>
+  </div>
+  <aside class="notes">⏱ 150 s · Punto que más confunde. from_attributes=True es el reemplazo moderno de orm_mode=True en Pydantic v2: permite leer atributos del objeto ORM.</aside>
+</section>
+
+<!-- 45 CRUD + ENDPOINTS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Conectar todo</div>
+    <h2>Dependencia de sesión y CRUD</h2>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,2,3,4,5,8,9">def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.get("/productos", response_model=list[ProductoOut])
+async def listar(db: Session = Depends(get_db)):
+    return db.query(Producto).all()</code></pre>
+    </div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div><code>get_db</code> usa <code>yield</code>: abre la sesión, la entrega y la cierra al terminar, aunque haya error. Es la dependencia más reutilizada.</div></div>
+  </div>
+  <aside class="notes">⏱ 150 s · El patrón yield garantiza el cierre de la sesión. list[ProductoOut] combina tipado moderno con response_model. La sesión se inyecta igual que cualquier dependencia.</aside>
+</section>
+
+<!-- 46 AUTH -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Proteger la API</div>
+    <h2>Autenticación y autorización</h2>
+    <p class="lead">Autenticar es saber <b>quién</b> eres; autorizar es saber <b>qué</b> puedes hacer.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">security.py</span></div>
+      <pre><code class="language-python" data-hl="1,2">from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")</code></pre>
+    </div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>El esquema OAuth2 dice que el token se obtiene en <code>/token</code>. FastAPI lo usa para pedir el header <code>Authorization: Bearer ...</code> y mostrarlo en <code>/docs</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Distinguir autenticación de autorización. OAuth2PasswordBearer solo describe cómo llega el token; la verificación la haremos en la dependencia.</aside>
+</section>
+
+<!-- 47 GET CURRENT USER -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">La dependencia de usuario</div>
+    <h2>get_current_user</h2>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">security.py</span></div>
+      <pre><code class="language-python" data-hl="1,2,3,4,5">async def get_current_user(token: str = Depends(oauth2_scheme)):
+    usuario = decodificar_token(token)  # verifica firma y expiración
+    if usuario is None:
+        raise HTTPException(status_code=401, detail="Token inválido")
+    return usuario
+
+@app.get("/usuarios/me")
+async def perfil(usuario: Usuario = Depends(get_current_user)):
+    return usuario</code></pre>
+    </div>
+    <div class="callout err" style="margin-top:12px"><span class="ic">×</span><div>En producción usa tokens <b>JWT firmados</b> (python-jose / PyJWT) y contraseñas con <b>hash</b> (passlib/bcrypt). Nunca guardes contraseñas en texto plano.</div></div>
+  </div>
+  <aside class="notes">⏱ 150 s · Una sola dependencia protege todas las rutas que la declaren. El 401 es la respuesta correcta para token ausente o inválido.</aside>
+</section>
+
+<!-- 48 LOGIN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Obtener el token</div>
+    <h2>Login: /token</h2>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,3,4,6">from fastapi.security import OAuth2PasswordRequestForm
+
+@app.post("/token")
+async def login(form: OAuth2PasswordRequestForm = Depends()):
+    # verificar form.username y form.password
+    token = crear_token(form.username)
+    return {"access_token": token, "token_type": "bearer"}</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Con esto, el botón <b>Authorize</b> de <code>/docs</code> funciona y puedes probar rutas protegidas sin escribir headers a mano.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Cerrar el ciclo de auth: /token entrega el token, /docs lo guarda y lo envía como Bearer en las rutas protegidas. Requiere python-multipart.</aside>
+</section>
+
+<!-- 49 CORS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Frontend y backend</div>
+    <h2>CORS</h2>
+    <p class="lead">Si un frontend en otro dominio llama a tu API, el navegador exige CORS.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,3,4,5,6">from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://mitienda.com"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)</code></pre>
+    </div>
+    <div class="callout warn" style="margin-top:12px"><span class="ic">!</span><div>Evita <code>allow_origins=["*"]</code> en producción: enumera los dominios permitidos.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · CORS lo aplica el navegador, no el servidor. Error clásico al conectar React/Vue con FastAPI. Siempre restringir orígenes en producción.</aside>
+</section>
+
+<!-- 50 DIVISOR 07 -->
+<section class="navy">
+  <div class="pad">
+    <div class="sectionnum">07</div>
+    <h2 style="font-size:1.6em">Testing y despliegue</h2>
+    <p class="lead" style="color:#CFE6E1;font-size:.6em">Confianza para cambiar el código y ponerlo en producción</p>
+  </div>
+  <aside class="notes">⏱ 10 s · Último bloque: cómo verificamos y cómo lo llevamos a producción.</aside>
+</section>
+
+<!-- 51 TESTCLIENT -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Probar la API</div>
+    <h2>Testing con TestClient</h2>
+    <p class="lead">Gracias a Starlette, probar una API es como usar <code>requests</code>.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">test_main.py</span></div>
+      <pre><code class="language-python" data-hl="1,2,4,6,7,8">from fastapi.testclient import TestClient
+from main import app
+
+client = TestClient(app)
+
+def test_root():
+    r = client.get("/")
+    assert r.status_code == 200
+    assert r.json() == {"mensaje": "Hola mundo"}</code></pre>
+    </div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>Funciones que empiezan con <code>test_</code> y asserts estándar: pytest lo entiende sin configuración.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · TestClient levanta la app en memoria, sin servidor real. Es la forma más rápida de cubrir endpoints.</aside>
+</section>
+
+<!-- 52 TESTS SEPARADOS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Organizar</div>
+    <h2>Separar código y tests</h2>
+    <div class="grid g2" style="margin-top:14px;align-items:start;gap:20px">
+      <div>
+        <div class="cap">main.py</div>
+        <pre><code class="language-python" data-hl="4">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def read_main():
+    return {"msg": "Hello World"}</code></pre>
+      </div>
+      <div>
+        <div class="cap">test_main.py</div>
+        <pre><code class="language-python" data-hl="1,3,6,8">from fastapi.testclient import TestClient
+from .main import app
+
+client = TestClient(app)
+
+def test_read_main():
+    r = client.get("/")
+    assert r.json() == {"msg": "Hello World"}</code></pre>
+      </div>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Un archivo por módulo (<code>test_&lt;módulo&gt;.py</code>) mantiene el proyecto navegable a medida que crece.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Mostrar la convención de nombres. A medida que la API crece, los tests crecen al lado.</aside>
+</section>
+
+<!-- 53 TESTS ASYNC -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Cuando hay async</div>
+    <h2>Tests asíncronos</h2>
+    <p class="lead">Para probar código asíncrono (por ejemplo una base de datos async) se usa <code>httpx</code> y <code>anyio</code>.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">test_main.py</span></div>
+      <pre><code class="language-python" data-hl="1,2,5,7,8,9">import pytest
+from httpx import AsyncClient, ASGITransport
+from main import app
+
+@pytest.mark.anyio
+async def test_root():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        r = await ac.get("/")
+    assert r.status_code == 200</code></pre>
+    </div>
+    <div class="callout warn" style="margin-top:12px"><span class="ic">!</span><div>Ya no se pasa <code>app=app</code> directamente al cliente: desde httpx 0.27 se usa <code>ASGITransport</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 150 s · Actualización importante: el ejemplo clásico AsyncClient(app=app) está deprecado. Requiere pip install httpx y el plugin anyio de pytest.</aside>
+</section>
+
+<!-- 54 ESTRUCTURA DE PROYECTO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Orden</div>
+    <h2>Estructura de un proyecto real</h2>
+    <div class="layers" style="margin-top:16px">
+      <div class="ly"><b>app/main.py</b><span>crea la app, incluye routers y middleware.</span></div>
+      <div class="ly"><b>app/models.py</b><span>tablas de SQLAlchemy.</span></div>
+      <div class="ly"><b>app/schemas.py</b><span>modelos Pydantic de entrada/salida.</span></div>
+      <div class="ly"><b>app/crud.py</b><span>operaciones contra la base de datos.</span></div>
+      <div class="ly"><b>app/database.py</b><span>engine, sesión y Base.</span></div>
+      <div class="ly"><b>app/security.py</b><span>tokens y usuario actual.</span></div>
+      <div class="ly"><b>tests/</b><span>pruebas junto al código que cubren.</span></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 90 s · No imponer un layout rígido: la idea es separar responsabilidades. A partir de aquí, routers por recurso (productos, pedidos, usuarios).</aside>
+</section>
+
+<!-- 55 DESPLIEGUE -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">A producción</div>
+    <h2 style="color:#fff">Despliegue</h2>
+    <div class="grid g2" style="margin-top:16px;align-items:start;gap:20px">
+      <div>
+        <div class="cap">local</div>
+        <div class="term">
+          <div class="bar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span>bash</span></div>
+          <div class="body"><span class="d">$</span> fastapi dev main.py</div>
+        </div>
+      </div>
+      <div>
+        <div class="cap">producción</div>
+        <div class="term">
+          <div class="bar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span>bash</span></div>
+          <div class="body"><span class="d">$</span> fastapi run main.py <span class="c">--workers</span> 4</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid g3" style="margin-top:16px;gap:14px">
+      <div class="card n a-cyan"><div class="value" style="font-size:.75em;color:#fff">Docker</div><p>Imagen reproducible; un contenedor por servicio.</p></div>
+      <div class="card n a-green"><div class="value" style="font-size:.75em;color:#fff">Workers</div><p>Varios procesos para aprovechar los núcleos de CPU.</p></div>
+      <div class="card n a-amber"><div class="value" style="font-size:.75em;color:#fff">Variables de entorno</div><p>Secretos y URLs de BD fuera del código.</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 120 s · Nunca usar fastapi dev en producción. Config por entorno (pydantic-settings) y contenedores para reproducibilidad.</aside>
+</section>
+
+<!-- 56 QUÉ MÁS TIENE -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Y esto no termina aquí</div>
+    <h2>Qué más tiene FastAPI</h2>
+    <div class="chiprow" style="margin-top:16px">
+      <span class="chip active">WebSockets</span>
+      <span class="chip">FormData</span>
+      <span class="chip">Subida de archivos</span>
+      <span class="chip">Cookies</span>
+      <span class="chip">Middleware</span>
+      <span class="chip">Lifespan</span>
+      <span class="chip">GraphQL (Strawberry)</span>
+      <span class="chip">SQLModel</span>
+      <span class="chip">Alembic</span>
+      <span class="chip">Pydantic Settings</span>
+      <span class="chip">OAuth2 social</span>
+      <span class="chip">Streaming</span>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Todo lo que viste se combina: una API con base de datos, auth, tests y despliegue es la base de cualquier producto.</div></div>
+  </div>
+  <aside class="notes">⏱ 60 s · Abrir el abanico sin profundizar: mostrar que hay camino después del taller. Recomendar SQLModel y Alembic como siguientes pasos.</aside>
+</section>
+
+<!-- 57 CHEATSHEET -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Para llevar</div>
+    <h2>Chuleta de FastAPI</h2>
+    <div class="grid g2" style="margin-top:14px;gap:14px">
+      <div class="kv"><b>Ruta</b> <code>@app.get("/productos")</code></div>
+      <div class="kv"><b>Path param</b> <code>def f(id: int)</code></div>
+      <div class="kv"><b>Query param</b> <code>skip: int = 0</code></div>
+      <div class="kv"><b>Body</b> <code>def f(item: Producto)</code></div>
+      <div class="kv"><b>Validación</b> <code>Field(gt=0)</code></div>
+      <div class="kv"><b>Salida</b> <code>response_model=Out</code></div>
+      <div class="kv"><b>Dependencia</b> <code>x = Depends(fn)</code></div>
+      <div class="kv"><b>Docs</b> <code>/docs</code> · <code>/redoc</code></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 60 s · Repaso relámpago. Sugerir guardar esta slide como referencia para el día a día.</aside>
+</section>
+
+<!-- 58 GRACIAS -->
+<section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.16" data-background-transition="fade">
+  <div class="pad">
+    <div class="kicker" style="color:#7FD8CD">Gracias</div>
+    <h1 style="font-size:1.8em">¿Preguntas?</h1>
+    <p class="lead" style="color:#CFE6E1;font-size:.6em">Construye tu primera API hoy: un recurso, una ruta, un test.</p>
+    <div style="margin-top:1.2em;display:flex;gap:60px;align-items:end">
+      <div>
+        <div style="color:#9FB4D4;font-size:.44em;font-family:'JetBrains Mono'">github · twitter</div>
+        <div style="color:#fff;font-size:.56em;font-family:'JetBrains Mono'">joseamaya · jamayac99</div>
+      </div>
+      <div>
+        <div style="color:#9FB4D4;font-size:.44em;font-family:'JetBrains Mono'">comunidad</div>
+        <div style="color:#fff;font-size:.56em;font-family:'JetBrains Mono'">Python Piura · Piura AI</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 30 s · Agradecer y abrir preguntas. Cerrar con la idea central: FastAPI convierte los tipos de Python en una API validada y documentada.</aside>
+</section>
+
+</div></div>
+<script src="vendor/reveal/reveal.js"></script>
+<script src="vendor/reveal/notes.js"></script>
+<script src="vendor/reveal/highlight.js"></script>
+<script src="vendor/reveal/search.js"></script>
+<script src="vendor/reveal/zoom.js"></script>
+<script src="js/deck.js"></script>
+</body>
+</html>
