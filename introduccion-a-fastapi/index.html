@@ -112,16 +112,16 @@
 <!-- 3 AGENDA -->
 <section class="light">
   <div class="pad">
-    <div class="kicker">Agenda · 60 minutos</div>
+    <div class="kicker">Agenda · ~90 minutos</div>
     <h2>El recorrido de hoy</h2>
     <ul class="agenda" style="margin-top:14px">
       <li><b>01</b> Fundamentos web: qué es una API REST <span>8 min</span></li>
-      <li><b>02</b> FastAPI: qué es y por qué <span>6 min</span></li>
+      <li><b>02</b> FastAPI: qué es y por qué <span>8 min</span></li>
       <li><b>03</b> Primeros pasos: hola mundo y docs <span>8 min</span></li>
-      <li><b>04</b> Rutas, parámetros y validación <span>16 min</span></li>
+      <li><b>04</b> Rutas, parámetros y validación <span>22 min</span></li>
       <li><b>05</b> Dependencias y tareas en segundo plano <span>6 min</span></li>
-      <li><b>06</b> Base de datos y seguridad <span>10 min</span></li>
-      <li><b>07</b> Testing y despliegue <span>6 min</span></li>
+      <li><b>06</b> Base de datos y seguridad <span>20 min</span></li>
+      <li><b>07</b> Testing, routers y despliegue <span>12 min</span></li>
     </ul>
   </div>
   <aside class="notes">⏱ 30 s · Mostrar el mapa completo para que sepan a dónde vamos. Aclarar que cada bloque termina con algo ejecutable: nada queda en el aire.</aside>
@@ -279,7 +279,27 @@
   <aside class="notes">⏱ 90 s · Enfatizar que FastAPI no inventa un lenguaje: aprovecha el tipado de Python. Eso es lo que lo hace distinto a Flask o Django para APIs.</aside>
 </section>
 
-<!-- 14 CARACTERÍSTICAS -->
+<!-- 14 FastAPI vs Flask vs Django -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">¿Por qué FastAPI?</div>
+    <h2>FastAPI vs Flask vs Django</h2>
+    <table style="margin-top:16px">
+      <thead><tr><th></th><th>FastAPI</th><th>Flask</th><th>Django</th></tr></thead>
+      <tbody>
+        <tr><td><b>Tipo</b></td><td>Framework de APIs</td><td>Micro-framework</td><td>Todo incluido</td></tr>
+        <tr><td><b>Validación</b></td><td>Pydantic, integrada</td><td>Manual / extensiones</td><td>Forms + DRF</td></tr>
+        <tr><td><b>Async</b></td><td>Nativo (ASGI)</td><td>Parcial</td><td>Parcial (ASGI)</td></tr>
+        <tr><td><b>Docs</b></td><td>Automáticas (OpenAPI)</td><td>Extensiones</td><td>DRF + drf-spectacular</td></tr>
+        <tr><td><b>Ideal para</b></td><td>APIs y microservicios</td><td>Apps pequeñas</td><td>Apps con admin y ORM</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:14px"><span class="ic">i</span><div>Los tres son Python. FastAPI brilla cuando el <b>contrato de la API</b> y el rendimiento son la prioridad.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · No es "el mejor", es "el más adecuado para APIs". Django sigue siendo gran opción si necesitas admin, ORM y baterías incluidas.</aside>
+</section>
+
+<!-- 15 CARACTERÍSTICAS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Qué trae de fábrica</div>
@@ -297,7 +317,7 @@
   <aside class="notes">⏱ 90 s · No leer como lista: elegir dos o tres y adelantar dónde se verán (validación en bloque 04, dependencias en 05, seguridad en 06).</aside>
 </section>
 
-<!-- 15 SOBRE HOMBROS DE GIGANTES -->
+<!-- 16 SOBRE HOMBROS DE GIGANTES -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Arquitectura</div>
@@ -312,7 +332,7 @@
   <aside class="notes">⏱ 90 s · Starlette = web, Pydantic = datos. Cada mensaje de error de validación viene de Pydantic; cada respuesta y middleware viene de Starlette.</aside>
 </section>
 
-<!-- 16 INSTALACIÓN -->
+<!-- 17 INSTALACIÓN -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">Puesta en marcha</div>
@@ -341,7 +361,7 @@
   <aside class="notes">⏱ 90 s · Mostrar que el entorno virtual es higiene, no opcional. El comando fastapi[standard] es la recomendación oficial actual.</aside>
 </section>
 
-<!-- 17 DIVISOR 03 -->
+<!-- 18 DIVISOR 03 -->
 <section class="navy">
   <div class="pad">
     <div class="sectionnum">03</div>
@@ -351,7 +371,7 @@
   <aside class="notes">⏱ 10 s · Divisor. Aquí empieza lo ejecutable.</aside>
 </section>
 
-<!-- 18 HOLA MUNDO -->
+<!-- 19 HOLA MUNDO -->
 <section class="light">
   <div class="pad">
     <div class="kicker">El mínimo</div>
@@ -371,7 +391,7 @@ async def root():
   <aside class="notes">⏱ 90 s · Escribirlo en vivo si es posible. Señalar que el diccionario se convierte a JSON automáticamente.</aside>
 </section>
 
-<!-- 19 ANALICEMOS EL CÓDIGO -->
+<!-- 20 ANALICEMOS EL CÓDIGO -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Disección</div>
@@ -399,7 +419,7 @@ async def root():
   <aside class="notes">⏱ 120 s · Nombrar los tres conceptos: instancia, decorador de operación y función de operación. Son el vocabulario que usaremos todo el taller.</aside>
 </section>
 
-<!-- 20 EJECUTAR -->
+<!-- 21 EJECUTAR -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">A correr</div>
@@ -421,7 +441,7 @@ async def root():
   <aside class="notes">⏱ 60 s · Mostrar el log: puerto 8000, y el acceso GET / con 200. Explicar la diferencia entre dev y run.</aside>
 </section>
 
-<!-- 21 DOCS AUTOMÁTICAS -->
+<!-- 22 DOCS AUTOMÁTICAS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Regalo de FastAPI</div>
@@ -440,7 +460,7 @@ async def root():
   <aside class="notes">⏱ 90 s · Momento "wow": la documentación no se escribe, se deriva del código. Mencionar /redoc y el esquema OpenAPI en /openapi.json.</aside>
 </section>
 
-<!-- 22 TYPE HINTS -->
+<!-- 23 TYPE HINTS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">La base de todo</div>
@@ -465,7 +485,7 @@ en_stock: bool = True</code></pre>
   <aside class="notes">⏱ 90 s · Mostrar que list[str] reemplaza a typing.List[str]. Este cambio moderno es una de las actualizaciones clave frente a las charlas antiguas.</aside>
 </section>
 
-<!-- 23 DIVISOR 04 -->
+<!-- 24 DIVISOR 04 -->
 <section class="navy">
   <div class="pad">
     <div class="sectionnum">04</div>
@@ -475,7 +495,29 @@ en_stock: bool = True</code></pre>
   <aside class="notes">⏱ 10 s · Divisor. El bloque más largo y el más importante.</aside>
 </section>
 
-<!-- 24 PATH Y OPERACIONES -->
+<!-- 25 El ciclo de una petición -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Mapa del bloque</div>
+    <h2>El ciclo de una petición</h2>
+    <p class="lead">Todo lo que veremos en este bloque ocurre en este recorrido.</p>
+    <div class="reqflow" style="margin-top:22px">
+      <div class="node"><b>Petición</b><small>método + path + body</small></div>
+      <div class="arrow">→</div>
+      <div class="node t"><b>Validación</b><small>Pydantic (422 si falla)</small></div>
+      <div class="arrow">→</div>
+      <div class="node"><b>Dependencias</b><small>Depends(...)</small></div>
+      <div class="arrow">→</div>
+      <div class="node"><b>Función</b><small>tu lógica</small></div>
+      <div class="arrow">→</div>
+      <div class="node t"><b>Respuesta</b><small>response_model → JSON</small></div>
+    </div>
+    <div class="callout tip" style="margin-top:20px"><span class="ic">✓</span><div>Si entiendes este orden, cada pieza de FastAPI encaja en su sitio.</div></div>
+  </div>
+  <aside class="notes">⏱ 60 s · Mapa mental antes de los detalles. Volver a esta slide al terminar el bloque para repasar.</aside>
+</section>
+
+<!-- 26 PATH Y OPERACIONES -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Vocabulario</div>
@@ -501,7 +543,7 @@ en_stock: bool = True</code></pre>
   <aside class="notes">⏱ 90 s · Explicar que el path separa "intereses" y el verbo la acción. En la práctica usaremos sobre todo GET, POST, PUT y DELETE.</aside>
 </section>
 
-<!-- 25 PARÁMETROS DE RUTA -->
+<!-- 27 PARÁMETROS DE RUTA -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Datos en la URL</div>
@@ -518,7 +560,7 @@ async def obtener_producto(producto_id: int):
   <aside class="notes">⏱ 90 s · El nombre entre llaves debe coincidir con el argumento. Es la primera vez que aparece un dato dinámico.</aside>
 </section>
 
-<!-- 26 RUTA CON TIPOS -->
+<!-- 28 RUTA CON TIPOS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Validación gratis</div>
@@ -538,7 +580,7 @@ async def obtener(producto_id: int):
   <aside class="notes">⏱ 90 s · Aquí se ve el valor del tipado: no escribimos validación manual. Mostrar el JSON de error de Pydantic si se puede.</aside>
 </section>
 
-<!-- 27 ENUM -->
+<!-- 29 ENUM -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Valores predefinidos</div>
@@ -562,7 +604,7 @@ async def por_categoria(categoria: Categoria):
   <aside class="notes">⏱ 90 s · Enum convierte reglas de negocio en tipos. Heredar de str hace que el valor serialice como texto en el JSON.</aside>
 </section>
 
-<!-- 28 PARÁMETROS DE CONSULTA -->
+<!-- 30 PARÁMETROS DE CONSULTA -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Datos en la query</div>
@@ -581,7 +623,7 @@ async def listar_productos(skip: int = 0, limit: int = 10):
   <aside class="notes">⏱ 120 s · Diferencia clave path vs query: path identifica el recurso, query lo modula. skip/limit es el patrón clásico de paginación.</aside>
 </section>
 
-<!-- 29 QUERY: DEFAULT / OPCIONAL / REQUERIDO -->
+<!-- 31 QUERY: DEFAULT / OPCIONAL / REQUERIDO -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Tres casos</div>
@@ -611,7 +653,34 @@ limit: int = 10</code></pre>
   <aside class="notes">⏱ 120 s · Este trío se pregunta siempre. Insistir: la ausencia de default es lo que marca "requerido". Mostrar str | None como reemplazo moderno de Optional[str].</aside>
 </section>
 
-<!-- 30 REQUEST BODY + PYDANTIC -->
+<!-- 32 Validación en parámetros -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Reglas declarativas</div>
+    <h2>Validación en parámetros</h2>
+    <p class="lead">Con <code>Query</code> y <code>Path</code> añades restricciones que se validan y aparecen en <code>/docs</code>.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,4,5,6,10">from fastapi import Path, Query
+
+@app.get("/productos")
+async def listar(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
+    q: str | None = Query(None, min_length=2),
+):
+    ...
+
+@app.get("/productos/{producto_id}")
+async def obtener(producto_id: int = Path(gt=0)):
+    ...</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div><code>ge</code>/<code>le</code> (rangos) y <code>min_length</code> se validan solos: fuera de rango → <b>422</b>.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · La validación no es solo de tipos sino de reglas. Todo queda documentado en Swagger sin esfuerzo adicional.</aside>
+</section>
+
+<!-- 33 REQUEST BODY + PYDANTIC -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Enviar datos</div>
@@ -621,22 +690,22 @@ limit: int = 10</code></pre>
       <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
       <pre><code class="language-python" data-hl="1,3,4,5,6,7,9,10">from pydantic import BaseModel, Field
 
-class Producto(BaseModel):
+class ProductoCreate(BaseModel):
     nombre: str
     descripcion: str | None = None
     precio: float = Field(gt=0)
     en_stock: bool = True
 
 @app.post("/productos")
-async def crear_producto(producto: Producto):
+async def crear_producto(producto: ProductoCreate):
     return producto</code></pre>
     </div>
-    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>FastAPI lee el JSON, lo convierte, lo valida y te entrega un objeto <code>Producto</code> listo para usar.</div></div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>FastAPI lee el JSON, lo convierte, lo valida y te entrega un objeto <code>ProductoCreate</code> listo para usar.</div></div>
   </div>
   <aside class="notes">⏱ 150 s · Aquí está el superpoder. Field(gt=0) es una regla declarativa. El mismo modelo alimenta la validación y la documentación.</aside>
 </section>
 
-<!-- 31 VALIDACIÓN PYDANTIC -->
+<!-- 34 VALIDACIÓN PYDANTIC -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Cuando los datos no cuadran</div>
@@ -664,7 +733,7 @@ async def crear_producto(producto: Producto):
   <aside class="notes">⏱ 120 s · Este es el gran diferenciador frente a validar a mano. Mostrar que el mensaje dice el campo exacto (loc) y por qué falló.</aside>
 </section>
 
-<!-- 32 BODY + PATH + QUERY -->
+<!-- 35 BODY + PATH + QUERY -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Todo junto</div>
@@ -675,7 +744,7 @@ async def crear_producto(producto: Producto):
       <pre><code class="language-python" data-hl="2,3,4">@app.put("/productos/{producto_id}")
 async def actualizar(
     producto_id: int,
-    producto: Producto,
+    producto: ProductoCreate,
     notificar: bool = False,
 ):
     return {"id": producto_id, **producto.model_dump()}</code></pre>
@@ -689,7 +758,7 @@ async def actualizar(
   <aside class="notes">⏱ 120 s · Regla mental: path si está en la URL, body si es un modelo Pydantic, query si es un tipo simple. model_dump() reemplaza al antiguo .dict() de Pydantic v2.</aside>
 </section>
 
-<!-- 33 RESPONSE MODEL -->
+<!-- 36 RESPONSE MODEL -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Controlar la salida</div>
@@ -713,7 +782,7 @@ async def crear_usuario(usuario: UsuarioIn):
   <aside class="notes">⏱ 120 s · Caso real de seguridad: entrada y salida son modelos distintos. FastAPI descarta los campos extra automáticamente.</aside>
 </section>
 
-<!-- 34 STATUS CODE -->
+<!-- 37 STATUS CODE -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Comunicar el resultado</div>
@@ -724,7 +793,7 @@ async def crear_usuario(usuario: UsuarioIn):
       <pre><code class="language-python" data-hl="1,3">from fastapi import status
 
 @app.post("/productos", status_code=status.HTTP_201_CREATED)
-async def crear_producto(producto: Producto):
+async def crear_producto(producto: ProductoCreate):
     return producto</code></pre>
     </div>
     <div class="grid g2" style="margin-top:14px;gap:14px">
@@ -735,7 +804,29 @@ async def crear_producto(producto: Producto):
   <aside class="notes">⏱ 90 s · Usar las constantes status.HTTP_* en vez de números mágicos. Es parte de un buen contrato de API.</aside>
 </section>
 
-<!-- 35 ERRORES COMUNES -->
+<!-- 38 Errores y HTTPException -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Errores con sentido</div>
+    <h2>Errores y <code>HTTPException</code></h2>
+    <p class="lead">Para errores de negocio, lanza una excepción con su código HTTP.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,5,6">from fastapi import HTTPException
+
+@app.get("/productos/{producto_id}", response_model=ProductoOut)
+async def obtener(producto_id: int, db: AsyncSession = Depends(get_db)):
+    producto = await db.get(Producto, producto_id)
+    if producto is None:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+    return producto</code></pre>
+    </div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>FastAPI convierte la excepción en <code>{"detail": "..."}</code> con el código indicado. Puedes unificar el formato con <code>@app.exception_handler</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · 404 para "no existe", 400 para datos inválidos de negocio, 403 para prohibido. Un handler global unifica el formato de error.</aside>
+</section>
+
+<!-- 39 ERRORES COMUNES -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Para no tropezar</div>
@@ -752,7 +843,7 @@ async def crear_producto(producto: Producto):
   <aside class="notes">⏱ 120 s · Repaso activo: preguntar a la audiencia por qué cada uno es un error. Es el resumen del bloque 04.</aside>
 </section>
 
-<!-- 36 DIVISOR 05 -->
+<!-- 40 DIVISOR 05 -->
 <section class="navy">
   <div class="pad">
     <div class="sectionnum">05</div>
@@ -762,7 +853,7 @@ async def crear_producto(producto: Producto):
   <aside class="notes">⏱ 10 s · Divisor. Dos patrones que separan una demo de una app real.</aside>
 </section>
 
-<!-- 37 INYECCIÓN DE DEPENDENCIAS -->
+<!-- 41 INYECCIÓN DE DEPENDENCIAS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Patrón clave</div>
@@ -778,7 +869,7 @@ async def crear_producto(producto: Producto):
   <aside class="notes">⏱ 90 s · No es magia: FastAPI mira las dependencias declaradas y las resuelve antes de llamar a la función. Anticipar que es la misma herramienta para get_db y get_current_user.</aside>
 </section>
 
-<!-- 38 DI EJEMPLO -->
+<!-- 42 DI EJEMPLO -->
 <section class="light">
   <div class="pad">
     <div class="kicker">En código</div>
@@ -799,7 +890,7 @@ async def listar(pag: dict = Depends(paginacion)):
   <aside class="notes">⏱ 120 s · Mostrar que la dependencia puede tener sus propios parámetros de query, que también aparecen en /docs. Composición de dependencias es el siguiente paso natural.</aside>
 </section>
 
-<!-- 39 BACKGROUND TASKS -->
+<!-- 43 BACKGROUND TASKS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Trabajo diferido</div>
@@ -822,7 +913,7 @@ async def crear_pedido(email: str, background_tasks: BackgroundTasks):
   <aside class="notes">⏱ 120 s · Aclarar que corre en el mismo proceso tras enviar la respuesta. Sirve para trabajo ligero; para pesado, ver la siguiente slide.</aside>
 </section>
 
-<!-- 40 BACKGROUND + DEPENDENCIAS -->
+<!-- 44 BACKGROUND + DEPENDENCIAS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Combinando patrones</div>
@@ -844,7 +935,7 @@ async def listar(q: str = Depends(auditar)):
   <aside class="notes">⏱ 90 s · Patrón útil para auditoría. Enfatizar que el mismo BackgroundTasks circula por toda la cadena de dependencias.</aside>
 </section>
 
-<!-- 41 CUÁNDO CELERY -->
+<!-- 45 CUÁNDO CELERY -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Límites</div>
@@ -858,7 +949,7 @@ async def listar(q: str = Depends(auditar)):
   <aside class="notes">⏱ 90 s · Criterio de decisión, no dogmatismo. BackgroundTasks cubre el 80% de los casos; las colas son para lo serio.</aside>
 </section>
 
-<!-- 42 DIVISOR 06 -->
+<!-- 46 DIVISOR 06 -->
 <section class="navy">
   <div class="pad">
     <div class="sectionnum">06</div>
@@ -868,7 +959,29 @@ async def listar(q: str = Depends(auditar)):
   <aside class="notes">⏱ 10 s · Divisor. Aquí la API deja de tener datos en memoria y se vuelve una app real.</aside>
 </section>
 
-<!-- 43 BASE DE DATOS -->
+<!-- 47 Configuración por entorno -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">12-factor</div>
+    <h2>Configuración por entorno</h2>
+    <p class="lead">Nada de secretos en el código: se leen del entorno con <code>pydantic-settings</code>.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">config.py</span></div>
+      <pre><code class="language-python" data-hl="1,3,4,5,7">from pydantic_settings import BaseSettings, SettingsConfigDict
+
+class Settings(BaseSettings):
+    database_url: str
+    secret_key: str
+    model_config = SettingsConfigDict(env_file=".env")
+
+settings = Settings()</code></pre>
+    </div>
+    <div class="callout warn" style="margin-top:12px"><span class="ic">!</span><div>Instala <code>pip install pydantic-settings</code>. Añade <code>.env</code> a <code>.gitignore</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Mismo código en dev, staging y prod; solo cambian las variables. Es la base de la metodología 12-factor.</aside>
+</section>
+
+<!-- 48 BASE DE DATOS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Persistencia</div>
@@ -876,23 +989,46 @@ async def listar(q: str = Depends(auditar)):
     <p class="lead">FastAPI no impone un ORM. El estándar de facto es SQLAlchemy 2.0.</p>
     <div class="ide" style="margin-top:12px">
       <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">database.py</span></div>
-      <pre><code class="language-python" data-hl="1,2,4,6,9,10">from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+      <pre><code class="language-python" data-hl="1,2,4,6,9,10">from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase
 
 DATABASE_URL = "postgresql+psycopg://tienda:tienda@localhost/tienda"
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine, autoflush=False)
+engine = create_async_engine(DATABASE_URL)
+SessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 class Base(DeclarativeBase):
     pass</code></pre>
     </div>
-    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>Instala el driver con <code>pip install "psycopg[binary]"</code>. El prefijo <code>postgresql+psycopg</code> selecciona el driver moderno (psycopg 3).</div></div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>Instala <code>pip install "psycopg[binary]"</code>. El prefijo <code>postgresql+psycopg</code> usa psycopg 3, que funciona en modo <b>async</b> y sync.</div></div>
   </div>
   <aside class="notes">⏱ 120 s · Mostrar la evolución: psycopg2 → psycopg3, y declarative_base() → DeclarativeBase (SQLAlchemy 2.0).</aside>
 </section>
 
-<!-- 44 MODELOS Y ESQUEMAS -->
+<!-- 49 Ciclo de vida: lifespan -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Arranque y cierre</div>
+    <h2>Ciclo de vida: <code>lifespan</code></h2>
+    <p class="lead">Recursos que se abren al arrancar la app y se cierran al apagarla.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,4,5,6,8">from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await conectar_recursos()
+    yield
+    await liberar_recursos()
+
+app = FastAPI(lifespan=lifespan)</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Reemplaza a los antiguos eventos <code>startup</code>/<code>shutdown</code>. Ideal para pools de conexión y clientes HTTP.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Todo lo que ocurre antes del yield es arranque; después, cierre. Evita abrir conexiones en cada petición.</aside>
+</section>
+
+<!-- 50 MODELOS Y ESQUEMAS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Dos capas</div>
@@ -925,30 +1061,49 @@ class ProductoOut(BaseModel):
   <aside class="notes">⏱ 150 s · Punto que más confunde. from_attributes=True es el reemplazo moderno de orm_mode=True en Pydantic v2: permite leer atributos del objeto ORM.</aside>
 </section>
 
-<!-- 45 CRUD + ENDPOINTS -->
+<!-- 51 CRUD + ENDPOINTS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Conectar todo</div>
     <h2>Dependencia de sesión y CRUD</h2>
     <div class="ide" style="margin-top:12px">
       <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
-      <pre><code class="language-python" data-hl="1,2,3,4,5,8,9">def get_db():
-    db = SessionLocal()
-    try:
+      <pre><code class="language-python" data-hl="1,2,4,5,8,9,10">from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+async def get_db():
+    async with SessionLocal() as db:
         yield db
-    finally:
-        db.close()
 
 @app.get("/productos", response_model=list[ProductoOut])
-async def listar(db: Session = Depends(get_db)):
-    return db.query(Producto).all()</code></pre>
+async def listar(db: AsyncSession = Depends(get_db)):
+    result = await db.scalars(select(Producto))
+    return result.all()</code></pre>
     </div>
-    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div><code>get_db</code> usa <code>yield</code>: abre la sesión, la entrega y la cierra al terminar, aunque haya error. Es la dependencia más reutilizada.</div></div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div><code>get_db</code> usa <code>yield</code>: abre la sesión, la entrega y la cierra al terminar. Y con <code>async with</code> + <code>await</code> no bloquea el event loop.</div></div>
+    <div class="callout warn" style="margin-top:8px"><span class="ic">!</span><div>Si usas SQLAlchemy <b>síncrono</b>, declara la ruta con <code>def</code> (no <code>async def</code>): FastAPI la ejecuta en un threadpool y evita bloquear el loop.</div></div>
   </div>
   <aside class="notes">⏱ 150 s · El patrón yield garantiza el cierre de la sesión. list[ProductoOut] combina tipado moderno con response_model. La sesión se inyecta igual que cualquier dependencia.</aside>
 </section>
 
-<!-- 46 AUTH -->
+<!-- 52 Migraciones con Alembic -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Versionar el esquema</div>
+    <h2>Migraciones con Alembic</h2>
+    <p class="lead">El esquema de la base de datos evoluciona con versiones reproducibles.</p>
+    <div class="term" style="margin-top:12px">
+      <div class="bar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span>bash</span></div>
+      <div class="body"><span class="d">$</span> alembic init migrations
+<span class="d">$</span> alembic revision --autogenerate -m <span class="g">"crear productos"</span>
+<span class="d">$</span> alembic upgrade head</div>
+    </div>
+    <div class="callout warn" style="margin-top:14px"><span class="ic">!</span><div>Usa <code>Base.metadata.create_all()</code> solo en pruebas. En producción, siempre migraciones.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Alembic genera la migración comparando los modelos con la base de datos. Cada cambio queda versionado y es reversible.</aside>
+</section>
+
+<!-- 53 AUTH -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Proteger la API</div>
@@ -965,17 +1120,23 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")</code></pre>
   <aside class="notes">⏱ 120 s · Distinguir autenticación de autorización. OAuth2PasswordBearer solo describe cómo llega el token; la verificación la haremos en la dependencia.</aside>
 </section>
 
-<!-- 47 GET CURRENT USER -->
+<!-- 54 GET CURRENT USER -->
 <section class="light">
   <div class="pad">
     <div class="kicker">La dependencia de usuario</div>
     <h2>get_current_user</h2>
     <div class="ide" style="margin-top:12px">
       <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">security.py</span></div>
-      <pre><code class="language-python" data-hl="1,2,3,4,5">async def get_current_user(token: str = Depends(oauth2_scheme)):
+      <pre style="font-size:.42em"><code class="language-python" data-hl="1,3,4,5,6,7,8,9,12,13">from fastapi import HTTPException
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
     usuario = decodificar_token(token)  # verifica firma y expiración
     if usuario is None:
-        raise HTTPException(status_code=401, detail="Token inválido")
+        raise HTTPException(
+            status_code=401,
+            detail="Token inválido",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return usuario
 
 @app.get("/usuarios/me")
@@ -987,7 +1148,7 @@ async def perfil(usuario: Usuario = Depends(get_current_user)):
   <aside class="notes">⏱ 150 s · Una sola dependencia protege todas las rutas que la declaren. El 401 es la respuesta correcta para token ausente o inválido.</aside>
 </section>
 
-<!-- 48 LOGIN -->
+<!-- 55 LOGIN -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Obtener el token</div>
@@ -1002,12 +1163,34 @@ async def login(form: OAuth2PasswordRequestForm = Depends()):
     token = crear_token(form.username)
     return {"access_token": token, "token_type": "bearer"}</code></pre>
     </div>
-    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Con esto, el botón <b>Authorize</b> de <code>/docs</code> funciona y puedes probar rutas protegidas sin escribir headers a mano.</div></div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Con esto, el botón <b>Authorize</b> de <code>/docs</code> funciona y puedes probar rutas protegidas sin escribir headers a mano. Requiere <code>pip install python-multipart</code>.</div></div>
   </div>
   <aside class="notes">⏱ 120 s · Cerrar el ciclo de auth: /token entrega el token, /docs lo guarda y lo envía como Bearer en las rutas protegidas. Requiere python-multipart.</aside>
 </section>
 
-<!-- 49 CORS -->
+<!-- 56 Autorización: roles y scopes -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Autenticación ≠ autorización</div>
+    <h2>Autorización: roles y scopes</h2>
+    <p class="lead">Ya sabes quién es; ahora define qué puede hacer.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">main.py</span></div>
+      <pre><code class="language-python" data-hl="1,3,4,6,7">from fastapi import Security
+
+@app.post(
+    "/productos",
+    dependencies=[Security(oauth2_scheme, scopes=["productos:escribir"])],
+)
+async def crear_producto(producto: ProductoCreate):
+    ...</code></pre>
+    </div>
+    <div class="callout" style="margin-top:12px"><span class="ic">i</span><div>Los <b>scopes</b> viajan en el token y se verifican en <code>get_current_user</code>. Alternativa simple: un campo <code>rol</code> en el usuario.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Cierra el ciclo de seguridad. Roles para permisos amplios; scopes para permisos finos por endpoint.</aside>
+</section>
+
+<!-- 57 CORS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Frontend y backend</div>
@@ -1029,7 +1212,7 @@ app.add_middleware(
   <aside class="notes">⏱ 90 s · CORS lo aplica el navegador, no el servidor. Error clásico al conectar React/Vue con FastAPI. Siempre restringir orígenes en producción.</aside>
 </section>
 
-<!-- 50 DIVISOR 07 -->
+<!-- 58 DIVISOR 07 -->
 <section class="navy">
   <div class="pad">
     <div class="sectionnum">07</div>
@@ -1039,7 +1222,7 @@ app.add_middleware(
   <aside class="notes">⏱ 10 s · Último bloque: cómo verificamos y cómo lo llevamos a producción.</aside>
 </section>
 
-<!-- 51 TESTCLIENT -->
+<!-- 59 TESTCLIENT -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Probar la API</div>
@@ -1062,7 +1245,7 @@ def test_root():
   <aside class="notes">⏱ 120 s · TestClient levanta la app en memoria, sin servidor real. Es la forma más rápida de cubrir endpoints.</aside>
 </section>
 
-<!-- 52 TESTS SEPARADOS -->
+<!-- 60 TESTS SEPARADOS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Organizar</div>
@@ -1095,7 +1278,7 @@ def test_read_main():
   <aside class="notes">⏱ 90 s · Mostrar la convención de nombres. A medida que la API crece, los tests crecen al lado.</aside>
 </section>
 
-<!-- 53 TESTS ASYNC -->
+<!-- 61 TESTS ASYNC -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Cuando hay async</div>
@@ -1103,9 +1286,13 @@ def test_read_main():
     <p class="lead">Para probar código asíncrono (por ejemplo una base de datos async) se usa <code>httpx</code> y <code>anyio</code>.</p>
     <div class="ide" style="margin-top:12px">
       <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">test_main.py</span></div>
-      <pre><code class="language-python" data-hl="1,2,5,7,8,9">import pytest
+      <pre style="font-size:.4em"><code class="language-python" data-hl="1,2,5,6,7,9,11,12,13">import pytest
 from httpx import AsyncClient, ASGITransport
 from main import app
+
+@pytest.fixture
+def anyio_backend():
+    return "asyncio"
 
 @pytest.mark.anyio
 async def test_root():
@@ -1119,7 +1306,64 @@ async def test_root():
   <aside class="notes">⏱ 150 s · Actualización importante: el ejemplo clásico AsyncClient(app=app) está deprecado. Requiere pip install httpx y el plugin anyio de pytest.</aside>
 </section>
 
-<!-- 54 ESTRUCTURA DE PROYECTO -->
+<!-- 62 Sobrescribir dependencias en tests -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Tests sin base de datos</div>
+    <h2>Sobrescribir dependencias</h2>
+    <p class="lead">Reemplaza una dependencia real por una de prueba sin tocar el código.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">test_productos.py</span></div>
+      <pre><code class="language-python" data-hl="1,4,6,8">from main import app, get_db
+from fastapi.testclient import TestClient
+
+async def db_falsa():
+    yield FakeSession()
+
+app.dependency_overrides[get_db] = db_falsa
+
+def test_listar():
+    client = TestClient(app)
+    assert client.get("/productos").status_code == 200</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Tests rápidos y aislados: no dependen de una base de datos real. Recuerda limpiar <code>app.dependency_overrides</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Esta es la razón de ser de la inyección de dependencias: poder sustituirlas. Ideal para CI sin servicios externos.</aside>
+</section>
+
+<!-- 63 Routers: APIRouter -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Modularizar</div>
+    <h2>Routers con <code>APIRouter</code></h2>
+    <p class="lead">Un router por recurso: el proyecto crece sin que <code>main.py</code> explote.</p>
+    <div class="grid g2" style="margin-top:12px;align-items:start;gap:20px">
+      <div>
+        <div class="cap">routers/productos.py</div>
+        <pre><code class="language-python" data-hl="1,3,4,5">from fastapi import APIRouter
+
+router = APIRouter(
+    prefix="/productos",
+    tags=["productos"],
+)
+
+@router.get("/")
+async def listar(...):
+    ...</code></pre>
+      </div>
+      <div>
+        <div class="cap">main.py</div>
+        <pre><code class="language-python" data-hl="1,3">from routers import productos
+
+app.include_router(productos.router)</code></pre>
+      </div>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div><code>prefix</code> evita repetir la ruta y <code>tags</code> agrupa los endpoints en <code>/docs</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · A partir de aquí, cada recurso (productos, pedidos, usuarios) vive en su propio archivo. Es el paso de demo a proyecto.</aside>
+</section>
+
+<!-- 64 ESTRUCTURA DE PROYECTO -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Orden</div>
@@ -1137,7 +1381,7 @@ async def test_root():
   <aside class="notes">⏱ 90 s · No imponer un layout rígido: la idea es separar responsabilidades. A partir de aquí, routers por recurso (productos, pedidos, usuarios).</aside>
 </section>
 
-<!-- 55 DESPLIEGUE -->
+<!-- 65 DESPLIEGUE -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">A producción</div>
@@ -1167,7 +1411,7 @@ async def test_root():
   <aside class="notes">⏱ 120 s · Nunca usar fastapi dev en producción. Config por entorno (pydantic-settings) y contenedores para reproducibilidad.</aside>
 </section>
 
-<!-- 56 QUÉ MÁS TIENE -->
+<!-- 66 QUÉ MÁS TIENE -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Y esto no termina aquí</div>
@@ -1191,7 +1435,7 @@ async def test_root():
   <aside class="notes">⏱ 60 s · Abrir el abanico sin profundizar: mostrar que hay camino después del taller. Recomendar SQLModel y Alembic como siguientes pasos.</aside>
 </section>
 
-<!-- 57 CHEATSHEET -->
+<!-- 67 CHEATSHEET -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Para llevar</div>
@@ -1200,7 +1444,7 @@ async def test_root():
       <div class="kv"><b>Ruta</b> <code>@app.get("/productos")</code></div>
       <div class="kv"><b>Path param</b> <code>def f(id: int)</code></div>
       <div class="kv"><b>Query param</b> <code>skip: int = 0</code></div>
-      <div class="kv"><b>Body</b> <code>def f(item: Producto)</code></div>
+      <div class="kv"><b>Body</b> <code>def f(item: ProductoCreate)</code></div>
       <div class="kv"><b>Validación</b> <code>Field(gt=0)</code></div>
       <div class="kv"><b>Salida</b> <code>response_model=Out</code></div>
       <div class="kv"><b>Dependencia</b> <code>x = Depends(fn)</code></div>
@@ -1210,7 +1454,7 @@ async def test_root():
   <aside class="notes">⏱ 60 s · Repaso relámpago. Sugerir guardar esta slide como referencia para el día a día.</aside>
 </section>
 
-<!-- 58 GRACIAS -->
+<!-- 68 GRACIAS -->
 <section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.16" data-background-transition="fade">
   <div class="pad">
     <div class="kicker" style="color:#7FD8CD">Gracias</div>
