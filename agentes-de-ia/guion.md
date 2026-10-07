@@ -2,7 +2,7 @@
 
 **Subtítulo:** De un LLM que responde a un agente que actúa.
 **Autor:** José Miguel Amaya Camacho · Piura AI.
-**Duración:** ~31 min · 33 slides · sin demos en vivo (explicación descriptiva).
+**Duración:** ~27 min · 28 slides · sin demos en vivo (explicación descriptiva).
 **Público:** developers (mixto). Código en Python.
 
 > Convención: voz en off + pistas de escena + tiempo acumulado `[acum m:ss]`.
@@ -20,7 +20,7 @@
 `[acum 1:30]`
 
 ### 3 · El recorrido
-"Estos son los cuatro tramos de la charla: qué es un agente, cómo funciona, cómo se construye con código, y un mapa del resto del ecosistema. Todo apunta a que puedas construir el tuyo."
+"Estos son los cuatro tramos de la charla: qué es un agente, cómo funciona, cómo empezar a construir con LangChain, y un mapa del resto del ecosistema. Todo apunta a que puedas construir el tuyo."
 "Antes de arrancar: ¿cuántos de ustedes ya construyeron algo con un LLM? Levanten la mano. Esa es la base de todo lo que viene."
 `[acum 2:10]`
 
@@ -100,111 +100,86 @@
 
 ---
 
-## ACTO 3 · CÓMO CONSTRUIRLOS: LANGCHAIN + LANGGRAPH (12 min)
+## ACTO 3 · CÓMO CONSTRUIRLOS: LANGCHAIN + LANGGRAPH (8 min)
 
 ### 16 · El stack 2026
 "Herramientas concretas. **LangChain** te da un agente listo en una función. **LangGraph** te da el control del flujo cuando lo necesitas. Y **LangSmith** observa. Dato 2026: `create_react_agent` se deprecó; el estándar ahora es `create_agent`."
 "Pregunta: ¿quién ha usado LangChain o LangGraph antes?"
 `[acum 14:10]`
 
-### 17 · LangChain v1: el agente mínimo
-"Un agente completo son cuatro líneas. `create_agent(model, tools, system_prompt)`. Y nada más. La herramienta la escribes con `@tool`. LangChain se encarga del bucle."
-"Por dentro construye un grafo: manda el mensaje al modelo; si pide una herramienta, la ejecuta y le devuelve el resultado; y repite hasta que el modelo responde sin pedir nada."
-`[acum 15:10]`
+### 17 · El agente mínimo
+"Un agente completo son cuatro líneas: `create_agent(model, tools, system_prompt)`. Y nada más. La herramienta la escribes con `@tool`; LangChain se encarga del bucle."
+"Y el `system_prompt` son las reglas: rol y objetivo; reglas y límites; formato y tono; y qué hacer cuando no sabe —no inventar, usar una herramienta o decirlo—."
+"Por dentro, `create_agent` arma un grafo: manda el mensaje al modelo; si pide una herramienta, la ejecuta y le devuelve el resultado; y repite hasta que el modelo responde sin pedir nada."
+`[acum 15:40]`
 
-### 18 · Las instrucciones (system prompt)
-"El agente necesita reglas. Eso es el system prompt: quién es, qué debe lograr, qué puede y qué no, y cómo responder."
-"Cuatro cosas: rol y objetivo; reglas y límites; formato y tono; y qué hacer cuando no sabe —no inventar, usar una herramienta o decirlo—."
-"El system prompt define el comportamiento; las descripciones de las tools definen cuándo usarlas. Son dos prompts distintos, y ambos importan."
-`[acum 16:10]`
-
-### 19 · Tools
+### 18 · Tools
 "La herramienta: un decorador, tipos en los parámetros y un docstring claro. Eso es todo lo que necesita el modelo para usarla bien. Argumentos tipados = contrato; docstring = prompt."
 "Y lo que decide cuándo se usa una tool no es su código: es su descripción. Por eso: pocas herramientas bien documentadas, nombres claros y errores útiles. La descripción de las tools es el prompt que más importa."
-`[acum 17:00]`
+`[acum 16:30]`
 
-### 20 · Modelo y middleware
-"Dos ideas. Una: el modelo es una pieza sustituible. `openai:gpt-5` es solo una cadena de texto; `init_chat_model` te deja cambiar de proveedor con una línea, y las *content blocks* dan un formato común a las salidas (texto, imágenes y más)."
-"Dos: el *middleware*. Son hooks que se enganchan **antes y después del modelo, y antes y después de cada tool**, sin tocar el bucle. Vienen en categorías: contexto (resumir, memorizar), guardrails (detectar y redactar datos sensibles como un correo, PII), aprobación humana, resiliencia (reintentos, fallbacks y límites) y planificación con subagentes. No es un runtime aparte: corre dentro del mismo grafo compilado."
-"Analogía: el middleware es como el control de calidad de una línea de montaje: revisa lo que entra y sale sin cambiar la máquina."
-`[acum 18:40]`
+### 19 · Modelo, middleware y salida
+"Tres ideas. Una: el modelo es una pieza sustituible. `openai:gpt-5` es solo una cadena de texto; `init_chat_model` te deja cambiar de proveedor con una línea, y las *content blocks* dan un formato común a las salidas."
+"Dos: el *middleware*. Hooks que se enganchan antes y después del modelo, y antes y después de cada tool: gestión de contexto, guardrails (PII), aprobación humana, resiliencia y subagentes. Corre dentro del mismo grafo."
+"Tres: la salida. Estructurada con Pydantic (`response_format` → `structured_response`) para integrarla con tu sistema, y streaming para ver la respuesta en vivo. Analogía: la salida estructurada es como pedir un formulario relleno en vez de una carta libre."
+`[acum 17:50]`
 
-### 21 · Salida estructurada y streaming
-"Dos detalles que hacen al agente usable. Uno: **salida estructurada**. Para integrar con tu sistema, el modelo devuelve un objeto validado en vez de texto suelto; se activa con `response_format` y el resultado queda en `structured_response`."
-"Dos: **streaming**. Ver la respuesta mientras se escribe mejora la experiencia y la latencia percibida, y se activa igual de simple."
-"Analogía: la salida estructurada es como pedir un formulario relleno en vez de una carta libre: tu sistema la lee sin ambigüedad."
-`[acum 19:30]`
-
-### 22 · Seguridad
+### 20 · Seguridad
 "Como el modelo propone y tu código ejecuta, la seguridad vive en tu código. Cuatro ideas."
 "Uno: **mínimo privilegio** — las herramientas corren con tus permisos y límites, nunca con los del modelo. Dos: **valida los argumentos** antes de ejecutar. Tres: **prompt injection** — el contenido externo, un documento o una web, son datos, no órdenes; no dejes que secuestren al agente. Y cuatro: **guardrails** para datos sensibles (PII) y aprobación humana en acciones críticas."
 "En una frase: el modelo decide; la ejecución y el permiso viven en tu código."
 "Analogía: mínimo privilegio es darle a un becario la llave de un cajón, no la del edificio."
-`[acum 20:30]`
+`[acum 18:50]`
 
-### 23 · LangGraph: cuándo bajar de nivel
-"`create_agent` cubre el 80%. ¿Cuándo bajas a LangGraph? Cuando necesitas control explícito del flujo: ramas condicionales, varios agentes, ciclos con reglas propias, o interrupciones en puntos exactos. LangChain para arrancar; LangGraph para orquestar."
-"Y en medio hay una pieza que conviene conocer: **Deep Agents**, `create_deep_agent`. Es un arnés ya prearmado con planificación, sistema de archivos y subagentes, para tareas largas. Solo lo nombro; existe y se apoya en lo mismo que ya viste."
-`[acum 21:10]`
+### 21 · LangGraph: control cuando lo necesitas
+"`create_agent` cubre el 80%. ¿Cuándo bajas a LangGraph? Cuando necesitas control explícito: ramas condicionales, varios agentes, ciclos con reglas propias o interrupciones en puntos exactos. LangChain para arrancar; LangGraph para orquestar."
+"LangGraph es un **grafo con estado**: un estado tipado, nodos (pasos) y aristas que deciden a dónde ir. Añade **memoria** (checkpointer por hilo, store entre hilos) y el **humano en el bucle** (pausa, aprueba y reanuda)."
+"El detalle de cada pieza —grafo, persistencia, interrupt— merece su propio espacio; aquí quédate con la idea: es la caja de herramientas para cuando el bucle estándar no alcanza."
+`[acum 20:10]`
 
-### 24 · StateGraph
-"Un grafo: un **estado** (un diccionario tipado), **nodos** (funciones que transforman el estado) y **aristas** que deciden a dónde ir. Es como un diagrama de flujo, pero donde las flechas se deciden solas."
-"Las aristas condicionales son la clave: el flujo no es fijo, depende del estado."
-`[acum 22:10]`
-
-### 25 · Persistencia
-"Le agregas un *checkpointer* y el agente recuerda entre turnos: guarda el hilo. El *store*, en cambio, guarda los hechos que cruzan conversaciones. Le das un `thread_id` y separa conversaciones. Y ojo con la distinción: el `thread_id` identifica la conversación; el `context` lleva los datos por ejecución, como el `user_id` o una bandera de configuración."
-"La memoria en RAM se pierde al reiniciar el proceso; para persistir de verdad se usa SQLite en desarrollo y Postgres —o Mongo— en producción."
-"Analogía: el checkpointer es como guardar la partida: cierras y continúas después por donde ibas."
-`[acum 23:00]`
-
-### 26 · HITL con interrupt
-"Y para el humano: con `HumanInTheLoopMiddleware` o con `interrupt`, el grafo se pausa antes de una herramienta marcada como sensible. Tú apruebas, rechazas o editas, y con `Command(resume=...)` continúa. El estado quedó guardado, así que la pausa puede durar horas."
-`[acum 23:50]`
-
-### 27 · La recuperación (RAG)
+### 22 · La recuperación (RAG)
 "Falta la recuperación, el **RAG**: son las siglas de Retrieval-Augmented Generation, recuperar información y añadirla al contexto del modelo."
 "Es como cuando contestas un examen con apuntes: buscas el dato que necesitas y lo usas para responder, en vez de fiarte de la memoria. Quédate con la idea: responde con tus datos, no con imaginación."
 "Por dentro: tus documentos se parten en fragmentos; cada uno se convierte en un vector (*embedding*) y se guarda en un índice. Ante una pregunta, se buscan los fragmentos más parecidos y se añaden al contexto. El agente decide cuándo buscar; la profundidad de RAG merece su propio espacio."
-`[acum 24:40]`
+`[acum 21:00]`
 
-### 28 · El agente completo, de una pieza
+### 23 · El agente completo, de una pieza
 "Recapitulemos con el plano: un agente completo es un modelo, con instrucciones, herramientas, middleware y memoria. Todo eso junto —el modelo y su arnés— es el agente."
 "Lo demás —la recuperación, los canales, la observabilidad— no es el agente: se conecta alrededor."
-`[acum 25:40]`
+`[acum 22:00]`
 
 ---
 
 ## ACTO 4 · ALREDEDOR Y ECOSISTEMA (3 min)
 
-### 29 · El agente no vive solo
+### 24 · El agente no vive solo
 "Un agente no vive solo. Lo que construiste es el núcleo. A su alrededor hay cuatro piezas que hoy solo nombro para que las reconozcas."
 "**Canales:** por dónde entra y sale el mensaje (WhatsApp, Telegram, web); cada canal solo traduce. **Núcleo:** la pieza que recibe, junta mensajes seguidos y arma el contexto antes de pensar. **Observabilidad:** ver cada turno por dentro —qué nodo corrió, qué herramienta se llamó, cuántos tokens—. **Evaluación:** medir si el agente acierta —¿eligió bien la herramienta?, ¿la respuesta salió de los datos?—."
 "Cada una merece su propio espacio. Quédate con los nombres."
-`[acum 27:00]`
+`[acum 23:20]`
 
-### 30 · Protocolos: MCP y A2A
+### 25 · Protocolos: MCP y A2A
 "Antes de cerrar, una distinción que confunde mucho: **MCP** y **A2A** no son frameworks. Un framework construye y orquesta tu agente; un protocolo es un contrato para conectarlo con el exterior. No compiten: se combinan."
 "**MCP**, Model Context Protocol: cómo un agente se conecta a **herramientas y datos**. El enchufe universal: describes la tool una vez y cualquier agente la usa. **A2A**, Agent-to-Agent: cómo un agente **habla con otro** agente; un idioma y una tarjeta de presentación comunes."
 "En una frase: el framework es cómo construyes tu agente; el protocolo, cómo se conecta con lo demás."
-`[acum 28:00]`
+`[acum 24:20]`
 
-### 31 · Otros frameworks
+### 26 · Otros frameworks
 "Ya vimos LangChain y LangGraph, pero no son los únicos. El ecosistema se elige por filosofía, no por moda. ¿Equipos con roles? CrewAI. ¿Datos y RAG? LlamaIndex. ¿Tipado y validación? Pydantic AI. ¿Conversación o multi-agente? AutoGen y el Microsoft Agent Framework. ¿En tu nube? ADK, Strands u OpenAI SDK. ¿Código mínimo o TypeScript? smolagents, Mastra o Vercel."
 "Y a veces la respuesta correcta no es ningún framework: el SDK del proveedor y código propio."
-`[acum 29:00]`
+`[acum 25:20]`
 
 ---
 
 ## ACTO 5 · CIERRE (2 min)
 
-### 32 · Cinco ideas
+### 27 · Cinco ideas
 "Para llevar: un agente es modelo + herramientas + bucle con estado. El modelo propone; tu código ejecuta, bajo tus reglas. Una buena descripción decide cuándo se usa una tool. Empieza con `create_agent` y baja a LangGraph cuando necesites control. Y el contexto es el recurso escaso."
-`[acum 30:00]`
+`[acum 26:20]`
 
-### 33 · Cierre
+### 28 · Cierre
 "Gracias. Ya tienes el mapa para construir tu primer agente."
-`[acum 30:50]`
+`[acum 27:10]`
 
 ---
 
@@ -214,7 +189,7 @@
 | Intro | 1–3 | 2.5 |
 | ¿Qué es un agente? | 4–8 | 4.5 |
 | Cómo funciona | 9–15 | 6.5 |
-| LangChain + LangGraph | 16–28 | 12 |
-| Alrededor y ecosistema | 29–31 | 3 |
-| Cierre | 32–33 | 2 |
-| **Total** | **33** | **~31** |
+| LangChain + LangGraph | 16–23 | 8 |
+| Alrededor y ecosistema | 24–26 | 3 |
+| Cierre | 27–28 | 2 |
+| **Total** | **28** | **~27** |
