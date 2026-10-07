@@ -62,7 +62,7 @@
     <div class="grid g2" style="margin-top:16px">
       <div class="card n a-cyan"><div class="num" style="color:var(--cyan-l)">1</div><h3>Qué es un agente</h3><p>La diferencia con un LLM y con un workflow.</p></div>
       <div class="card n a-cyan"><div class="num" style="color:var(--cyan-l)">2</div><h3>Cómo funciona</h3><p>El bucle, las herramientas y la memoria.</p></div>
-      <div class="card n a-cyan"><div class="num" style="color:var(--cyan-l)">3</div><h3>Cómo se construye</h3><p>Con LangChain y LangGraph, con código.</p></div>
+      <div class="card n a-cyan"><div class="num" style="color:var(--cyan-l)">3</div><h3>Cómo empezar a construir</h3><p>Un agente mínimo con LangChain.</p></div>
       <div class="card n a-cyan"><div class="num" style="color:var(--cyan-l)">4</div><h3>Otros frameworks</h3><p>Un mapa del ecosistema y cómo elegir.</p></div>
     </div>
     <p class="mt" style="color:#DCE6F5;font-weight:700;font-size:.55em">Al terminar, vas a poder construir un agente y ubicar el resto del ecosistema.</p>
@@ -355,44 +355,29 @@
   </aside>
 </section>
 
-<!-- 17 CREATE_AGENT -->
+<!-- 17 EL AGENTE MÍNIMO -->
 <section class="light">
   <div class="pad">
     <div class="kicker">LangChain v1 · el mínimo</div>
-    <h2>Un agente completo son cuatro líneas</h2>
-    <img src="assets/term-create-agent.png" alt="" style="width:80%;margin:14px auto 0;border-radius:12px">
-    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.52em">create_agent(model, tools, system_prompt): arma el grafo por dentro, ejecuta las tools y repite hasta que el modelo responde.</p>
-  </div>
-  <aside class="notes">
-    <p>"Un agente completo son cuatro líneas. create_agent(model, tools, system_prompt). Y nada más. La herramienta la escribes con @tool. LangChain se encarga del bucle."</p>
-    <p>"Por dentro construye un grafo: manda el mensaje al modelo; si pide una herramienta, la ejecuta y le devuelve el resultado; y repite hasta que el modelo responde sin pedir nada."</p>
-    <p>[acum 15:10]</p>
-  </aside>
-</section>
-
-<!-- 18 INSTRUCCIONES -->
-<section class="light">
-  <div class="pad">
-    <div class="kicker">LangChain v1 · instrucciones</div>
-    <h2>Las reglas del agente</h2>
-    <div class="term" style="margin-top:14px"><div class="body" style="font-size:.42em"><span class="c">system_prompt</span>=<span class="g">"Eres un asistente de ventas. Usa las herramientas y no inventes datos."</span></div></div>
+    <h2>El agente mínimo</h2>
+    <div class="term" style="margin-top:14px"><div class="body" style="font-size:.38em"><span class="c">agent</span> = <span class="g">create_agent</span>(<span class="c">model</span>=<span class="g">"openai:gpt-5"</span>, <span class="c">tools</span>=[...], <span class="c">system_prompt</span>=<span class="g">"..."</span>)</div></div>
     <div class="grid g2" style="margin-top:16px">
-      <div class="card a-cyan"><h3>Rol y objetivo</h3><p>Quién es y qué debe lograr. El 'para qué' del agente.</p></div>
-      <div class="card a-red"><h3>Reglas y límites</h3><p>Qué puede y qué no; cuándo pausar y pedir aprobación.</p></div>
+      <div class="card a-cyan"><h3>Rol y objetivo</h3><p>Quién es y qué debe lograr.</p></div>
+      <div class="card a-red"><h3>Reglas y límites</h3><p>Qué puede y qué no; cuándo pausar.</p></div>
       <div class="card a-amber"><h3>Formato y tono</h3><p>Cómo responde: idioma, longitud y estilo.</p></div>
-      <div class="card a-green"><h3>Cuando no sabe</h3><p>No inventar: usar una tool o decir que no lo sabe.</p></div>
+      <div class="card a-green"><h3>Cuando no sabe</h3><p>No inventar: usar una tool o decirlo.</p></div>
     </div>
-    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.52em">El system prompt define el comportamiento; las descripciones de tools, cuándo usarlas.</p>
+    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.52em">create_agent arma el grafo por dentro; el system_prompt son las reglas del agente.</p>
   </div>
   <aside class="notes">
-    <p>"El agente necesita reglas. Eso es el system prompt: quién es, qué debe lograr, qué puede y qué no, y cómo responder."</p>
-    <p>"Cuatro cosas: rol y objetivo; reglas y límites; formato y tono; y qué hacer cuando no sabe —no inventar, usar una herramienta o decirlo—."</p>
-    <p>"El system prompt define el comportamiento; las descripciones de las tools definen cuándo usarlas. Son dos prompts distintos, y ambos importan."</p>
-    <p>[acum 16:10]</p>
+    <p>"Un agente completo son cuatro líneas: create_agent(model, tools, system_prompt). Y nada más. La herramienta la escribes con @tool; LangChain se encarga del bucle."</p>
+    <p>"Y el system_prompt son las reglas: rol y objetivo; reglas y límites; formato y tono; y qué hacer cuando no sabe —no inventar, usar una herramienta o decirlo—."</p>
+    <p>"Por dentro, create_agent arma un grafo: manda el mensaje al modelo; si pide una herramienta, la ejecuta y le devuelve el resultado; y repite hasta que el modelo responde sin pedir nada."</p>
+    <p>[acum 15:40]</p>
   </aside>
 </section>
 
-<!-- 19 TOOLS -->
+<!-- 18 TOOLS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">LangChain v1 · herramientas</div>
@@ -419,49 +404,32 @@
   <aside class="notes">
     <p>"La herramienta: un decorador, tipos en los parámetros y un docstring claro. Eso es todo lo que necesita el modelo para usarla bien. Argumentos tipados = contrato; docstring = prompt."</p>
     <p>"Y lo que decide cuándo se usa una tool no es su código: es su descripción. Por eso: pocas herramientas bien documentadas, nombres claros y errores útiles. La descripción de las tools es el prompt que más importa."</p>
-    <p>[acum 17:00]</p>
+    <p>[acum 16:30]</p>
   </aside>
 </section>
 
-<!-- 20 MODELO Y MIDDLEWARE -->
+<!-- 19 MODELO, MIDDLEWARE Y SALIDA -->
 <section class="light">
   <div class="pad">
-    <div class="kicker" style="color:var(--navy)">LangChain v1 · configuración</div>
-    <h2>Modelo sustituible y comportamiento extensible</h2>
+    <div class="kicker" style="color:var(--navy)">LangChain v1 · configuración y salida</div>
+    <h2>Modelo sustituible, middleware y salida</h2>
     <div class="term" style="margin-top:14px"><div class="body" style="font-size:.5em"><span class="c">model</span>=<span class="g">"openai:gpt-5"</span>   <span class="d"># o anthropic:..., google:..., ollama:...</span></div></div>
-    <div class="grid g2" style="margin-top:16px">
-      <div class="card a-cyan"><h3>El modelo es sustituible</h3><p>Cambia de proveedor con una línea: <span class="mono">init_chat_model</span> unifica la interfaz, y las content blocks dan un formato común a texto, imágenes y más.</p></div>
-      <div class="card a-green"><h3>El middleware lo hace extensible</h3><p>Hooks que se enganchan antes y después del modelo, y antes y después de cada tool, sin tocar el bucle. Categorías: contexto (resumir, memorizar), guardrails (PII), aprobación humana, resiliencia (reintentos, límites) y subagentes. No es un runtime aparte: corre dentro del grafo.</p></div>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-cyan"><h3>Modelo sustituible</h3><p>Cambia de proveedor con una línea: <span class="mono">init_chat_model</span> unifica la interfaz, y las content blocks dan un formato común a texto, imágenes y más.</p></div>
+      <div class="card a-green"><h3>Middleware</h3><p>Hooks antes y después del modelo, y de cada tool: contexto, guardrails (PII), aprobación, resiliencia y subagentes. No es un runtime aparte.</p></div>
+      <div class="card a-navy"><h3>Salida</h3><p>Estructurada (Pydantic, <span class="mono">response_format → structured_response</span>) para integrar; y streaming para ver la respuesta en vivo.</p></div>
     </div>
+    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.5em">El modelo se cambia con una línea; el middleware extiende el bucle; la salida se adapta a tu sistema.</p>
   </div>
   <aside class="notes">
-    <p>"Dos ideas. Una: el modelo es una pieza sustituible. openai:gpt-5 es solo una cadena de texto; init_chat_model te deja cambiar de proveedor con una línea, y las content blocks dan un formato común a las salidas (texto, imágenes y más)."</p>
-    <p>"Dos: el middleware. Son hooks que se enganchan antes y después del modelo, y antes y después de cada tool, sin tocar el bucle. Vienen en categorías: contexto (resumir, memorizar), guardrails (detectar y redactar datos sensibles como un correo, PII), aprobación humana, resiliencia (reintentos, fallbacks y límites) y planificación con subagentes. No es un runtime aparte: corre dentro del mismo grafo compilado."</p>
-    <p>"Analogía: el middleware es como el control de calidad de una línea de montaje: revisa lo que entra y sale sin cambiar la máquina."</p>
-    <p>[acum 18:40]</p>
+    <p>"Tres ideas. Una: el modelo es una pieza sustituible. openai:gpt-5 es solo una cadena de texto; init_chat_model te deja cambiar de proveedor con una línea, y las content blocks dan un formato común a las salidas."</p>
+    <p>"Dos: el middleware. Hooks que se enganchan antes y después del modelo, y antes y después de cada tool: gestión de contexto, guardrails (PII), aprobación humana, resiliencia y subagentes. Corre dentro del mismo grafo."</p>
+    <p>"Tres: la salida. Estructurada con Pydantic (response_format → structured_response) para integrarla con tu sistema, y streaming para ver la respuesta en vivo. Analogía: la salida estructurada es como pedir un formulario relleno en vez de una carta libre."</p>
+    <p>[acum 17:50]</p>
   </aside>
 </section>
 
-<!-- 21 SALIDA ESTRUCTURADA -->
-<section class="light">
-  <div class="pad">
-    <div class="kicker">LangChain v1 · salida</div>
-    <h2>Respuestas con forma y en vivo</h2>
-    <div class="grid g2" style="margin-top:20px">
-      <div class="card a-cyan"><h3>Salida estructurada</h3><p class="mono" style="color:var(--cyan);font-size:.5em;margin:.25em 0 .5em">Pydantic</p><p>Para integrar con tu sistema: el modelo devuelve un objeto validado, no texto suelto. Se activa con <span class="mono">response_format</span> y el resultado queda en <span class="mono">structured_response</span>.</p></div>
-      <div class="card a-green"><h3>Streaming</h3><p class="mono" style="color:var(--green);font-size:.5em;margin:.25em 0 .5em">tokens en vivo</p><p>Ver la respuesta mientras se escribe: mejor experiencia y latencia percibida. Igual de simple de activar.</p></div>
-    </div>
-    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.55em">Dos detalles de implementación que hacen al agente usable y fácil de integrar.</p>
-  </div>
-  <aside class="notes">
-    <p>"Dos detalles que hacen al agente usable. Uno: salida estructurada. Con Pydantic, el modelo devuelve un objeto validado en vez de texto suelto; se activa con response_format y el resultado queda en structured_response. Clave para integrarlo con tu sistema."</p>
-    <p>"Dos: streaming. Ver la respuesta mientras se escribe mejora la experiencia y la latencia percibida, y se activa igual de simple."</p>
-    <p>"Analogía: la salida estructurada es como pedir un formulario relleno en vez de una carta libre: tu sistema la lee sin ambigüedad."</p>
-    <p>[acum 19:30]</p>
-  </aside>
-</section>
-
-<!-- 22 SEGURIDAD -->
+<!-- 20 SEGURIDAD -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Construir · seguridad</div>
@@ -479,74 +447,32 @@
     <p>"Uno: mínimo privilegio — las herramientas corren con tus permisos y límites, nunca con los del modelo. Dos: valida los argumentos antes de ejecutar. Tres: prompt injection — el contenido externo, un documento o una web, son datos, no órdenes; no dejes que secuestren al agente. Y cuatro: guardrails para datos sensibles (PII) y aprobación humana en acciones críticas."</p>
     <p>"En una frase: el modelo decide; la ejecución y el permiso viven en tu código."</p>
     <p>"Analogía: mínimo privilegio es darle a un becario la llave de un cajón, no la del edificio."</p>
-    <p>[acum 20:30]</p>
+    <p>[acum 18:50]</p>
   </aside>
 </section>
 
-<!-- 23 CUÁNDO BAJAR -->
+<!-- 21 LANGGRAPH: CONTROL CUANDO LO NECESITAS -->
 <section class="light">
   <div class="pad">
-    <div class="kicker">LangGraph · cuándo bajar de nivel</div>
-    <h2>create_agent cubre el 80%. LangGraph, el control.</h2>
+    <div class="kicker">LangGraph · control explícito</div>
+    <h2>LangGraph: control cuando lo necesitas</h2>
     <div class="grid g2" style="margin-top:18px">
-      <div class="card a-cyan"><h3>Usa create_agent cuando…</h3><ul style="font-size:.5em;line-height:1.5;padding-left:1.1em"><li>Necesitas un agente estándar</li><li>El bucle ReAct te alcanza</li><li>Quieres arrancar hoy</li></ul></div>
-      <div class="card a-green"><h3>Baja a LangGraph cuando…</h3><ul style="font-size:.5em;line-height:1.5;padding-left:1.1em"><li>Necesitas ramas condicionales</li><li>Varios agentes o subgrafos</li><li>Interrupciones en puntos exactos</li><li>Ciclos con tus propias reglas</li></ul></div>
+      <div class="card a-cyan"><h3>Cuándo bajar</h3><p>Ramas condicionales, varios agentes, ciclos con reglas propias o interrupciones en puntos exactos.</p></div>
+      <div class="card a-navy"><h3>Grafo con estado</h3><p>Estado tipado, nodos (pasos) y aristas que deciden a dónde ir según el estado.</p></div>
+      <div class="card a-amber"><h3>Memoria</h3><p>Un checkpointer guarda el hilo; el store, lo que cruza conversaciones. El thread_id separa charlas.</p></div>
+      <div class="card a-green"><h3>Humano en el bucle</h3><p>El grafo se pausa antes de una tool sensible; apruebas o editas y reanuda con resume.</p></div>
     </div>
-    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.52em">LangChain para empezar; LangGraph para orquestar. Y en medio, Deep Agents: un arnés prearmado con planificación, archivos y subagentes.</p>
+    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.5em">create_agent cubre el 80%; baja a LangGraph cuando necesites este control. El detalle de cada pieza merece su propio espacio.</p>
   </div>
   <aside class="notes">
-    <p>"create_agent cubre el 80%. ¿Cuándo bajas a LangGraph? Cuando necesitas control explícito del flujo: ramas condicionales, varios agentes, ciclos con reglas propias, o interrupciones en puntos exactos. LangChain para arrancar; LangGraph para orquestar."</p>
-    <p>"Y en medio hay una pieza que conviene conocer: Deep Agents, create_deep_agent. Es un arnés ya prearmado con planificación, sistema de archivos y subagentes, para tareas largas. Solo lo nombro; existe y se apoya en lo mismo que ya viste."</p>
-    <p>[acum 21:10]</p>
+    <p>"create_agent cubre el 80%. ¿Cuándo bajas a LangGraph? Cuando necesitas control explícito: ramas condicionales, varios agentes, ciclos con reglas propias o interrupciones en puntos exactos. LangChain para arrancar; LangGraph para orquestar."</p>
+    <p>"LangGraph es un grafo con estado: un estado tipado, nodos (pasos) y aristas que deciden a dónde ir. Añade memoria (checkpointer por hilo, store entre hilos) y el humano en el bucle (pausa, aprueba y reanuda)."</p>
+    <p>"El detalle de cada pieza —grafo, persistencia, interrupt— merece su propio espacio; aquí quédate con la idea: es la caja de herramientas para cuando el bucle estándar no alcanza."</p>
+    <p>[acum 20:10]</p>
   </aside>
 </section>
 
-<!-- 24 STATEGRAPH -->
-<section class="light">
-  <div class="pad">
-    <div class="kicker">LangGraph · el grafo</div>
-    <h2>StateGraph: estado, nodos y aristas</h2>
-    <img src="assets/term-stategraph.png" alt="" style="width:76%;margin:12px auto 0;border-radius:12px">
-    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.55em">Las aristas condicionales son la clave: el flujo depende del estado, no es fijo.</p>
-  </div>
-  <aside class="notes">
-    <p>"Un grafo: un estado (un diccionario tipado), nodos (funciones que transforman el estado) y aristas que deciden a dónde ir. Es como un diagrama de flujo, pero donde las flechas se deciden solas."</p>
-    <p>"Las aristas condicionales son la clave: el flujo no es fijo, depende del estado."</p>
-    <p>[acum 22:10]</p>
-  </aside>
-</section>
-
-<!-- 25 PERSISTENCIA -->
-<section class="light">
-  <div class="pad">
-    <div class="kicker">LangGraph · memoria</div>
-    <h2>Un checkpointer y el agente recuerda</h2>
-    <img src="assets/term-persist.png" alt="" style="width:80%;margin:12px auto 0;border-radius:12px">
-    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.48em">El checkpointer guarda el hilo; el store, los hechos que cruzan conversaciones. El thread_id separa conversaciones; el context lleva datos por ejecución (p. ej. el user_id). RAM se pierde al reiniciar; para persistir: SQLite en dev, Postgres o Mongo en producción.</p>
-  </div>
-  <aside class="notes">
-    <p>"Le agregas un checkpointer y el agente recuerda entre turnos: guarda el hilo. El store, en cambio, guarda los hechos que cruzan conversaciones. Le das un thread_id y separa conversaciones. Y ojo con la distinción: el thread_id identifica la conversación; el context lleva los datos por ejecución, como el user_id o una bandera de configuración."</p>
-    <p>"La memoria en RAM se pierde al reiniciar el proceso; para persistir de verdad se usa SQLite en desarrollo y Postgres —o Mongo— en producción."</p>
-    <p>"Analogía: el checkpointer es como guardar la partida: cierras y continúas después por donde ibas."</p>
-    <p>[acum 23:00]</p>
-  </aside>
-</section>
-
-<!-- 26 HITL INTERRUPT -->
-<section class="light">
-  <div class="pad">
-    <div class="kicker">LangGraph · human in the loop</div>
-    <h2>Pausar, aprobar y reanudar</h2>
-    <img src="assets/term-hitl.png" alt="" style="width:78%;margin:12px auto 0;border-radius:12px">
-    <p class="mt" style="color:var(--navy);font-weight:800;font-size:.55em">La pausa puede durar horas: el estado quedó guardado en el checkpointer.</p>
-  </div>
-  <aside class="notes">
-    <p>"Y para el humano: con HumanInTheLoopMiddleware o con interrupt, el grafo se pausa antes de una herramienta marcada como sensible. Tú apruebas, rechazas o editas, y con Command(resume=...) continúa. El estado quedó guardado, así que la pausa puede durar horas."</p>
-    <p>[acum 23:50]</p>
-  </aside>
-</section>
-
-<!-- 27 RAG COMO TOOL -->
+<!-- 22 RAG COMO TOOL -->
 <section class="light">
   <div class="pad">
     <div class="kicker">La recuperación (RAG)</div>
@@ -566,11 +492,11 @@
     <p>"La recuperación, el RAG: son las siglas de Retrieval-Augmented Generation, recuperar información y añadirla al contexto del modelo."</p>
     <p>"Es como cuando contestas un examen con apuntes: buscas el dato que necesitas y lo usas para responder, en vez de fiarte de la memoria. El agente decide cuándo buscar; y cómo buscar bien y cuándo callar van aparte. Quédate con la idea: responde con tus datos, no con imaginación."</p>
     <p>"Por dentro: tus documentos se parten en fragmentos; cada uno se convierte en un vector (embedding) y se guarda en un índice. Ante una pregunta, se buscan los fragmentos más parecidos y se añaden al contexto. El agente decide cuándo buscar; la profundidad de RAG merece su propio espacio."</p>
-    <p>[acum 24:40]</p>
+    <p>[acum 21:00]</p>
   </aside>
 </section>
 
-<!-- 28 BLUEPRINT -->
+<!-- 23 BLUEPRINT -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Construir · el plano</div>
@@ -587,11 +513,11 @@
   <aside class="notes">
     <p>"Recapitulemos con el plano: un agente completo es un modelo, con instrucciones, herramientas, middleware y memoria. Todo eso junto —el modelo y su arnés— es el agente."</p>
     <p>"Lo demás —la recuperación, los canales, la observabilidad— no es el agente: se conecta alrededor."</p>
-    <p>[acum 25:40]</p>
+    <p>[acum 22:00]</p>
   </aside>
 </section>
 
-<!-- 29 EL AGENTE NO VIVE SOLO -->
+<!-- 24 EL AGENTE NO VIVE SOLO -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Alrededor del agente</div>
@@ -609,11 +535,11 @@
     <p>"Un agente no vive solo. Lo que construiste es el núcleo. A su alrededor hay cuatro piezas que hoy solo nombro para que las reconozcas."</p>
     <p>"Canales: por dónde entra y sale el mensaje (WhatsApp, Telegram, web); cada canal solo traduce. Núcleo: la pieza que recibe, junta mensajes seguidos y arma el contexto antes de pensar. Observabilidad: ver cada turno por dentro —qué nodo corrió, qué herramienta se llamó, cuántos tokens—. Evaluación: medir si el agente acierta —¿eligió bien la herramienta?, ¿la respuesta salió de los datos?—."</p>
     <p>"Cada una merece su propio espacio. Quédate con los nombres."</p>
-    <p>[acum 27:00]</p>
+    <p>[acum 23:20]</p>
   </aside>
 </section>
 
-<!-- 30 PROTOCOLOS -->
+<!-- 25 PROTOCOLOS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Protocolos · estándares</div>
@@ -629,11 +555,11 @@
     <p>"Antes de cerrar, una distinción que confunde mucho: MCP y A2A no son frameworks. Un framework construye y orquesta tu agente; un protocolo es un contrato para conectarlo con el exterior. No compiten: se combinan."</p>
     <p>"MCP, Model Context Protocol: cómo un agente se conecta a herramientas y datos. Como el enchufe universal: describes la herramienta una vez y cualquier agente la usa. A2A, Agent-to-Agent: cómo un agente habla con otro; un idioma y una tarjeta de presentación comunes."</p>
     <p>"En una frase: el framework es cómo construyes tu agente; el protocolo, cómo se conecta con lo demás."</p>
-    <p>[acum 28:00]</p>
+    <p>[acum 24:20]</p>
   </aside>
 </section>
 
-<!-- 31 OTROS FRAMEWORKS -->
+<!-- 26 OTROS FRAMEWORKS -->
 <section class="light">
   <div class="pad" style="gap:.25em">
     <div class="kicker">El ecosistema · 2026</div>
@@ -652,11 +578,11 @@
   <aside class="notes">
     <p>"Ya vimos LangChain y LangGraph, pero no son los únicos. El ecosistema se elige por filosofía, no por moda. ¿Equipos con roles? CrewAI. ¿Datos y RAG? LlamaIndex. ¿Tipado y validación? Pydantic AI. ¿Conversación o multi-agente? AutoGen y el Microsoft Agent Framework. ¿En tu nube? ADK, Strands u OpenAI SDK. ¿Código mínimo o TypeScript? smolagents, Mastra o Vercel."</p>
     <p>"Y a veces la respuesta correcta no es ningún framework: el SDK del proveedor y código propio."</p>
-    <p>[acum 29:00]</p>
+    <p>[acum 25:20]</p>
   </aside>
 </section>
 
-<!-- 32 CINCO IDEAS -->
+<!-- 27 CINCO IDEAS -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">Para llevar</div>
@@ -665,11 +591,11 @@
   </div>
   <aside class="notes">
     <p>"Un agente es modelo + herramientas + bucle con estado. El modelo propone; tu código ejecuta, bajo tus reglas. Una buena descripción decide cuándo se usa una tool. Empieza con create_agent y baja a LangGraph cuando necesites control. Y el contexto es el recurso escaso."</p>
-    <p>[acum 30:00]</p>
+    <p>[acum 26:20]</p>
   </aside>
 </section>
 
-<!-- 33 CIERRE -->
+<!-- 28 CIERRE -->
 <section class="dark" data-transition="fade">
   <div class="pad" style="justify-content:center">
     <h1 style="font-size:2.4em;color:var(--cyan-l)">Gracias.</h1>
@@ -680,7 +606,7 @@
   </div>
   <aside class="notes">
     <p>"Gracias. Ya tienes el mapa para construir tu primer agente."</p>
-    <p>[acum 30:50]</p>
+    <p>[acum 27:10]</p>
   </aside>
 </section>
 
