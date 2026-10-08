@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Introducción a Django REST Framework · José Miguel Amaya</title>
+<meta name="description" content="De cero a una API REST con Python: modelos, serializadores, vistas y routers con Django 5.2 y DRF 3.16. Caso práctico: taller/cursos. Charla de José Miguel Amaya (Python Piura · Piura AI).">
+<link rel="canonical" href="https://joseamaya.github.io/introduccion-a-django-rest-framework/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Introducción a Django REST Framework">
+<meta property="og:description" content="Modelos, serializadores, vistas y routers: tu primera API REST con Django y DRF.">
+<meta property="og:url" content="https://joseamaya.github.io/introduccion-a-django-rest-framework/">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="vendor/reveal/reset.css">
+<link rel="stylesheet" href="vendor/reveal/reveal.css">
+<link rel="stylesheet" href="vendor/reveal/highlight-theme.css">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  .reveal pre.sm{font-size:.44em}
+  .reveal pre.sm code{padding:12px 16px}
+  .cl{display:block}
+  .cl.hl{background:rgba(163,0,0,.16);box-shadow:-8px 0 0 rgba(163,0,0,.16);border-radius:4px}
+  section.dark .cl.hl,section.navy .cl.hl{background:rgba(214,69,69,.22);box-shadow:-8px 0 0 rgba(214,69,69,.22)}
+  .cap{font-family:'JetBrains Mono',monospace;font-size:.4em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:.35em 0 .15em}
+  section.dark .cap,section.navy .cap{color:#E39A9A}
+  .apimock{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 10px 26px rgba(22,10,10,.08)}
+  .apimock .am-top{display:flex;align-items:center;gap:10px;background:#F3EAEA;padding:10px 16px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:.4em;color:var(--muted)}
+  .apimock .am-top .dot{width:10px;height:10px;border-radius:50%;background:var(--drf-l);flex:0 0 auto}
+  .apimock .am-url{flex:1;background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 12px;color:var(--ink)}
+  .apimock .am-body{padding:12px 18px;font-family:'JetBrains Mono',monospace;font-size:.42em;line-height:1.6;color:#3A2B2B;white-space:pre;overflow:hidden}
+  .apimock .am-body .k{color:var(--blue-ink)} .apimock .am-body .s{color:var(--django-ink)}
+  .apimock .am-actions{display:flex;gap:8px;padding:0 18px 14px}
+  .apimock .am-btn{font-family:'JetBrains Mono',monospace;font-size:.4em;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:#F7F1F1;color:var(--body)}
+  .apimock .am-btn.p{background:var(--django);border-color:var(--django);color:#fff}
+  .rolelist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.28em;font-size:.5em}
+  .rolelist li{display:flex;gap:12px;align-items:baseline}
+  .rolelist code{color:var(--drf-ink);font-weight:700;min-width:8em}
+  .kv.wide b{min-width:11em}
+  section.dark .rolelist code,section.navy .rolelist code{color:var(--drf-l)}
+  .steps4{display:flex;flex-direction:column;gap:10px}
+  .steprow{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:12px;padding:10px 16px;background:#fff}
+  .steprow b{font-family:'JetBrains Mono',monospace;font-size:.44em;color:var(--drf-ink);white-space:nowrap}
+  .steprow span{font-size:.44em;color:var(--body)}
+  .steprow.hi{border-color:var(--django-l);background:#EAF4EF}
+  .steprow.hi b{color:var(--django-ink)}
+  @media (prefers-reduced-motion: reduce){
+    .reveal .fragment{transition:none!important}
+    .reveal .slides section{transition:none!important}
+  }
+</style>
+</head>
+<body>
+<noscript>
+  <style>
+    .reveal{position:static;height:auto}
+    .reveal .slides{position:static;width:auto;height:auto;transform:none!important}
+    .reveal .slides>section{display:block;position:relative;min-height:0;height:auto;padding:40px 24px;border-bottom:1px solid #e7dbdb}
+    .reveal .foot{display:none}
+  </style>
+  <p style="font-family:sans-serif;padding:16px;background:#150D0E;color:#fff;margin:0">Esta presentación usa JavaScript (Reveal.js) para navegar. Aquí está el contenido completo.</p>
+</noscript>
+<div class="reveal"><div class="slides">
+
+<!-- 1 PORTADA -->
+<section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.16" data-background-transition="fade">
+  <div class="pad">
+    <div class="kicker" style="color:#EF9A9A">Python Piura · Piura AI</div>
+    <h1 style="font-size:1.9em;line-height:1.03">Introducción a <span style="color:var(--drf-l)">Django REST Framework</span></h1>
+    <p class="lead" style="color:#E3CBCB;font-size:.64em;margin-top:.6em">De cero a una API REST con Python · Caso: <b>taller/cursos</b></p>
+    <div style="margin-top:1.1em">
+      <span class="pill">Django 5.2 LTS</span>
+      <span class="pill">DRF 3.16</span>
+      <span class="pill">Python 3.13</span>
+    </div>
+    <div style="margin-top:1.2em;color:#BF9FA0;font-family:'JetBrains Mono';font-size:.5em">José Miguel Amaya Camacho · github: joseamaya</div>
+  </div>
+  <aside class="notes">⏱ 1 min · Presentar la charla: un recorrido práctico desde REST hasta un CRUD completo con Django y DRF, construyendo el proyecto taller y la app cursos. Es una remasterización del taller de FLISOL 2019 con versiones actuales.</aside>
+</section>
+
+<!-- 2 BIO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Sobre mí</div>
+    <h2>José Miguel Amaya Camacho</h2>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card a-drf"><span class="label">Perfil</span><p>Desarrollador Python/Django. Full Stack en Xprende Tech (Ecuador) e Infobibliotecas (España). Fundador de Python Piura.</p></div>
+      <div class="card a-django"><span class="label">Hoy</span><p>Construimos una API REST paso a paso: del modelo al endpoint, con código que puedes llevarte.</p></div>
+    </div>
+    <div class="kv" style="margin-top:16px"><b>GitHub</b> <span>github.com/joseamaya</span></div>
+    <div class="kv"><b>Comunidad</b> <span>Python Piura · Piura AI</span></div>
+  </div>
+  <aside class="notes">⏱ 30 s · Presentación breve. El taller asume Python básico; no hace falta conocer Django de antes.</aside>
+</section>
+
+<!-- 3 AGENDA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Agenda</div>
+    <h2>Qué vamos a ver</h2>
+    <ul class="agenda" style="margin-top:14px">
+      <li><b>01</b> Qué es REST y por qué importa <span>10 min</span></li>
+      <li><b>02</b> Django y Django REST Framework <span>10 min</span></li>
+      <li><b>03</b> Proyecto, app y configuración <span>10 min</span></li>
+      <li><b>04</b> Modelos, serializers, vistas y routers <span>25 min</span></li>
+      <li><b>05</b> Probemos la API y siguientes pasos <span>5 min</span></li>
+    </ul>
+  </div>
+  <aside class="notes">⏱ 1 min · Enmarcar: la primera mitad es concepto, la segunda es código en vivo. Al final tendremos un CRUD completo funcionando.</aside>
+</section>
+
+<!-- 4 SECCIÓN 01 -->
+<section class="dark">
+  <div class="pad">
+    <div class="sectionnum">01</div>
+    <h2 style="font-size:1.6em">REST</h2>
+    <p class="lead" style="color:#C9AFAF">Qué es una API REST y qué restricciones sigue.</p>
+  </div>
+  <aside class="notes">⏱ 15 s · Sección de conceptos. Lo justo para entender las decisiones de DRF.</aside>
+</section>
+
+<!-- 5 QUÉ ES REST -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Punto de partida</div>
+    <h2>¿Qué es una API REST?</h2>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-drf"><span class="num">2000</span><p><b>Roy Fielding</b> describe REST en su tesis doctoral: uno de los padres de la especificación HTTP.</p></div>
+      <div class="card a-django"><span class="num">≠ arquitectura</span><p>No es una arquitectura de software: es un <b>conjunto de restricciones</b> para diseñar un estilo de arquitectura.</p></div>
+      <div class="card a-pg"><span class="num">JSON / XML</span><p>Una interfaz entre sistemas que usa <b>HTTP</b> para obtener datos u operar sobre ellos.</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · REST = Representational State Transfer. Insistir en que es un estilo con restricciones, no una tecnología ni un protocolo. HTTP ya nos da casi todo.</aside>
+</section>
+
+<!-- 6 CARACTERÍSTICAS I -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Restricciones</div>
+    <h2>Características de REST (I)</h2>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-drf"><h3>Cliente-servidor</h3><p>Débilmente acoplados: el cliente no conoce la implementación del servidor y viceversa. Pueden evolucionar por separado.</p></div>
+      <div class="card a-django"><h3>Interfaz uniforme</h3><p>Cada recurso tiene una única dirección: su <b>URI</b>. <code>/cursos/</code>, <code>/cursos/3/</code>…</p></div>
+      <div class="card a-pg"><h3>Operaciones</h3><p><span class="method post">POST</span> crear · <span class="method get">GET</span> leer · <span class="method put">PUT</span> editar · <span class="method delete">DELETE</span> eliminar.</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · Los verbos HTTP son las operaciones sobre recursos. Una URI = un recurso; el verbo indica qué hacer con él. Esto es exactamente lo que DRF mapea a vistas.</aside>
+</section>
+
+<!-- 7 CARACTERÍSTICAS II -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Restricciones</div>
+    <h2>Características de REST (II)</h2>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-drf"><h3>Sin estado</h3><p>Cada petición es independiente: el servidor no necesita recordar sesiones. Todo lo necesario viaja en la petición.</p></div>
+      <div class="card a-amber"><h3>Cacheable</h3><p>Las respuestas deben poder marcarse como cacheables para evitar trabajo repetido.</p></div>
+      <div class="card a-violet"><h3>Sistema de capas</h3><p>El servidor puede implementarse en capas: balanceadores, cachés, proxies… el cliente no necesita saberlo.</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Sin estado ≠ sin base de datos: el estado vive en el cliente o en la BD, no en la sesión del servidor. Las capas permiten escalar.</aside>
+</section>
+
+<!-- 8 DIAGRAMA CLIENTE-SERVIDOR -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">La idea en una imagen</div>
+    <h2>Cliente, métodos y servidor</h2>
+    <div class="svgbox" style="margin-top:8px">
+      <svg viewBox="0 0 1120 340" role="img" aria-label="Diagrama: el cliente envía una petición JSON; los métodos HTTP GET, POST, PUT, PATCH y DELETE la procesan; el servidor con su base de datos responde">
+        <defs>
+          <marker id="a-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#A30000"/></marker>
+          <marker id="a-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6E5B5B"/></marker>
+        </defs>
+        <rect x="30" y="55" width="230" height="185" rx="14" fill="#fff" stroke="#E7DBDB" stroke-width="2"/>
+        <rect x="65" y="80" width="160" height="95" rx="8" fill="#150D0E"/>
+        <rect x="125" y="180" width="40" height="9" fill="#3A2B2B"/>
+        <rect x="98" y="189" width="94" height="9" rx="4" fill="#3A2B2B"/>
+        <text x="145" y="222" text-anchor="middle" font-size="17" font-weight="700" fill="#160A0A">Cliente</text>
+        <text x="145" y="243" text-anchor="middle" font-size="13" fill="#6E5B5B">web · móvil · otro servicio</text>
+        <line x1="280" y1="112" x2="430" y2="112" stroke="#A30000" stroke-width="3" marker-end="url(#a-r)"/>
+        <line x1="430" y1="152" x2="280" y2="152" stroke="#A30000" stroke-width="3" marker-end="url(#a-r)"/>
+        <text x="355" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#A30000">petición · JSON</text>
+        <text x="355" y="180" text-anchor="middle" font-size="14" fill="#6E5B5B">respuesta</text>
+        <g font-size="17" font-weight="700" text-anchor="middle">
+          <rect x="455" y="50" width="170" height="42" rx="9" fill="#EAF1F7" stroke="#336791" stroke-width="2"/><text x="540" y="77" fill="#2A5D86">GET</text>
+          <rect x="455" y="100" width="170" height="42" rx="9" fill="#EAF4EF" stroke="#2E7D5B" stroke-width="2"/><text x="540" y="127" fill="#2E7D5B">POST</text>
+          <rect x="455" y="150" width="170" height="42" rx="9" fill="#FDF1E0" stroke="#A36208" stroke-width="2"/><text x="540" y="177" fill="#A36208">PUT / PATCH</text>
+          <rect x="455" y="200" width="170" height="42" rx="9" fill="#FDECEC" stroke="#C94141" stroke-width="2"/><text x="540" y="227" fill="#C94141">DELETE</text>
+        </g>
+        <line x1="645" y1="112" x2="800" y2="112" stroke="#6E5B5B" stroke-width="3" marker-end="url(#a-g)"/>
+        <line x1="800" y1="152" x2="645" y2="152" stroke="#6E5B5B" stroke-width="3" marker-end="url(#a-g)"/>
+        <text x="722" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#6E5B5B">HTTP</text>
+        <text x="722" y="180" text-anchor="middle" font-size="14" fill="#6E5B5B">HTTP</text>
+        <rect x="810" y="45" width="160" height="205" rx="14" fill="#0C4B33"/>
+        <rect x="835" y="72" width="110" height="14" rx="4" fill="#2E7D5B"/>
+        <rect x="835" y="98" width="110" height="14" rx="4" fill="#2E7D5B"/>
+        <rect x="835" y="124" width="110" height="14" rx="4" fill="#2E7D5B"/>
+        <path d="M950,185 v55 a60,18 0 0 0 120,0 v-55" fill="#336791"/>
+        <ellipse cx="1010" cy="185" rx="60" ry="18" fill="#4A90C2" stroke="#244A66" stroke-width="2"/>
+        <text x="890" y="272" text-anchor="middle" font-size="17" font-weight="700" fill="#160A0A">Servidor</text>
+        <text x="890" y="292" text-anchor="middle" font-size="13" fill="#6E5B5B">Django + DRF</text>
+        <text x="1010" y="272" text-anchor="middle" font-size="17" font-weight="700" fill="#160A0A">Base de datos</text>
+        <text x="145" y="330" text-anchor="middle" font-size="14" fill="#6E5B5B">El cliente envía una petición</text>
+        <text x="540" y="330" text-anchor="middle" font-size="14" fill="#6E5B5B">Métodos HTTP</text>
+        <text x="935" y="330" text-anchor="middle" font-size="14" fill="#6E5B5B">El servidor responde</text>
+      </svg>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · Recorrer el diagrama de izquierda a derecha. El cliente y el servidor solo comparten el contrato: métodos, URIs y formato. La base de datos es un detalle interno del servidor.</aside>
+</section>
+
+<!-- 9 MÉTODOS Y ESTADOS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Vocabulario HTTP</div>
+    <h2>Métodos y códigos de estado</h2>
+    <div class="grid g2" style="margin-top:12px;gap:26px">
+      <div>
+        <div class="cap">Métodos</div>
+        <table>
+          <tr><td><span class="method get">GET</span></td><td>Leer un recurso o una colección</td></tr>
+          <tr><td><span class="method post">POST</span></td><td>Crear un recurso</td></tr>
+          <tr><td><span class="method put">PUT</span></td><td>Reemplazar un recurso completo</td></tr>
+          <tr><td><span class="method patch">PATCH</span></td><td>Actualizar parte de un recurso</td></tr>
+          <tr><td><span class="method delete">DELETE</span></td><td>Eliminar un recurso</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="cap">Códigos frecuentes</div>
+        <table>
+          <tr><td><span class="status s2">200</span></td><td>OK · la operación salió bien</td></tr>
+          <tr><td><span class="status s2">201</span></td><td>Created · recurso creado</td></tr>
+          <tr><td><span class="status s4">400</span></td><td>Bad Request · datos inválidos</td></tr>
+          <tr><td><span class="status s4">404</span></td><td>Not Found · no existe</td></tr>
+          <tr><td><span class="status s5">500</span></td><td>Server Error · fallo del servidor</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · DRF traduce automáticamente: POST que crea → 201, validación fallida → 400, recurso inexistente → 404. No hay que escribirlos a mano.</aside>
+</section>
+
+<!-- 10 VENTAJAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Por qué REST</div>
+    <h2>Ventajas para el desarrollo</h2>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="card a-drf"><h3>Separación cliente-servidor</h3><p>Frontend y backend en servidores distintos, con equipos y ciclos independientes. La interfaz es la API.</p></div>
+      <div class="card a-django"><h3>Visibilidad, fiabilidad y escalabilidad</h3><p>Puedes migrar servidores o cambiar la base de datos sin tocar al cliente, mientras se respete el contrato.</p></div>
+      <div class="card a-pg"><h3>Independiente de la plataforma</h3><p>La misma API la consumen una web, una app móvil, otro servicio o una integración.</p></div>
+      <div class="card a-green"><h3>Un contrato claro</h3><p>Recursos, métodos y códigos de estado: cualquiera puede integrarse sin leer tu código.</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Conectar con el día a día: el mismo backend sirve a la web, al móvil y a futuras integraciones. DRF hace esto casi gratis.</aside>
+</section>
+
+<!-- 11 SECCIÓN 02 -->
+<section class="dark">
+  <div class="pad">
+    <div class="sectionnum">02</div>
+    <h2 style="font-size:1.6em">Django y DRF</h2>
+    <p class="lead" style="color:#C9AFAF">El framework web y su toolkit para APIs.</p>
+  </div>
+  <aside class="notes">⏱ 15 s · Puente: ya sabemos qué queremos construir; ahora con qué.</aside>
+</section>
+
+<!-- 12 QUÉ ES DJANGO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El framework</div>
+    <h2>¿Qué es Django?</h2>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="card a-django"><h3>Baterías incluidas</h3><p>ORM, autenticación, admin, formularios, plantillas y migraciones: listo para producción.</p></div>
+      <div class="card a-django"><h3>Apps reutilizables</h3><p>Un proyecto se compone de aplicaciones con una responsabilidad cada una: <code>cursos</code>, <code>usuarios</code>…</p></div>
+      <div class="card a-django"><h3>ORM</h3><p>Clases Python que se reflejan en tablas de la base de datos, sin escribir SQL a mano.</p></div>
+    </div>
+    <div class="callout tip" style="margin-top:14px"><span class="ic">✓</span><div><b>Django 5.2 LTS</b>: soporte extendido y la versión que usarás en proyectos reales. Todo lo que veamos aplica igual en 4.2+.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · Django es el framework full-stack de Python por excelencia. Para esta charla nos interesan dos piezas: el ORM (modelos) y las URLs/vistas. El resto no lo usaremos hoy.</aside>
+</section>
+
+<!-- 13 FLUJO DJANGO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Cómo fluye una petición</div>
+    <h2>Django en una imagen</h2>
+    <div class="flow" style="margin-top:16px">
+      <div class="step"><span class="n">1</span><h4>URL</h4><small>urls.py decide qué vista atiende</small></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="n">2</span><h4>Vista</h4><small>views.py procesa la petición</small></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="n">3</span><h4>Modelo</h4><small>models.py consulta la base de datos</small></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="n">4</span><h4>Respuesta</h4><small>template o dato listo para enviar</small></div>
+    </div>
+    <div class="callout info" style="margin-top:14px"><span class="ic">i</span><div>DRF cambia solo los pasos 2 y 4: en vez de vistas con templates, tendremos <b>vistas que devuelven JSON</b>.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · Este es el mapa mental de Django. Una petición entra por una URL y termina en una vista que consulta modelos. DRF reemplaza la capa de presentación HTML por serialización JSON.</aside>
+</section>
+
+<!-- 14 QUÉ ES DRF -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El toolkit</div>
+    <h2>Django REST Framework</h2>
+    <p class="lead">Una app de Django para construir APIs REST reutilizando piezas, con una <b>API navegable desde el navegador</b>.</p>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card a-drf"><h3>Serialización</h3><p>Convierte modelos (y otros orígenes) a JSON y valida lo que entra: como los Forms, pero para APIs.</p></div>
+      <div class="card a-drf"><h3>Vistas y routers</h3><p>Vistas genéricas y ViewSets que implementan un CRUD completo con muy poco código.</p></div>
+      <div class="card a-django"><h3>Autenticación y permisos</h3><p>Integración con sesiones, OAuth1a/2, tokens y JWT; permisos declarados por vista.</p></div>
+      <div class="card a-green"><h3>Comunidad y docs</h3><p>Documentación excelente y uso intensivo en producción (Mozilla, Red Hat, Heroku…).</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2.5 min · DRF es a Django lo que Django es a Python: convenciones y piezas listas. Destacar la API navegable: podremos probar el CRUD en el navegador sin Postman ni curl.</aside>
+</section>
+
+<!-- 15 DRF VS VISTAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">La diferencia</div>
+    <h2>¿Por qué no con vistas Django a mano?</h2>
+    <table style="margin-top:12px">
+      <tr><th></th><th>Vista Django</th><th>Django REST Framework</th></tr>
+      <tr><td><b>Devuelve</b></td><td>HTML con un template</td><td>JSON, XML u otro formato</td></tr>
+      <tr><td><b>Valida</b></td><td>Form</td><td>Serializer</td></tr>
+      <tr><td><b>CRUD</b></td><td>Escribes cada vista</td><td>ViewSet + router generan rutas y acciones</td></tr>
+      <tr><td><b>Probar</b></td><td>Formulario en el navegador</td><td>API navegable + herramientas HTTP</td></tr>
+    </table>
+    <div class="callout warn" style="margin-top:12px"><span class="ic">!</span><div>No es que no se pueda: es que con DRF escribes menos código y ganan consistencia los errores, la paginación y los permisos.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Comparación honesta: en una app clásica puedes devolver JsonResponse, pero acabas reimplementando validación, códigos de estado y paginación. DRF da todo eso con convenciones.</aside>
+</section>
+
+<!-- 16 SECCIÓN 03 -->
+<section class="dark">
+  <div class="pad">
+    <div class="sectionnum">03</div>
+    <h2 style="font-size:1.6em">Manos a la obra</h2>
+    <p class="lead" style="color:#C9AFAF">Proyecto, aplicación y configuración inicial.</p>
+  </div>
+  <aside class="notes">⏱ 15 s · Empezamos a teclear. Todo está pensado para ejecutarse en clase paso a paso.</aside>
+</section>
+
+<!-- 17 ENTORNO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 1</div>
+    <h2>Preparar el entorno</h2>
+    <p class="lead">Un entorno virtual aísla las dependencias de cada proyecto.</p>
+    <div class="term" style="margin-top:12px">
+      <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+      <div class="body"><span class="g">$</span> python3 --version
+Python 3.13.5
+<span class="g">$</span> python3 -m venv .venv
+<span class="g">$</span> source .venv/bin/activate     <span class="d"># Windows: .venv\Scripts\activate</span>
+(.venv) <span class="g">$</span> <span class="caret"></span></div>
+    </div>
+    <div class="callout info" style="margin-top:12px"><span class="ic">i</span><div>¿Por qué <code>.venv</code>? Cada proyecto tiene sus propias versiones; tu sistema queda limpio.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · En Linux/macOS python3 ya viene; en Windows se descarga de python.org. El prompt cambia a (.venv) cuando el entorno está activo: señal de que todo lo que instalemos vive ahí.</aside>
+</section>
+
+<!-- 18 INSTALACIÓN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 2</div>
+    <h2>Instalar Django y DRF</h2>
+    <div class="term" style="margin-top:12px">
+      <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+      <div class="body">(.venv) <span class="g">$</span> pip install <span class="b">"Django&gt;=5.2,&lt;6"</span> <span class="b">djangorestframework</span>
+Collecting Django&gt;=5.2,&lt;6
+Collecting djangorestframework
+Successfully installed <span class="g">django-5.2.7</span> <span class="g">djangorestframework-3.16.1</span> <span class="d">...</span>
+
+(.venv) <span class="g">$</span> pip freeze &gt; requirements.txt</div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Antes era django==1.11.11 y djangorestframework==3.8.2. Hoy instalamos la LTS y fijamos versiones en requirements.txt para que el proyecto sea reproducible.</aside>
+</section>
+
+<!-- 19 STARTPROJECT -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 3</div>
+    <h2>Crear el proyecto</h2>
+    <div class="term" style="margin-top:12px">
+      <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+      <div class="body">(.venv) <span class="g">$</span> django-admin startproject taller .
+(.venv) <span class="g">$</span> ls
+manage.py  taller/</div>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>El <b>punto</b> al final hace que <code>manage.py</code> quede en la raíz: menos anidamiento y comandos más cortos.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · taller es el nombre del proyecto. El punto final evita la carpeta taller/taller/ duplicada en la raíz; es lo que recomienda la documentación actual.</aside>
+</section>
+
+<!-- 20 ESTRUCTURA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 4</div>
+    <h2>Estructura del proyecto</h2>
+    <div class="grid g2" style="margin-top:12px;gap:24px">
+      <div class="ide plain">
+        <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">taller/ — árbol</span></div>
+        <pre><code>taller/
+├── manage.py
+├── requirements.txt
+└── taller/
+    ├── __init__.py
+    ├── settings.py
+    ├── urls.py
+    ├── asgi.py
+    └── wsgi.py</code></pre>
+      </div>
+      <ul class="rolelist" style="align-self:center">
+        <li><code>settings.py</code><span>apps, base de datos, idioma, zona horaria…</span></li>
+        <li><code>urls.py</code><span>enruta cada URL a una vista</span></li>
+        <li><code>asgi.py</code><span>entrada ASGI (async) para producción</span></li>
+        <li><code>wsgi.py</code><span>entrada WSGI clásica para producción</span></li>
+        <li><code>manage.py</code><span>script de administración del proyecto</span></li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · A diferencia del taller original, Django genera hoy también asgi.py: la entrada async moderna. El servidor de desarrollo y los despliegues usan una u otra según el stack.</aside>
+</section>
+
+<!-- 21 INSTALLED_APPS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 5</div>
+    <h2>Configurar DRF</h2>
+    <p class="lead">En <code>taller/settings.py</code> sumamos DRF y nuestra app a las aplicaciones instaladas.</p>
+    <div class="ide" style="margin-top:10px">
+      <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">taller/settings.py</span></div>
+      <pre><code class="language-python" data-hl="8,9">INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework",
+    "cursos",
+]</code></pre>
+    </div>
+    <div class="callout info" style="margin-top:10px"><span class="ic">i</span><div><code>rest_framework</code> habilita la API navegable; <code>cursos</code> se agrega al crearla (siguiente slide).</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Sin rest_framework en INSTALLED_APPS no hay browsable API ni nada de DRF. Es el primer error clásico: instalarlo con pip pero olvidar registrarlo.</aside>
+</section>
+
+<!-- 22 STARTAPP -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 6</div>
+    <h2>La aplicación cursos</h2>
+    <div class="grid g2" style="margin-top:10px;gap:24px">
+      <div class="term">
+        <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+        <div class="body">(.venv) <span class="g">$</span> python manage.py startapp cursos
+(.venv) <span class="g">$</span> ls cursos
+admin.py  apps.py  models.py
+tests.py  views.py  migrations/</div>
+      </div>
+      <div class="ide plain">
+        <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">cursos/ — árbol</span></div>
+        <pre><code>cursos/
+├── migrations/
+├── admin.py
+├── apps.py
+├── models.py
+├── tests.py
+└── views.py</code></pre>
+      </div>
+    </div>
+    <div class="callout info" style="margin-top:10px"><span class="ic">i</span><div>Django no crea <code>serializers.py</code>: es una convención de DRF y lo crearemos nosotros.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Una app = una responsabilidad. cursos agrupa todo lo del dominio de cursos. Recordar agregarla a INSTALLED_APPS como vimos en la slide anterior.</aside>
+</section>
+
+<!-- 23 MIGRATE / RUNSERVER -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 7</div>
+    <h2>Arrancar el proyecto</h2>
+    <div class="term" style="margin-top:10px">
+      <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+      <div class="body">(.venv) <span class="g">$</span> python manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... <span class="g">OK</span>
+  <span class="d">... (16 migraciones más)</span>
+
+(.venv) <span class="g">$</span> python manage.py runserver
+Watching for file changes with StatReloader
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.</div>
+    </div>
+    <div class="callout warn" style="margin-top:10px"><span class="ic">!</span><div>El servidor de desarrollo es <b>solo para local</b>. En producción: gunicorn/uvicorn detrás de nginx.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · migrate aplica las migraciones de las apps de Django (auth, admin…) y crea las tablas. runserver levanta el servidor en el puerto 8000 con recarga automática al guardar archivos.</aside>
+</section>
+
+<!-- 24 ADMIN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 8</div>
+    <h2>El admin y el superusuario</h2>
+    <div class="grid g2" style="gap:24px">
+      <ul class="rolelist" style="align-self:center">
+        <li><code>/admin/</code><span>panel listo para administrar usuarios y modelos</span></li>
+        <li><code>createsuperuser</code><span>acceso total al admin y a las apps registradas</span></li>
+      </ul>
+      <div class="term">
+        <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+        <div class="body">(.venv) <span class="g">$</span> python manage.py createsuperuser
+Nombre de usuario: <span class="b">miguel</span>
+Correo electrónico: <span class="b">miguel@example.com</span>
+Password: <span class="d">********</span>
+Superuser created successfully.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · El admin nos servirá para crear categorías y cursos de prueba mientras la API esté en pañales. No es la API, pero es una gran herramienta de desarrollo.</aside>
+</section>
+
+<!-- 25 SECCIÓN 04 -->
+<section class="dark">
+  <div class="pad">
+    <div class="sectionnum">04</div>
+    <h2 style="font-size:1.6em">El CRUD</h2>
+    <p class="lead" style="color:#C9AFAF">Modelos, serializadores, vistas y routers.</p>
+  </div>
+  <aside class="notes">⏱ 15 s · El corazón de la charla: cuatro piezas y un CRUD completo.</aside>
+</section>
+
+<!-- 26 MODELOS CONCEPTO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 1</div>
+    <h2>Los modelos</h2>
+    <ul class="rolelist">
+      <li><code>Descripción</code><span>los datos, en código Python, reflejados en tablas de la base de datos.</span></li>
+      <li><code>SQL por detrás</code><span>cada consulta ejecuta SQL y devuelve objetos Python cómodos de usar.</span></li>
+      <li><code>models.py</code><span>cada aplicación declara ahí sus modelos.</span></li>
+    </ul>
+    <div class="callout tip" style="margin-top:14px"><span class="ic">✓</span><div>Nuestro dominio: <b>Categoria</b> y <b>Curso</b>, con una relación de muchos a muchos y un creador.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Un modelo es una clase = una tabla. Cada atributo = una columna. Las migraciones traducen los cambios del modelo a la base de datos.</aside>
+</section>
+
+<!-- 27 MODELS.PY -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 1</div>
+    <h2>models.py</h2>
+    <div class="ide" style="margin-top:8px">
+      <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">cursos/models.py</span></div>
+      <pre class="sm"><code class="language-python" data-hl="6,12,14">from django.contrib.auth.models import User
+from django.db import models
+
+
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=20)
+
+
+class Curso(models.Model):
+    titulo = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True)
+    categorias = models.ManyToManyField(Categoria, related_name="cursos")
+    creador = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    def __str__(self):
+        return self.titulo</code></pre>
+    </div>
+    <div class="callout info" style="margin-top:8px"><span class="ic">i</span><div>Cambios frente al original: <code>on_delete</code> es obligatorio desde Django 2.0, <code>related_name="cursos"</code> es más claro y agregamos <code>__str__</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 3 min · Recorrer el código con calma. on_delete define qué pasa con los cursos si se borra el usuario creador. __str__ hace legible el modelo en el admin. Tras editar el modelo: makemigrations + migrate.</aside>
+</section>
+
+<!-- 28 SERIALIZADORES CONCEPTO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 2</div>
+    <h2>Los serializadores</h2>
+    <p class="lead">Convierten objetos Python ⇄ JSON y <b>validan</b> lo que entra, como los Forms.</p>
+    <div class="grid g2" style="margin-top:8px;gap:24px;align-items:center">
+      <div class="svgbox">
+        <svg viewBox="0 0 520 210" role="img" aria-label="El serializer convierte el modelo Curso a JSON al serializar y valida el JSON para crear o actualizar el modelo al deserializar">
+          <defs><marker id="s-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6E5B5B"/></marker></defs>
+          <rect x="10" y="75" width="140" height="60" rx="12" fill="#fff" stroke="#E7DBDB" stroke-width="2"/>
+          <text x="80" y="100" text-anchor="middle" font-size="15" font-weight="700" fill="#160A0A">Modelo</text>
+          <text x="80" y="120" text-anchor="middle" font-size="13" fill="#6E5B5B">Curso</text>
+          <rect x="190" y="70" width="140" height="70" rx="12" fill="#A30000"/>
+          <text x="260" y="100" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Serializer</text>
+          <text x="260" y="121" text-anchor="middle" font-size="12" fill="#F3C9C9">valida</text>
+          <rect x="370" y="75" width="140" height="60" rx="12" fill="#EAF4EF" stroke="#2E7D5B" stroke-width="2"/>
+          <text x="440" y="100" text-anchor="middle" font-size="15" font-weight="700" fill="#2E7D5B">JSON</text>
+          <text x="440" y="120" text-anchor="middle" font-size="12" fill="#6E5B5B">{ ... }</text>
+          <line x1="150" y1="90" x2="190" y2="90" stroke="#6E5B5B" stroke-width="2.5" marker-end="url(#s-a)"/>
+          <line x1="190" y1="120" x2="150" y2="120" stroke="#6E5B5B" stroke-width="2.5" marker-end="url(#s-a)"/>
+          <line x1="330" y1="90" x2="370" y2="90" stroke="#6E5B5B" stroke-width="2.5" marker-end="url(#s-a)"/>
+          <line x1="370" y1="120" x2="330" y2="120" stroke="#6E5B5B" stroke-width="2.5" marker-end="url(#s-a)"/>
+          <text x="170" y="45" text-anchor="middle" font-size="12" fill="#6E5B5B">instancia</text>
+          <text x="170" y="175" text-anchor="middle" font-size="12" fill="#6E5B5B">crear / actualizar</text>
+          <text x="350" y="45" text-anchor="middle" font-size="12" fill="#6E5B5B">serializar</text>
+          <text x="350" y="175" text-anchor="middle" font-size="12" fill="#6E5B5B">deserializar</text>
+        </svg>
+      </div>
+      <div>
+        <div class="kv wide"><b>Serializer</b><span>control total: defines cada campo a mano</span></div>
+        <div class="kv wide"><b>ModelSerializer</b><span>infiere campos y validaciones del modelo</span></div>
+        <div class="kv wide" style="border-bottom:0"><b>serializers.py</b><span>convención de DRF para declararlos</span></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · Serializar = objeto → JSON para responder; deserializar = JSON → objeto validado para guardar. ModelSerializer evita repetir el modelo: DRF genera los campos y sus validaciones.</aside>
+</section>
+
+<!-- 29 SERIALIZERS.PY -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 2</div>
+    <h2>serializers.py</h2>
+    <div class="ide" style="margin-top:8px">
+      <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">cursos/serializers.py</span></div>
+      <pre class="sm"><code class="language-python" data-hl="9,15">from rest_framework import serializers
+
+from cursos.models import Categoria, Curso
+
+
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = ("id", "nombre")
+
+
+class CursoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Curso
+        fields = ("id", "titulo", "descripcion", "categorias", "creador")</code></pre>
+    </div>
+    <div class="callout info" style="margin-top:8px"><span class="ic">i</span><div>En producción marca <code>creador</code> como <code>read_only_fields</code> y asígnalo desde <code>self.request.user</code>: nadie debería crear cursos a nombre de otro.</div></div>
+  </div>
+  <aside class="notes">⏱ 2.5 min · fields decide qué se expone y qué se acepta. Fíjate que añadimos "id" al CursoSerializer, que el original omitía. ModelSerializer también valida longitudes y tipos a partir del modelo.</aside>
+</section>
+
+<!-- 30 VISTAS CONCEPTO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 3</div>
+    <h2>Las vistas</h2>
+    <ul class="rolelist">
+      <li><code>Entrada</code><span>reciben un objeto con la información de la petición (request).</span></li>
+      <li><code>Salida</code><span>devuelven JSON (u otro formato) o una excepción si algo falla.</span></li>
+      <li><code>views.py</code><span>cada aplicación declara ahí sus vistas; en DRF suelen ser clases.</span></li>
+    </ul>
+    <div class="callout tip" style="margin-top:14px"><span class="ic">✓</span><div>DRF trae vistas genéricas que ya implementan listar, crear, recuperar, actualizar y borrar.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Una vista es el punto donde la petición aterriza. Con DRF heredamos de clases que ya saben hacer el CRUD: solo conectamos queryset y serializer.</aside>
+</section>
+
+<!-- 31 JERARQUÍA DE VISTAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 3</div>
+    <h2>La jerarquía de vistas de DRF</h2>
+    <div class="steps4" style="margin-top:10px">
+      <div class="steprow"><b>APIView</b><span>control total: escribes cada get(), post() a mano</span></div>
+      <div class="steprow" style="margin-left:34px"><b>GenericAPIView</b><span>+ queryset, serializer_class, get_object()</span></div>
+      <div class="grid g2" style="margin-left:68px;gap:10px">
+        <div class="steprow"><b>ListCreateAPIView</b><span>listar + crear</span></div>
+        <div class="steprow"><b>RetrieveUpdateDestroyAPIView</b><span>detalle + editar + borrar</span></div>
+      </div>
+      <div class="steprow hi" style="margin-left:34px"><b>ModelViewSet</b><span>las 6 acciones + router · lo que usaremos</span></div>
+    </div>
+    <div class="callout info" style="margin-top:10px"><span class="ic">i</span><div>Cuanto más abajo, menos código escribes y más convenciones aceptas. Puedes bajar de nivel cuando lo necesites.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · No hay que memorizar la jerarquía: entender que existen niveles. APIView para control total; las genéricas para CRUD por recurso; ModelViewSet cuando quieres el CRUD completo con router.</aside>
+</section>
+
+<!-- 32 ACCIONES MODELVIEWSET -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 3</div>
+    <h2>ModelViewSet: las 6 acciones</h2>
+    <table style="margin-top:10px">
+      <tr><th>Acción</th><th>Método</th><th>Ruta generada</th><th>Qué hace</th></tr>
+      <tr><td><code>list</code></td><td><span class="method get">GET</span></td><td><code>/cursos/</code></td><td>Lista la colección</td></tr>
+      <tr><td><code>create</code></td><td><span class="method post">POST</span></td><td><code>/cursos/</code></td><td>Crea un recurso</td></tr>
+      <tr><td><code>retrieve</code></td><td><span class="method get">GET</span></td><td><code>/cursos/{id}/</code></td><td>Devuelve un recurso</td></tr>
+      <tr><td><code>update</code></td><td><span class="method put">PUT</span></td><td><code>/cursos/{id}/</code></td><td>Reemplaza el recurso</td></tr>
+      <tr><td><code>partial_update</code></td><td><span class="method patch">PATCH</span></td><td><code>/cursos/{id}/</code></td><td>Edita parte del recurso</td></tr>
+      <tr><td><code>destroy</code></td><td><span class="method delete">DELETE</span></td><td><code>/cursos/{id}/</code></td><td>Elimina el recurso</td></tr>
+    </table>
+  </div>
+  <aside class="notes">⏱ 2 min · Por heredar de ModelViewSet obtenemos las seis acciones. El router (siguiente pieza) traduce esto a URLs. retrieve, update, partial_update y destroy cuelgan del detalle con {id}.</aside>
+</section>
+
+<!-- 33 VIEWS.PY -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 3</div>
+    <h2>views.py</h2>
+    <div class="ide" style="margin-top:8px">
+      <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">cursos/views.py</span></div>
+      <pre class="sm"><code class="language-python" data-hl="8,13">from rest_framework import viewsets
+
+from cursos.models import Categoria, Curso
+from cursos.serializers import CategoriaSerializer, CursoSerializer
+
+
+class CategoriaViewSet(viewsets.ModelViewSet):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+
+
+class CursoViewSet(viewsets.ModelViewSet):
+    queryset = Curso.objects.all()
+    serializer_class = CursoSerializer</code></pre>
+    </div>
+    <div class="callout err" style="margin-top:8px"><span class="ic">!</span><div><b>Error clásico:</b> en el taller original los <code>queryset</code> estaban cruzados (<code>CategoriasView</code> consultaba <code>Curso</code>). Cada vista debe apuntar a su propio modelo.</div></div>
+  </div>
+  <aside class="notes">⏱ 3 min · Cada ViewSet son dos atributos: qué consultar y cómo serializarlo. Ese es todo el CRUD. Contar la anécdota del bug del taller original y cómo se detecta (el endpoint devolvía el modelo equivocado).</aside>
+</section>
+
+<!-- 34 GRÁFICA LOC -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 3</div>
+    <h2>¿Cuánto código necesitas?</h2>
+    <p class="lead">El mismo CRUD de <code>Curso</code>, según el enfoque elegido.</p>
+    <div style="position:relative;height:360px;margin-top:6px">
+      <canvas data-chart="loc" role="img" aria-label="Gráfica de barras: una vista por función requiere unas 30 líneas; APIView 22; las vistas genéricas 10; y ModelViewSet solo 6"></canvas>
+    </div>
+    <p class="muted italic" style="font-size:.4em;margin:.2em 0 0">Cifras ilustrativas para comparar enfoques; el código real varía según el proyecto.</p>
+  </div>
+  <aside class="notes">⏱ 1.5 min · No es una competencia: APIView da control total y ModelViewSet velocidad. Empieza por lo simple y baja de nivel solo cuando lo necesites. El CRUD completo en muy pocas líneas es realista.</aside>
+</section>
+
+<!-- 35 ROUTERS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 4</div>
+    <h2>Los routers</h2>
+    <ul class="rolelist">
+      <li><code>Definir URLs</code><span>generan las rutas del API de forma ordenada a partir de los ViewSets.</span></li>
+      <li><code>Mapear verbos</code><span>deciden qué acción se ejecuta según el verbo HTTP y el path.</span></li>
+      <li><code>Organizar</code><span>todo en el <code>urls.py</code> del proyecto o uno por aplicación.</span></li>
+    </ul>
+    <div class="callout tip" style="margin-top:14px"><span class="ic">✓</span><div>Con <code>DefaultRouter</code> registramos <code>cursos</code> una vez y obtenemos las 6 rutas del CRUD, sin escribir ningún <code>path()</code> a mano.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Router = convención sobre URLs. registrar("cursos", CursoViewSet) genera /cursos/ y /cursos/{id}/ y asocia GET/POST/PUT/PATCH/DELETE a las acciones que vimos.</aside>
+</section>
+
+<!-- 36 URLS.PY -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 4</div>
+    <h2>urls.py</h2>
+    <div class="ide" style="margin-top:8px">
+      <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">taller/urls.py</span></div>
+      <pre class="sm"><code class="language-python" data-hl="8,9,13">from django.contrib import admin
+from django.urls import include, path
+from rest_framework import routers
+
+from cursos.views import CategoriaViewSet, CursoViewSet
+
+router = routers.DefaultRouter()
+router.register("cursos", CursoViewSet, basename="cursos")
+router.register("categorias", CategoriaViewSet, basename="categorias")
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("api/v1/", include(router.urls)),
+]</code></pre>
+    </div>
+    <div class="callout info" style="margin-top:8px"><span class="ic">i</span><div>Del taller original a hoy: <code>url()</code> con regex pasó a <code>path()</code>, y la API se monta bajo <code>/api/v1/</code> para poder versionarla.</div></div>
+  </div>
+  <aside class="notes">⏱ 2.5 min · El router se registra una vez por recurso. El prefijo /api/v1/ versiona desde el día uno. El original definía una variable URL_API_BASE_V1 que luego no usaba: aquí lo hacemos bien.</aside>
+</section>
+
+<!-- 37 CICLO DE UNA PETICIÓN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Todo junto</div>
+    <h2>El viaje de una petición</h2>
+    <div class="reqflow" style="margin-top:16px">
+      <div class="node r"><b>Petición</b><small>GET /api/v1/cursos/</small></div>
+      <div class="arrow">→</div>
+      <div class="node"><b>Router</b><small>en urls.py elige la acción</small></div>
+      <div class="arrow">→</div>
+      <div class="node p"><b>ViewSet</b><small>usa queryset + serializer</small></div>
+      <div class="arrow">→</div>
+      <div class="node p"><b>Serializer</b><small>valida y convierte</small></div>
+      <div class="arrow">→</div>
+      <div class="node g"><b>ORM</b><small>consulta la base de datos</small></div>
+      <div class="arrow">→</div>
+      <div class="node g"><b>PostgreSQL</b><small>devuelve las filas</small></div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>De vuelta: filas → objetos → JSON → HTTP <b>200 OK</b>. Si algo no valida, se corta antes con <b>400</b>.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · Este diagrama une las cuatro piezas. Mientras lo cuentas, señala dónde actúa cada archivo que escribimos: urls.py, views.py, serializers.py, models.py.</aside>
+</section>
+
+<!-- 38 BROWSABLE API -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 5</div>
+    <h2>Probemos la API</h2>
+    <div class="apimock" style="margin-top:10px">
+      <div class="am-top"><span class="dot"></span><span class="am-url">http://127.0.0.1:8000/api/v1/cursos/</span><span>GET</span></div>
+      <div class="am-body">HTTP 200 OK
+Allow: GET, POST, HEAD, OPTIONS
+Content-Type: application/json
+
+[
+    {
+        <span class="k">"id"</span>: <span class="s">1</span>,
+        <span class="k">"titulo"</span>: <span class="s">"Django REST Framework"</span>,
+        <span class="k">"descripcion"</span>: <span class="s">"Charla en Python Piura"</span>,
+        <span class="k">"categorias"</span>: [<span class="s">1</span>],
+        <span class="k">"creador"</span>: <span class="s">1</span>
+    }
+]</div>
+      <div class="am-actions"><span class="am-btn p">POST</span><span class="am-btn">PUT</span><span class="am-btn">PATCH</span><span class="am-btn">DELETE</span><span class="am-btn">OPTIONS</span></div>
+    </div>
+    <p class="muted italic" style="font-size:.4em;margin:.4em 0 0">La API navegable permite hacer POST y PUT desde el propio navegador.</p>
+  </div>
+  <aside class="notes">⏱ 2 min · Esta es la killer feature de DRF: abres /api/v1/cursos/ en el navegador y ves el JSON con un formulario para crear recursos. Menos fricción para probar sin herramientas externas.</aside>
+</section>
+
+<!-- 39 CURL / POSTMAN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 5</div>
+    <h2>También desde la terminal</h2>
+    <div class="grid g2" style="gap:20px;margin-top:10px">
+      <div class="term">
+        <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>curl</span></div>
+        <div class="body"><span class="g">$</span> API=http://127.0.0.1:8000/api/v1
+<span class="g">$</span> curl <span class="b">$API</span>/cursos/
+[{<span class="b">"id"</span>: 1, <span class="b">"titulo"</span>: "Django REST Framework", <span class="d">...</span>}]
+
+<span class="g">$</span> curl -X POST <span class="b">$API</span>/cursos/ \
+    -H <span class="b">"Content-Type: application/json"</span> \
+    -d <span class="b">'{"titulo": "FastAPI", "descripcion": "Nueva charla"}'</span>
+{<span class="b">"id"</span>: 2, <span class="b">"titulo"</span>: "FastAPI", <span class="d">...</span>}</div>
+      </div>
+      <div>
+        <div class="card a-drf"><h3>Postman / httpie</h3><p>Clientes gráficos o de terminal para guardar colecciones de peticiones y compartirlas con el equipo.</p></div>
+        <div class="callout info" style="margin-top:12px"><span class="ic">i</span><div>Lo importante es la API: cualquier cliente que hable HTTP sirve para probarla.</div></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · Postman, el del taller original, sigue siendo útil, pero ya no es imprescindible: la API navegable y curl cubren el taller. httpie es una alternativa de terminal más legible.</aside>
+</section>
+
+<!-- 40 ERRORES COMUNES -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Aprendiendo de los errores</div>
+    <h2>Errores comunes</h2>
+    <div class="grid g2" style="gap:14px;margin-top:10px">
+      <div class="card a-drf"><h3>Querysets cruzados</h3><p><code>CategoriaViewSet</code> debe usar <code>Categoria.objects.all()</code>, no <code>Curso</code>. Síntoma: el endpoint devuelve datos del otro modelo.</p></div>
+      <div class="card a-amber"><h3>Falta <code>on_delete</code></h3><p>Obligatorio en cada <code>ForeignKey</code> desde Django 2.0. Y si cambias el modelo: <code>makemigrations</code> + <code>migrate</code>.</p></div>
+      <div class="card a-pg"><h3>Olvidar <code>rest_framework</code></h3><p>Sin registrarlo en <code>INSTALLED_APPS</code> no hay API navegable ni routers.</p></div>
+      <div class="card a-green"><h3>Rutas sin prefijo</h3><p>Montar la API en <code>/api/v1/</code> desde el inicio te deja evolucionar sin romper clientes.</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · El primero salió del taller original: los querysets estaban intercambiados. Los demás son los que vemos en code review: migraciones olvidadas y APIs sin prefijo ni versionado.</aside>
+</section>
+
+<!-- 41 BUENAS PRÁCTICAS Y RECURSOS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Para seguir</div>
+    <h2>Buenas prácticas y siguientes pasos</h2>
+    <div class="chiprow" style="margin-top:12px">
+      <span class="chip active">Paginación</span>
+      <span class="chip">Permisos</span>
+      <span class="chip">Autenticación (Token/JWT)</span>
+      <span class="chip">Filtros y búsqueda</span>
+      <span class="chip">drf-spectacular (OpenAPI)</span>
+      <span class="chip">Testing con APIClient</span>
+      <span class="chip">Versionado</span>
+      <span class="chip">Throttling</span>
+    </div>
+    <div class="grid g2" style="gap:14px;margin-top:16px">
+      <div class="kv"><b>Documentación</b><span>django-rest-framework.org</span></div>
+      <div class="kv"><b>Django</b><span>docs.djangoproject.com/en/5.2/</span></div>
+      <div class="kv"><b>Comunidad</b><span>Python Piura · pythonpiura.org</span></div>
+      <div class="kv"><b>Este deck</b><span>joseamaya.github.io/introduccion-a-django-rest-framework/</span></div>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Todo lo anterior son piezas de DRF que se activan con configuración: el CRUD ya está listo para crecer.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Cerrar con el mapa de lo que viene: paginación y permisos son dos líneas de configuración; auth y documentación son el siguiente nivel. Recomendar la documentación oficial y la comunidad para seguir.</aside>
+</section>
+
+<!-- 42 GRACIAS -->
+<section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.16" data-background-transition="fade">
+  <div class="pad">
+    <div class="kicker" style="color:#EF9A9A">Gracias</div>
+    <h1 style="font-size:1.8em">¿Preguntas?</h1>
+    <p class="lead" style="color:#E3CBCB;font-size:.6em">Tu primera API es un modelo, un serializer, una vista y un router.</p>
+    <div style="margin-top:1.2em;display:flex;gap:60px;align-items:end">
+      <div>
+        <div style="color:#BF9FA0;font-size:.44em;font-family:'JetBrains Mono'">github · twitter</div>
+        <div style="color:#fff;font-size:.56em;font-family:'JetBrains Mono'">joseamaya · jamayac99</div>
+      </div>
+      <div>
+        <div style="color:#BF9FA0;font-size:.44em;font-family:'JetBrains Mono'">comunidad</div>
+        <div style="color:#fff;font-size:.56em;font-family:'JetBrains Mono'">Python Piura · Piura AI</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 30 s · Agradecer y abrir preguntas. Idea final: Django puso el ORM y el admin; DRF puso la serialización y las rutas; tú pones el dominio.</aside>
+</section>
+
+</div></div>
+<script src="vendor/reveal/reveal.js"></script>
+<script src="vendor/reveal/notes.js"></script>
+<script src="vendor/reveal/highlight.js"></script>
+<script src="vendor/reveal/search.js"></script>
+<script src="vendor/reveal/zoom.js"></script>
+<script src="vendor/chartjs/chart.umd.min.js"></script>
+<script src="js/deck.js"></script>
+</body>
+</html>
