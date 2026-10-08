@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Introducción a Django · José Miguel Amaya</title>
+<meta name="description" content="El framework web de Python, de cero: MTV, ORM, admin, plantillas y estáticos, con un blog mínimo. Charla de José Miguel Amaya (Python Piura · Piura AI).">
+<link rel="canonical" href="https://joseamaya.github.io/introduccion-a-django/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Introducción a Django">
+<meta property="og:description" content="MTV, ORM, admin, plantillas y estáticos: el framework web de Python, de cero.">
+<meta property="og:url" content="https://joseamaya.github.io/introduccion-a-django/">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="vendor/reveal/reset.css">
+<link rel="stylesheet" href="vendor/reveal/reveal.css">
+<link rel="stylesheet" href="vendor/reveal/highlight-theme.css">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  .reveal pre.sm{font-size:.44em}
+  .reveal pre.sm code{padding:12px 16px}
+  .cl{display:block}
+  .cl.hl{background:rgba(12,75,51,.16);box-shadow:-8px 0 0 rgba(12,75,51,.16);border-radius:4px}
+  section.dark .cl.hl,section.navy .cl.hl{background:rgba(68,183,139,.22);box-shadow:-8px 0 0 rgba(68,183,139,.22)}
+  .cap{font-family:'JetBrains Mono',monospace;font-size:.4em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:.35em 0 .15em}
+  section.dark .cap,section.navy .cap{color:#8FCFAF}
+  .adminmock{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 10px 26px rgba(10,36,26,.08)}
+  .adminmock .ad-top{display:flex;align-items:center;gap:10px;background:#E7F1EC;padding:10px 16px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:.4em;color:var(--muted)}
+  .adminmock .ad-top .dot{width:10px;height:10px;border-radius:50%;background:var(--mint);flex:0 0 auto}
+  .adminmock .ad-url{flex:1;background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 12px;color:var(--ink)}
+  .adminmock .ad-head{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line)}
+  .adminmock .ad-head b{font-family:'Montserrat';font-size:.56em;color:var(--ink)}
+  .adminmock .ad-head .add{margin-left:auto;background:var(--dj);color:#fff;font-family:'JetBrains Mono',monospace;font-size:.38em;padding:7px 14px;border-radius:8px}
+  .adminmock .ad-row{display:flex;align-items:center;gap:14px;padding:10px 18px;border-bottom:1px solid var(--line);font-size:.46em;color:var(--body)}
+  .adminmock .ad-row:last-child{border-bottom:0}
+  .adminmock .ad-row .t{font-weight:600;color:var(--ink)}
+  .adminmock .ad-row .s{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.38em;color:var(--green-ink)}
+  .adminmock .ad-row .s.draft{color:var(--muted)}
+  .rolelist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.28em;font-size:.5em}
+  .rolelist li{display:flex;gap:12px;align-items:baseline}
+  .rolelist code{color:var(--dj-ink);font-weight:700;min-width:8em}
+  section.dark .rolelist code,section.navy .rolelist code{color:var(--mint)}
+  .steprow{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:12px;padding:10px 16px;background:#fff}
+  .steprow b{font-family:'JetBrains Mono',monospace;font-size:.44em;color:var(--dj-ink);white-space:nowrap}
+  .steprow span{font-size:.44em;color:var(--body)}
+  @media (prefers-reduced-motion: reduce){
+    .reveal .fragment{transition:none!important}
+    .reveal .slides section{transition:none!important}
+  }
+</style>
+</head>
+<body>
+<noscript>
+  <style>
+    .reveal{position:static;height:auto}
+    .reveal .slides{position:static;width:auto;height:auto;transform:none!important}
+    .reveal .slides>section{display:block;position:relative;min-height:0;height:auto;padding:40px 24px;border-bottom:1px solid #d5e7dc}
+    .reveal .foot{display:none}
+  </style>
+  <p style="font-family:sans-serif;padding:16px;background:#0A241A;color:#fff;margin:0">Esta presentación usa JavaScript (Reveal.js) para navegar. Aquí está el contenido completo.</p>
+</noscript>
+<div class="reveal"><div class="slides">
+
+<!-- 1 PORTADA -->
+<section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.16" data-background-transition="fade">
+  <div class="pad">
+    <div class="kicker">Python Piura · Piura AI</div>
+    <h1 style="font-size:1.9em;line-height:1.03">Introducción a <span style="color:var(--mint)">Django</span></h1>
+    <p class="lead" style="color:#D2E8DC;font-size:.64em;margin-top:.6em">El framework web de Python, de cero · Caso: <b>taller/blog</b></p>
+    <div style="margin-top:1.1em">
+      <span class="pill">Django 5.2 LTS</span>
+      <span class="pill">Python 3.13</span>
+      <span class="pill">MTV + ORM</span>
+    </div>
+    <div style="margin-top:1.2em;color:#9DBFAE;font-family:'JetBrains Mono';font-size:.5em">José Miguel Amaya Camacho · github: joseamaya</div>
+  </div>
+  <aside class="notes">⏱ 1 min · Presentar: un recorrido por Django desde cero, con un blog mínimo como ejemplo. Esta charla une las dos versiones que di en el FLISOL 2017 Sede Loja (Ecuador) y las actualiza a Django 5.2 LTS y Python 3.13.</aside>
+</section>
+
+<!-- 2 BIO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Sobre mí</div>
+    <h2>José Miguel Amaya Camacho</h2>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card a-dj"><span class="label">Perfil</span><p>Desarrollador Python/Django. Full Stack en Xprende Tech (Ecuador) e Infobibliotecas (España). Fundador de Python Piura.</p></div>
+      <div class="card a-mint"><span class="label">Hoy</span><p>Un vistazo rápido pero completo a Django: qué trae, cómo se organiza y cómo se construye un blog mínimo.</p></div>
+    </div>
+    <div class="kv" style="margin-top:16px"><b>GitHub</b> <span>github.com/joseamaya</span></div>
+    <div class="kv"><b>Twitter</b> <span>@jamayac99</span></div>
+  </div>
+  <aside class="notes">⏱ 30 s · Presentación breve. No hace falta conocer Django: partimos de Python básico. El objetivo es que al final entiendas cómo encajan las piezas y por dónde seguir.</aside>
+</section>
+
+<!-- 3 COMUNIDAD -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">La comunidad</div>
+    <h2>Python Piura</h2>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="card a-dj"><h3>Qué hacemos</h3><p>Eventos, charlas y talleres para difundir Python en Piura y la región.</p></div>
+      <div class="card a-mint"><h3>Dónde escribimos</h3><p>Un blog con experiencias en Python, Django, Odoo y más.</p></div>
+      <div class="card a-pg"><h3>Súmate</h3><p>Comunidad abierta a todos los niveles: estudiantes, profesionales y curiosos.</p></div>
+    </div>
+    <div class="kv" style="margin-top:16px"><b>Web</b> <span>pythonpiura.org</span></div>
+    <div class="kv"><b>Hoy</b> <span>Python Piura · Piura AI</span></div>
+  </div>
+  <aside class="notes">⏱ 30 s · Mencionar la comunidad y su historia. Si estás en Piura y te gusta Python, este es tu sitio. Agradecer a la organización de la comunidad por el espacio.</aside>
+</section>
+
+<!-- 4 AGENDA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Agenda</div>
+    <h2>Qué vamos a ver</h2>
+    <ul class="agenda" style="margin-top:14px">
+      <li><b>01</b> Qué es Django, filosofía y MTV <span>10 min</span></li>
+      <li><b>02</b> Preparar el entorno y el proyecto <span>10 min</span></li>
+      <li><b>03</b> Las piezas: modelos, ORM, admin, vistas y plantillas <span>25 min</span></li>
+      <li><b>04</b> El ciclo completo y siguientes pasos <span>5 min</span></li>
+    </ul>
+  </div>
+  <aside class="notes">⏱ 1 min · Enmarcar: la primera mitad es concepto, la segunda es cómo se construye un blog mínimo. Al final tendrás el mapa completo de Django y un ejemplo funcionando.</aside>
+</section>
+
+<!-- 5 SECCIÓN 01 -->
+<section class="dark">
+  <div class="pad">
+    <div class="sectionnum">01</div>
+    <h2 style="font-size:1.6em">Django</h2>
+    <p class="lead" style="color:#BFD9CC">Qué es, en qué cree y cómo piensa.</p>
+  </div>
+  <aside class="notes">⏱ 15 s · Sección de conceptos: entender Django antes de instalar nada.</aside>
+</section>
+
+<!-- 6 QUÉ ES DJANGO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Punto de partida</div>
+    <h2>¿Qué es Django?</h2>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="card a-dj"><h3>Framework web completo</h3><p>Gratuito y open source, escrito en Python. Nació en 2005 en el Lawrence Journal-World.</p></div>
+      <div class="card a-mint"><h3>Lado del servidor</h3><p>Trabaja el backend: enrutado, base de datos, autenticación, formularios, plantillas.</p></div>
+      <div class="card a-pg"><h3>Sin ataduras</h3><p>Soporta múltiples bases de datos y se despliega en varios servidores web.</p></div>
+    </div>
+    <div class="callout tip" style="margin-top:14px"><span class="ic">✓</span><div>Detrás de sitios como <b>Instagram, Mozilla, Pinterest o Eventbrite</b>: Django escala.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · Django es un framework "baterías incluidas": no empiezas con una página en blanco. Es gratis, open source y con una comunidad enorme. Nació en una redacción de periódico, de ahí su foco en contenido y fechas.</aside>
+</section>
+
+<!-- 7 FILOSOFÍA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Cómo piensa</div>
+    <h2>Filosofía de Django</h2>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="card a-dj"><h3>Agilidad</h3><p>Del concepto al producto sin montar media infraestructura.</p></div>
+      <div class="card a-dj"><h3>Bajo acoplamiento</h3><p>Componentes independientes que puedes cambiar por separado.</p></div>
+      <div class="card a-mint"><h3>DRY</h3><p>Don't Repeat Yourself: la lógica vive en un solo lugar.</p></div>
+      <div class="card a-mint"><h3>URLs limpias</h3><p>Direcciones legibles y mapeadas explícitamente.</p></div>
+      <div class="card a-pg"><h3>Versatilidad</h3><p>De un blog a una plataforma enorme con la misma base.</p></div>
+      <div class="card a-pg"><h3>MTV</h3><p>Model Template View: una variación del clásico MVC.</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · Estos principios explican muchas decisiones del framework. DRY es el que más notarás: un modelo, un serializer, una vista. MTV es la pieza que viene en la siguiente slide.</aside>
+</section>
+
+<!-- 8 MTV PREGUNTAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El patrón</div>
+    <h2>MTV: tres preguntas, tres piezas</h2>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="card a-dj"><span class="label">¿Cómo se almacena el dato?</span><div class="value">Modelo</div><p>La clase Python que describe la tabla en la base de datos.</p></div>
+      <div class="card a-mint"><span class="label">¿Qué dato se muestra?</span><div class="value">Vista</div><p>La función o clase que decide qué consultar y qué responder.</p></div>
+      <div class="card a-pg"><span class="label">¿Cómo se muestra el dato?</span><div class="value">Template</div><p>El HTML con marcadores que da forma a la respuesta.</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · Estas tres preguntas son el esqueleto de toda app Django. Los noruegos dirían: modelo = datos, vista = lógica, template = presentación. El registro de URLs conecta las peticiones con las vistas.</aside>
+</section>
+
+<!-- 9 DIAGRAMA MTV -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">La idea en una imagen</div>
+    <h2>El flujo de Django</h2>
+    <div class="svgbox" style="margin-top:6px">
+      <svg viewBox="0 0 1120 500" role="img" aria-label="Diagrama: el navegador pide una URL, Django la resuelve con una vista; la vista consulta los modelos (ORM) que hablan con la base de datos y renderiza un template que vuelve al navegador como HTML">
+        <defs>
+          <marker id="d-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0C4B33"/></marker>
+          <marker id="d-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2E7D5B"/></marker>
+        </defs>
+        <text x="560" y="26" text-anchor="middle" font-size="13" fill="#5E7268">Usuario · persona con navegador</text>
+        <rect x="430" y="40" width="260" height="62" rx="12" fill="#fff" stroke="#D5E7DC" stroke-width="2"/>
+        <text x="560" y="78" text-anchor="middle" font-size="18" font-weight="700" fill="#0A1F16">Navegador</text>
+        <rect x="800" y="130" width="240" height="62" rx="12" fill="#E7F5EE" stroke="#8FCFAF" stroke-width="2"/>
+        <text x="920" y="168" text-anchor="middle" font-size="18" font-weight="700" fill="#0A5138">URLs</text>
+        <rect x="430" y="230" width="260" height="62" rx="12" fill="#0C4B33"/>
+        <text x="560" y="268" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">Vistas</text>
+        <rect x="430" y="340" width="260" height="62" rx="12" fill="#E7F5EE" stroke="#8FCFAF" stroke-width="2"/>
+        <text x="560" y="371" text-anchor="middle" font-size="18" font-weight="700" fill="#0A5138">Modelos</text>
+        <text x="560" y="391" text-anchor="middle" font-size="12" fill="#1E7A55">(ORM)</text>
+        <rect x="430" y="428" width="260" height="56" rx="12" fill="#EAF1F7" stroke="#2A5D86" stroke-width="2"/>
+        <text x="560" y="462" text-anchor="middle" font-size="18" font-weight="700" fill="#2A5D86">Base de datos</text>
+        <rect x="80" y="130" width="240" height="62" rx="12" fill="#fff" stroke="#D5E7DC" stroke-width="2"/>
+        <text x="200" y="168" text-anchor="middle" font-size="18" font-weight="700" fill="#0A1F16">Templates</text>
+        <line x1="690" y1="82" x2="860" y2="130" stroke="#0C4B33" stroke-width="2.5" marker-end="url(#d-a)"/>
+        <text x="810" y="96" font-size="13" fill="#5E7268">petición</text>
+        <line x1="920" y1="192" x2="700" y2="236" stroke="#0C4B33" stroke-width="2.5" marker-end="url(#d-a)"/>
+        <text x="800" y="226" font-size="13" fill="#5E7268">resuelve</text>
+        <line x1="560" y1="292" x2="560" y2="340" stroke="#0C4B33" stroke-width="2.5" marker-end="url(#d-a)" marker-start="url(#d-b)"/>
+        <text x="600" y="322" font-size="13" fill="#5E7268">datos</text>
+        <line x1="560" y1="402" x2="560" y2="428" stroke="#0C4B33" stroke-width="2.5" marker-end="url(#d-a)" marker-start="url(#d-b)"/>
+        <text x="600" y="422" font-size="13" fill="#5E7268">SQL</text>
+        <line x1="430" y1="250" x2="320" y2="192" stroke="#2E7D5B" stroke-width="2.5" marker-end="url(#d-b)"/>
+        <text x="330" y="238" font-size="13" fill="#5E7268">render</text>
+        <line x1="200" y1="130" x2="430" y2="80" stroke="#2E7D5B" stroke-width="2.5" marker-end="url(#d-b)"/>
+        <text x="230" y="94" font-size="13" fill="#5E7268">HTML</text>
+        <text x="560" y="497" text-anchor="middle" font-size="13" fill="#5E7268">El navegador recibe HTML; el ciclo se repite en cada petición</text>
+      </svg>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2.5 min · Recorrer el diagrama: el navegador pide una URL, urls.py resuelve qué vista la atiende, la vista consulta los modelos (que hablan SQL con la base de datos) y renderiza un template. El resultado vuelve como HTML. Este es el corazón de Django.</aside>
+</section>
+
+<!-- 10 BATERÍAS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Baterías incluidas</div>
+    <h2>Qué trae Django de fábrica</h2>
+    <div class="grid g4" style="margin-top:12px">
+      <div class="card a-dj"><h3>ORM</h3><p>Base de datos con objetos Python.</p></div>
+      <div class="card a-dj"><h3>Admin</h3><p>Panel de gestión listo.</p></div>
+      <div class="card a-mint"><h3>Auth</h3><p>Usuarios, grupos y permisos.</p></div>
+      <div class="card a-mint"><h3>Migraciones</h3><p>Cambios de esquema versionados.</p></div>
+      <div class="card a-pg"><h3>Plantillas</h3><p>HTML reutilizable y heredable.</p></div>
+      <div class="card a-pg"><h3>Forms</h3><p>Validación de datos de entrada.</p></div>
+      <div class="card a-amber"><h3>i18n</h3><p>Traducciones y zonas horarias.</p></div>
+      <div class="card a-violet"><h3>Seguridad</h3><p>CSRF, XSS, SQLi y sesiones.</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · Esta es la gran ventaja frente a microframeworks: no montas estas piezas una a una. La siguiente slide compara Django con Flask y FastAPI con honestidad.</aside>
+</section>
+
+<!-- 11 COMPARATIVA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Contexto</div>
+    <h2>Django, Flask y FastAPI</h2>
+    <table style="margin-top:10px">
+      <tr><th></th><th>Django</th><th>Flask</th><th>FastAPI</th></tr>
+      <tr><td><b>Enfoque</b></td><td>Full-stack</td><td>Micro, flexible</td><td>Micro, async</td></tr>
+      <tr><td><b>ORM</b></td><td>Incluido</td><td>Extensiones</td><td>SQLAlchemy/SQLModel</td></tr>
+      <tr><td><b>Admin</b></td><td>Incluido</td><td>—</td><td>—</td></tr>
+      <tr><td><b>Validación</b></td><td>Forms</td><td>Extensiones</td><td>Pydantic</td></tr>
+      <tr><td><b>Ideal para</b></td><td>Portales y sistemas completos</td><td>Apps pequeñas</td><td>APIs y servicios</td></tr>
+    </table>
+    <div class="callout info" style="margin-top:12px"><span class="ic">i</span><div>No hay framework "mejor": hay herramientas para cada problema. Django brilla cuando necesitas el paquete completo.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · Comparación honesta: Flask y FastAPI son excelentes y más livianos. Django parte con todo incluido; por eso es ideal para productos completos con panel de administración y usuarios.</aside>
+</section>
+
+<!-- 12 CHART -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Contexto</div>
+    <h2>Piezas incluidas de fábrica</h2>
+    <div style="position:relative;height:330px;margin-top:6px">
+      <canvas data-chart="baterias" role="img" aria-label="Gráfica de barras ilustrativa: Django cubre unas 8 áreas de fábrica, FastAPI 4 y Flask 2"></canvas>
+    </div>
+    <p class="muted italic" style="font-size:.4em;margin:.2em 0 0">Comparación ilustrativa de áreas cubiertas sin plugins; no es un benchmark.</p>
+  </div>
+  <aside class="notes">⏱ 1 min · Visual rápido de lo anterior: cuántas áreas resuelve cada framework sin instalar nada. Django viene con todo; en Flask y FastAPI compones tu stack. Ambas estrategias son válidas.</aside>
+</section>
+
+<!-- 13 SECCIÓN 02 -->
+<section class="dark">
+  <div class="pad">
+    <div class="sectionnum">02</div>
+    <h2 style="font-size:1.6em">Preparación</h2>
+    <p class="lead" style="color:#BFD9CC">Del entorno virtual al primer servidor corriendo.</p>
+  </div>
+  <aside class="notes">⏱ 15 s · Manos a la obra: creamos el proyecto taller y la app blog.</aside>
+</section>
+
+<!-- 14 ENTORNO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 1</div>
+    <h2>El entorno virtual</h2>
+    <p class="lead">Un entorno aislado con su propia copia de Python y sus dependencias.</p>
+    <div class="term" style="margin-top:12px">
+      <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+      <div class="body"><span class="g">$</span> mkdir taller &amp;&amp; cd taller
+<span class="g">$</span> python3 -m venv .venv
+<span class="g">$</span> source .venv/bin/activate     <span class="d"># Windows: .venv\Scripts\activate</span>
+(.venv) <span class="g">$</span> <span class="caret"></span></div>
+    </div>
+    <div class="callout info" style="margin-top:12px"><span class="ic">i</span><div>Antes se usaba <code>virtualenv</code>; hoy <code>venv</code> viene incluido en Python. El prompt <code>(.venv)</code> confirma que está activo.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · El entorno virtual evita ensuciar el Python del sistema y que dos proyectos choquen de versiones. Todo lo que instalemos vive en .venv, dentro del proyecto.</aside>
+</section>
+
+<!-- 15 INSTALACIÓN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 2</div>
+    <h2>Instalar Django</h2>
+    <div class="term" style="margin-top:12px">
+      <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+      <div class="body">(.venv) <span class="g">$</span> pip install <span class="b">"Django&gt;=5.2,&lt;6"</span>
+Collecting Django&gt;=5.2,&lt;6
+Successfully installed <span class="g">django-5.2.7</span> <span class="d">...</span>
+
+(.venv) <span class="g">$</span> pip freeze &gt; requirements.txt</div>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div><code>pip freeze</code> deja las versiones exactas en <code>requirements.txt</code>: tu proyecto es reproducible en otra máquina.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · pip es el gestor de paquetes de Python. Fijamos la serie 5.2 (LTS, soporte extendido) y congelamos versiones. En el taller de 2017 esto era "pip install django" sin más.</aside>
+</section>
+
+<!-- 16 STARTPROJECT -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 3</div>
+    <h2>Crear el proyecto</h2>
+    <div class="term" style="margin-top:12px">
+      <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+      <div class="body">(.venv) <span class="g">$</span> django-admin startproject taller .
+(.venv) <span class="g">$</span> ls
+manage.py  taller/</div>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>El <b>punto</b> al final evita la carpeta <code>taller/taller/</code> duplicada: <code>manage.py</code> queda en la raíz del proyecto.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Un proyecto Django se crea con startproject. El nombre taller es nuestro caso de ejemplo. El punto final es el detalle moderno que no estaba en los talleres originales.</aside>
+</section>
+
+<!-- 17 ESTRUCTURA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 4</div>
+    <h2>Estructura del proyecto</h2>
+    <div class="grid g2" style="margin-top:12px;gap:24px">
+      <div class="ide plain">
+        <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">taller/ — árbol</span></div>
+        <pre><code>taller/
+├── manage.py
+├── requirements.txt
+└── taller/
+    ├── __init__.py
+    ├── settings.py
+    ├── urls.py
+    ├── asgi.py
+    └── wsgi.py</code></pre>
+      </div>
+      <ul class="rolelist" style="align-self:center">
+        <li><code>settings.py</code><span>apps, base de datos, idioma, zona horaria…</span></li>
+        <li><code>urls.py</code><span>enruta cada URL a una vista</span></li>
+        <li><code>asgi.py</code><span>entrada ASGI (async) para producción</span></li>
+        <li><code>wsgi.py</code><span>entrada WSGI clásica para producción</span></li>
+        <li><code>manage.py</code><span>comandos de administración del proyecto</span></li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · settings.py es el panel de configuración; urls.py el conmutador de direcciones; asgi.py y wsgi.py son las puertas de entrada para producción; manage.py es tu navaja suiza. El proyecto solo contiene configuración: la funcionalidad vive en las apps.</aside>
+</section>
+
+<!-- 18 STARTAPP -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 5</div>
+    <h2>La aplicación blog</h2>
+    <div class="grid g2" style="margin-top:10px;gap:24px">
+      <div class="term">
+        <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+        <div class="body">(.venv) <span class="g">$</span> python manage.py startapp blog
+(.venv) <span class="g">$</span> ls blog
+admin.py  apps.py  models.py
+tests.py  views.py  migrations/</div>
+      </div>
+      <div class="ide plain">
+        <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">blog/ — árbol</span></div>
+        <pre><code>blog/
+├── migrations/
+├── admin.py
+├── apps.py
+├── models.py
+├── tests.py
+└── views.py</code></pre>
+      </div>
+    </div>
+    <div class="callout info" style="margin-top:10px"><span class="ic">i</span><div>No olvides agregar <code>"blog"</code> a <code>INSTALLED_APPS</code>: es el error número uno de todo principiante.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · Una app = una responsabilidad. blog agrupará modelos, vistas, plantillas y estáticos del blog. Django genera el esqueleto; nosotros rellenamos las piezas.</aside>
+</section>
+
+<!-- 19 MIGRATE / RUNSERVER -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 6</div>
+    <h2>Arrancar el proyecto</h2>
+    <div class="term" style="margin-top:12px">
+      <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+      <div class="body">(.venv) <span class="g">$</span> python manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... <span class="g">OK</span>
+  <span class="d">... (16 migraciones más)</span>
+
+(.venv) <span class="g">$</span> python manage.py runserver
+Watching for file changes with StatReloader
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.</div>
+    </div>
+    <div class="callout warn" style="margin-top:10px"><span class="ic">!</span><div>El servidor de desarrollo es <b>solo para local</b>: en producción se usa gunicorn/uvicorn detrás de nginx.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · Las migraciones crean las tablas que Django necesita (usuarios, permisos, sesiones…). runserver levanta la app en el puerto 8000 y recarga al guardar archivos: tu mejor compañero de desarrollo.</aside>
+</section>
+
+<!-- 20 ADMIN / SUPERUSER -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Paso 7</div>
+    <h2>El admin y el superusuario</h2>
+    <div class="grid g2" style="gap:24px">
+      <ul class="rolelist" style="align-self:center">
+        <li><code>/admin/</code><span>panel ya construido para gestionar usuarios y datos</span></li>
+        <li><code>createsuperuser</code><span>acceso total al admin y a las apps registradas</span></li>
+      </ul>
+      <div class="term">
+        <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>zsh — terminal</span></div>
+        <div class="body">(.venv) <span class="g">$</span> python manage.py createsuperuser
+Nombre de usuario: <span class="b">miguel</span>
+Correo electrónico: <span class="b">miguel@example.com</span>
+Password: <span class="d">********</span>
+Superuser created successfully.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · El admin es una de las grandes ventajas de Django: sin escribir vistas ya puedes crear y editar datos. Con el superusuario entramos y registramos nuestras apps en admin.py.</aside>
+</section>
+
+<!-- 21 SECCIÓN 03 -->
+<section class="dark">
+  <div class="pad">
+    <div class="sectionnum">03</div>
+    <h2 style="font-size:1.6em">Las piezas</h2>
+    <p class="lead" style="color:#BFD9CC">Modelos, ORM, admin, vistas y plantillas con un blog mínimo.</p>
+  </div>
+  <aside class="notes">⏱ 15 s · Ahora conectamos todo: cada archivo que Django generó y qué va dentro.</aside>
+</section>
+
+<!-- 22 PROYECTO VS APP -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Organización</div>
+    <h2>Proyecto y aplicación</h2>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card a-dj"><h3>Proyecto</h3><p>Contiene la configuración y los componentes del sitio: settings, urls, wsgi/asgi. Nuestro <code>taller</code>.</p></div>
+      <div class="card a-mint"><h3>Aplicación</h3><p>Un componente con una funcionalidad concreta: blog, usuarios, foros, galería… Cada una con sus modelos y vistas.</p></div>
+    </div>
+    <div class="callout info" style="margin-top:14px"><span class="ic">i</span><div>Un proyecto puede contener muchas apps; una app puede reutilizarse en varios proyectos (Django trae varias de serie: <code>admin</code>, <code>auth</code>…).</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Esta distinción confunde al principio: el proyecto es el pegamento y la configuración; las apps son las funcionalidades. Nuestro caso: proyecto taller + app blog.</aside>
+</section>
+
+<!-- 23 SETTINGS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Configuración</div>
+    <h2>settings.py</h2>
+    <div class="ide" style="margin-top:8px">
+      <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">taller/settings.py</span></div>
+      <pre class="sm"><code class="language-python" data-hl="9,12,13">INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "blog",
+]
+
+LANGUAGE_CODE = "es-pe"
+TIME_ZONE = "America/Lima"</code></pre>
+    </div>
+    <div class="callout info" style="margin-top:8px"><span class="ic">i</span><div>Aquí viven la base de datos, los idiomas, la zona horaria y las apps activas. En producción suele haber uno por entorno (local, testing, prod).</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · INSTALLED_APPS es la lista de apps activas: las de Django más la nuestra. Con LANGUAGE_CODE y TIME_ZONE adaptamos el proyecto a Perú. Si olvidas registrar blog aquí, sus modelos no existen para Django.</aside>
+</section>
+
+<!-- 24 URLS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Enrutado</div>
+    <h2>urls.py</h2>
+    <div class="ide" style="margin-top:8px">
+      <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">taller/urls.py</span></div>
+      <pre class="sm"><code class="language-python" data-hl="8">from django.contrib import admin
+from django.urls import path
+
+from blog import views
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("articulos/", views.lista_articulos, name="lista_articulos"),
+]</code></pre>
+    </div>
+    <div class="callout info" style="margin-top:8px"><span class="ic">i</span><div>Django 2+ usa <code>path()</code> con convertidores (<code>&lt;int:pk&gt;</code>); en 2017 esto se escribía con <code>url()</code> y expresiones regulares. Un <code>urls.py</code> por app mantiene todo ordenado.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · urls.py mapea direcciones a vistas. La primera ruta es el admin que Django trae; la segunda es la nuestra. name= permite referenciar la URL desde plantillas sin repetir la ruta.</aside>
+</section>
+
+<!-- 25 MODELOS CONCEPTO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 1</div>
+    <h2>Los modelos</h2>
+    <ul class="rolelist">
+      <li><code>Descripción</code><span>los datos en código Python que se reflejan en tablas de la base de datos.</span></li>
+      <li><code>SQL por detrás</code><span>cada consulta ejecuta SQL y devuelve objetos Python cómodos.</span></li>
+      <li><code>models.py</code><span>cada aplicación declara ahí sus modelos.</span></li>
+    </ul>
+    <div class="callout tip" style="margin-top:14px"><span class="ic">✓</span><div>Nuestro blog: un modelo <b>Articulo</b> con título, cuerpo, estado de publicación y fecha de creación.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Un modelo es una clase = una tabla; cada atributo = una columna. Las migraciones traducen los cambios a la base de datos. Nunca escribimos CREATE TABLE a mano.</aside>
+</section>
+
+<!-- 26 MODELS.PY -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 1</div>
+    <h2>models.py</h2>
+    <div class="ide" style="margin-top:8px">
+      <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">blog/models.py</span></div>
+      <pre class="sm"><code class="language-python" data-hl="5,8,14">from django.db import models
+
+
+class Articulo(models.Model):
+    titulo = models.CharField(max_length=120)
+    cuerpo = models.TextField()
+    publicado = models.BooleanField(default=True)
+    creado = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.titulo
+
+    class Meta:
+        ordering = ("-creado",)</code></pre>
+    </div>
+    <div class="callout info" style="margin-top:8px"><span class="ic">i</span><div><code>CharField</code> y <code>TextField</code> son los campos de texto; <code>auto_now_add</code> pone la fecha al crear. <code>__str__</code> hace legible el objeto en el admin.</div></div>
+  </div>
+  <aside class="notes">⏱ 2.5 min · Recorrer cada campo. publicado con default=True; creado se rellena solo. Meta.ordering ordena por fecha descendente: el blog muestra lo más nuevo primero. Tras editarlo toca migrar.</aside>
+</section>
+
+<!-- 27 MIGRACIONES -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 1</div>
+    <h2>Las migraciones</h2>
+    <p class="lead">El historial versionado de los cambios de tus modelos, en archivos Python.</p>
+    <div class="flow" style="margin-top:16px">
+      <div class="step"><span class="n">1</span><h4>Cambias models.py</h4><small>añades o modificas un campo</small></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="n">2</span><h4>makemigrations</h4><small>genera el archivo de migración en migrations/</small></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="n">3</span><h4>migrate</h4><small>aplica los cambios a la base de datos</small></div>
+    </div>
+    <div class="callout warn" style="margin-top:16px"><span class="ic">!</span><div>Cambiaste un modelo y no migraste: la tabla no existe. Es el error más frecuente al empezar.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · makemigrations crea código Python legible (puedes revisarlo e incluso versionarlo); migrate lo aplica. Las migraciones van al repositorio: son parte del proyecto.</aside>
+</section>
+
+<!-- 28 ORM CONCEPTO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 2</div>
+    <h2>El ORM de Django</h2>
+    <p class="lead">Object Relational Mapping: mapeo objeto-relacional.</p>
+    <ul class="rolelist" style="margin-top:8px">
+      <li><code>Sin SQL</code><span>consultas y escrituras con métodos Python; el ORM genera el SQL.</span></li>
+      <li><code>Objetos</code><span>crear, modificar, eliminar y consultar de forma individual o en conjunto.</span></li>
+      <li><code>Portable</code><span>el mismo código funciona en PostgreSQL, MariaDB, SQLite…</span></li>
+    </ul>
+    <div class="callout tip" style="margin-top:14px"><span class="ic">✓</span><div>La puerta de entrada es <code>python manage.py shell</code>: un intérprete con Django cargado.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · El ORM es el interfaz entre tus objetos Python y la base de datos. Es potente y expresivo, y genera SQL eficiente en la mayoría de los casos. Cuando necesites, puedes caer a SQL con query.raw().</aside>
+</section>
+
+<!-- 29 ORM EN ACCIÓN -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 2</div>
+    <h2>ORM en acción</h2>
+    <div class="term" style="margin-top:10px">
+      <div class="bar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span>python manage.py shell</span></div>
+      <div class="body"><span class="g">&gt;&gt;&gt;</span> from blog.models import Articulo
+<span class="g">&gt;&gt;&gt;</span> Articulo.objects.create(titulo=<span class="b">"Hola Django"</span>, cuerpo=<span class="b">"Mi primer post"</span>)
+<span class="d">&lt;Articulo: Hola Django&gt;</span>
+<span class="g">&gt;&gt;&gt;</span> Articulo.objects.all()
+<span class="d">&lt;QuerySet [&lt;Articulo: Hola Django&gt;]&gt;</span>
+<span class="g">&gt;&gt;&gt;</span> Articulo.objects.filter(publicado=True).order_by(<span class="b">"-creado"</span>)
+<span class="d">&lt;QuerySet [&lt;Articulo: Hola Django&gt;]&gt;</span></div>
+    </div>
+    <div class="callout info" style="margin-top:10px"><span class="ic">i</span><div><code>create()</code> inserta, <code>all()</code> trae todo, <code>filter()</code> filtra y <code>order_by()</code> ordena. Detrás de cada línea hay SQL generado por Django.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · Esta es la forma más rápida de tocar datos sin pasar por el admin. Los QuerySet son perezosos: la consulta se ejecuta cuando iteras o imprimes el resultado.</aside>
+</section>
+
+<!-- 30 ADMIN EN PRÁCTICA -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 3</div>
+    <h2>El admin en la práctica</h2>
+    <div class="grid g2" style="gap:22px;align-items:start">
+      <div>
+        <div class="ide">
+          <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">blog/admin.py</span></div>
+          <pre class="sm"><code class="language-python" data-hl="3,4,6">from django.contrib import admin
+
+from blog.models import Articulo
+
+
+admin.site.register(Articulo)</code></pre>
+        </div>
+      </div>
+      <div class="adminmock">
+        <div class="ad-top"><span class="dot"></span><span class="ad-url">127.0.0.1:8000/admin/blog/articulo/</span><span>admin</span></div>
+        <div class="ad-head"><b>Selecciona artículo para cambiar</b><span class="add">AÑADIR ARTÍCULO</span></div>
+        <div class="ad-row"><span class="t">Hola Django</span><span class="s">Publicado</span></div>
+        <div class="ad-row"><span class="t">Plantillas y herencia</span><span class="s">Publicado</span></div>
+        <div class="ad-row"><span class="t">Django 5.2 LTS</span><span class="s draft">Borrador</span></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · Con una línea registramos el modelo y aparece en el admin: listar, crear, editar y borrar sin escribir ni una vista. Es perfecto para el equipo de contenido y para desarrollo.</aside>
+</section>
+
+<!-- 31 VISTAS CONCEPTO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 4</div>
+    <h2>Las vistas</h2>
+    <ul class="rolelist">
+      <li><code>Entrada</code><span>reciben un objeto con la petición: método (GET/POST), ruta, datos…</span></li>
+      <li><code>Salida</code><span>devuelven una respuesta: HTML renderizado, una redirección o un error.</span></li>
+      <li><code>views.py</code><span>cada aplicación declara ahí sus vistas; pueden ser funciones o clases.</span></li>
+    </ul>
+    <div class="callout tip" style="margin-top:14px"><span class="ic">✓</span><div>Nuestra primera vista: consultar los artículos publicados y pasarlos a una plantilla.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · La vista es el cerebro: decide qué datos usar y qué plantilla renderizar. Empezamos con funciones (más simples de leer); las vistas basadas en clases llegan cuando el CRUD se repite.</aside>
+</section>
+
+<!-- 32 VISTA EJEMPLO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 4</div>
+    <h2>views.py</h2>
+    <div class="ide" style="margin-top:8px">
+      <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">blog/views.py</span></div>
+      <pre class="sm"><code class="language-python" data-hl="7,8">from django.shortcuts import render
+
+from blog.models import Articulo
+
+
+def lista_articulos(request):
+    articulos = Articulo.objects.filter(publicado=True)
+    return render(request, "blog/lista.html", {"articulos": articulos})</code></pre>
+    </div>
+    <div class="callout info" style="margin-top:8px"><span class="ic">i</span><div><code>render()</code> une tres cosas: la petición, la plantilla y el contexto (los datos que la plantilla usará).</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · Tres líneas de negocio: consulta, contexto, render. El request casi nunca se usa aquí, pero es la puerta a todo (usuario, método, parámetros). Esa vista ya está enlazada en urls.py.</aside>
+</section>
+
+<!-- 33 PLANTILLAS CONCEPTO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 5</div>
+    <h2>Las plantillas</h2>
+    <ul class="rolelist">
+      <li><code>HTML + etiquetas</code><span><code>{{ variable }}</code> inserta datos; <code>{% etiqueta %}</code> controla la lógica.</span></li>
+      <li><code>¿Dónde viven?</code><span>en <code>templates/</code> de cada app, o una carpeta global del proyecto.</span></li>
+      <li><code>Herencia</code><span>las plantillas se extienden y se reutilizan: una base, muchas páginas.</span></li>
+    </ul>
+    <div class="callout tip" style="margin-top:14px"><span class="ic">✓</span><div>El HTML final se arma con datos en el servidor; el navegador solo recibe el resultado.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Las plantillas no son Python: son HTML con un mini-lenguaje. La herencia es su superpoder: defines la estructura una vez (base.html) y cada página rellena sus bloques.</aside>
+</section>
+
+<!-- 34 PLANTILLAS CÓDIGO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 5</div>
+    <h2>Herencia de plantillas</h2>
+    <div class="grid g2" style="margin-top:8px;gap:20px">
+      <div class="ide plain">
+        <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">blog/templates/base.html</span></div>
+        <pre class="sm"><code>&lt;!doctype html&gt;
+&lt;html lang="es"&gt;
+&lt;head&gt;
+  &lt;title&gt;
+    {% block titulo %}Mi blog{% endblock %}
+  &lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  {% block contenido %}{% endblock %}
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+      <div class="ide plain">
+        <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">blog/templates/blog/lista.html</span></div>
+        <pre class="sm"><code>{% extends "base.html" %}
+
+{% block titulo %}Artículos{% endblock %}
+
+{% block contenido %}
+  {% for articulo in articulos %}
+    &lt;h2&gt;{{ articulo.titulo }}&lt;/h2&gt;
+  {% endfor %}
+{% endblock %}</code></pre>
+      </div>
+    </div>
+    <div class="callout info" style="margin-top:8px"><span class="ic">i</span><div><code>extends</code> hereda la base; <code>block</code> rellena las partes; <code>for</code> recorre el contexto que envió la vista.</div></div>
+  </div>
+  <aside class="notes">⏱ 2.5 min · La plantilla lista.html solo define lo que cambia; base.html se escribe una vez. {{ articulo.titulo }} escapa el HTML por defecto: protección XSS incluida.</aside>
+</section>
+
+<!-- 35 ESTÁTICOS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Pieza 6</div>
+    <h2>Archivos estáticos</h2>
+    <p class="lead">CSS, JavaScript e imágenes: lo que no cambia con cada petición.</p>
+    <div class="grid g2" style="margin-top:12px;gap:22px;align-items:center">
+      <ul class="rolelist">
+        <li><code>static/</code><span>una carpeta por app, o una global del proyecto.</span></li>
+        <li><code>{% static %}</code><span>genera la URL correcta de cada archivo en las plantillas.</span></li>
+        <li><code>collectstatic</code><span>reúne todo para servirlo en producción (nginx, S3…).</span></li>
+      </ul>
+      <div class="ide">
+        <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">taller/settings.py</span></div>
+        <pre class="sm"><code class="language-python">STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]</code></pre>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · En desarrollo Django sirve los estáticos él mismo; en producción los recoge collectstatic y los sirve nginx o un CDN. Nunca los pongas a mano en el HTML: usa {% static %}.</aside>
+</section>
+
+<!-- 36 PROYECTO COMPLETO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Mapa final</div>
+    <h2>El proyecto completo</h2>
+    <div class="ide plain" style="margin-top:8px">
+      <div class="filebar"><span class="dots"><span style="background:#E0605E"></span><span style="background:#D9A23A"></span><span style="background:#5FA96C"></span></span><span class="fname">taller/ — con la app blog</span></div>
+      <pre class="sm"><code>taller/
+├── manage.py
+├── requirements.txt
+├── taller/
+│   ├── settings.py
+│   ├── urls.py
+│   └── ...
+└── blog/
+    ├── models.py            # Articulo
+    ├── views.py             # lista_articulos
+    ├── admin.py             # admin.site.register
+    ├── migrations/          # historial de la BD
+    ├── templates/blog/      # base.html, lista.html
+    └── static/blog/         # estilos.css</code></pre>
+    </div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Este es el mapa de todo lo que construimos. Fíjate en la separación: el proyecto solo tiene configuración; la app blog contiene toda la funcionalidad del blog. Este patrón se repite con cada app que añadas.</aside>
+</section>
+
+<!-- 37 CICLO COMPLETO -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Todo junto</div>
+    <h2>El viaje de una petición</h2>
+    <div class="reqflow" style="margin-top:16px">
+      <div class="node"><b>Petición</b><small>GET /articulos/</small></div>
+      <div class="arrow">→</div>
+      <div class="node"><b>URLs</b><small>elige la vista</small></div>
+      <div class="arrow">→</div>
+      <div class="node g"><b>Vista</b><small>consulta y arma el contexto</small></div>
+      <div class="arrow">→</div>
+      <div class="node p"><b>Modelos (ORM)</b><small>traducen a consultas SQL</small></div>
+      <div class="arrow">→</div>
+      <div class="node p"><b>Base de datos</b><small>devuelve las filas</small></div>
+      <div class="arrow">→</div>
+      <div class="node g"><b>Template</b><small>renderiza el HTML</small></div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Y de vuelta al navegador: <b>HTML</b> listo para mostrar. Cada clic repite este ciclo en milisegundos.</div></div>
+  </div>
+  <aside class="notes">⏱ 2 min · Este diagrama une todo: la URL encuentra la vista, la vista usa el ORM, el ORM habla con la base de datos y el template da forma al HTML. Cuando algo falla, este es el recorrido para depurar.</aside>
+</section>
+
+<!-- 38 SECCIÓN 04 -->
+<section class="dark">
+  <div class="pad">
+    <div class="sectionnum">04</div>
+    <h2 style="font-size:1.6em">Cierre</h2>
+    <p class="lead" style="color:#BFD9CC">Lo que viene después y cómo evitar los tropiezos típicos.</p>
+  </div>
+  <aside class="notes">⏱ 15 s · Última sección: siguientes pasos y buenas prácticas.</aside>
+</section>
+
+<!-- 39 DRF -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El puente</div>
+    <h2>Django REST Framework</h2>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="card a-dj"><h3>Django pone la base</h3><p>Modelos, ORM, autenticación, admin y migraciones: el motor de datos y la lógica.</p></div>
+      <div class="card a-mint"><h3>DRF añade la capa API</h3><p>Serializers, vistas y routers para exponer todo eso como una API REST con JSON.</p></div>
+    </div>
+    <div class="callout info" style="margin-top:14px"><span class="ic">i</span><div>Cuando tu web necesite una app móvil, una integración o un frontend separado, el siguiente paso natural es DRF.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Mención breve, sin entrar en detalle: DRF es la evolución natural de lo que aprendiste hoy. Los mismos modelos y lógica se expone como API. Hay una charla completa dedicada a DRF si te interesa el tema.</aside>
+</section>
+
+<!-- 40 ERRORES COMUNES -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Aprendiendo de los errores</div>
+    <h2>Errores comunes</h2>
+    <div class="grid g2" style="gap:14px;margin-top:10px">
+      <div class="card a-dj"><h3>Olvidar la app en INSTALLED_APPS</h3><p>Síntoma: no aparecen tablas, ni admin, ni plantillas. Django no sabe que tu app existe.</p></div>
+      <div class="card a-amber"><h3>Cambiar el modelo sin migrar</h3><p><code>makemigrations</code> + <code>migrate</code> después de cada cambio. Sin eso, la tabla no existe.</p></div>
+      <div class="card a-pg"><h3>DEBUG=True en producción</h3><p>Expone información interna. Se apaga con variables de entorno, igual que <code>SECRET_KEY</code>.</p></div>
+      <div class="card a-green"><h3>Commitear la base de datos</h3><p><code>db.sqlite3</code> y <code>.venv/</code> van al <code>.gitignore</code>: son locales, no código.</p></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 2 min · Estos cuatro errores son los que más se repiten al empezar. El primero es el clásico "no funciona nada y estaba bien el código": faltaba registrar la app. Los otros tres son de higiene de proyecto.</aside>
+</section>
+
+<!-- 41 SIGUIENTES PASOS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Para seguir</div>
+    <h2>Siguientes pasos</h2>
+    <div class="chiprow" style="margin-top:12px">
+      <span class="chip active">Vistas basadas en clases</span>
+      <span class="chip">Formularios</span>
+      <span class="chip">Tests</span>
+      <span class="chip">PostgreSQL</span>
+      <span class="chip">DRF</span>
+      <span class="chip">Despliegue (gunicorn/uvicorn)</span>
+      <span class="chip">Docker</span>
+      <span class="chip">Celery</span>
+      <span class="chip">Cache</span>
+      <span class="chip">i18n</span>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Django es un ecosistema: no hay que aprenderlo todo de golpe. Elige el siguiente paso que tu proyecto necesite.</div></div>
+  </div>
+  <aside class="notes">⏱ 1.5 min · Recomendar un orden: formularios y tests antes que despliegue; PostgreSQL cuando los datos importen; Docker cuando haya equipo. Lo importante es construir algo real y pequeño.</aside>
+</section>
+
+<!-- 42 RECURSOS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Para llevar</div>
+    <h2>Recursos</h2>
+    <div class="grid g2" style="gap:14px;margin-top:12px">
+      <div class="kv"><b>Documentación</b><span>docs.djangoproject.com/es/5.2/</span></div>
+      <div class="kv"><b>Tutorial oficial</b><span>docs.djangoproject.com/es/5.2/intro/tutorial01/</span></div>
+      <div class="kv"><b>Comunidad</b><span>pythonpiura.org · Python Piura · Piura AI</span></div>
+      <div class="kv"><b>Este deck</b><span>joseamaya.github.io/introduccion-a-django/</span></div>
+    </div>
+    <div class="callout tip" style="margin-top:14px"><span class="ic">✓</span><div>El tutorial oficial de Django es de los mejores que existen: en 7 partes construyes una app completa.</div></div>
+  </div>
+  <aside class="notes">⏱ 1 min · Invitar a seguir el tutorial oficial en español y a sumarse a la comunidad. Compartir el enlace de este deck: las diapositivas quedan y el código del blog es reproducible.</aside>
+</section>
+
+<!-- 43 GRACIAS -->
+<section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.16" data-background-transition="fade">
+  <div class="pad">
+    <div class="kicker">Gracias</div>
+    <h1 style="font-size:1.8em">¿Preguntas?</h1>
+    <p class="lead" style="color:#D2E8DC;font-size:.6em">Un modelo, una vista, una plantilla: así piensa Django.</p>
+    <div style="margin-top:1.2em;display:flex;gap:60px;align-items:end">
+      <div>
+        <div style="color:#9DBFAE;font-size:.44em;font-family:'JetBrains Mono'">github · twitter</div>
+        <div style="color:#fff;font-size:.56em;font-family:'JetBrains Mono'">joseamaya · jamayac99</div>
+      </div>
+      <div>
+        <div style="color:#9DBFAE;font-size:.44em;font-family:'JetBrains Mono'">comunidad</div>
+        <div style="color:#fff;font-size:.56em;font-family:'JetBrains Mono'">Python Piura · Piura AI</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 30 s · Agradecer y abrir preguntas. Idea final: Django te da el mapa completo (modelos, ORM, admin, vistas, plantillas); tú solo pones el dominio. Empieza pequeño y hazlo bien.</aside>
+</section>
+
+</div></div>
+<script src="vendor/reveal/reveal.js"></script>
+<script src="vendor/reveal/notes.js"></script>
+<script src="vendor/reveal/highlight.js"></script>
+<script src="vendor/reveal/search.js"></script>
+<script src="vendor/reveal/zoom.js"></script>
+<script src="vendor/chartjs/chart.umd.min.js"></script>
+<script src="js/deck.js"></script>
+</body>
+</html>

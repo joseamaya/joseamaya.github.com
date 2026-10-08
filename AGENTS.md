@@ -13,7 +13,7 @@ python3 -m http.server 8000
 ## Layout
 
 - `index.html` + `css/styles.css` + `js/main.js` — portfolio/CV. Bilingual via `data-es`/`data-en` attributes; `main.js` toggles them (localStorage `language`, default `es`; also `theme`). PDF export is client-side in `main.js`.
-- Seven self-contained Reveal.js talk decks, each with its own `index.html`, `css/`, `js/deck.js`, `assets/` and `vendor/`:
+- Eight self-contained Reveal.js talk decks, each with its own `index.html`, `css/`, `js/deck.js`, `assets/` and `vendor/`:
   - `como-deje-de-programar-y-empece-a-orquestar/` — opencode/orchestration talk. `charla-opencode/` is only a redirect stub to this path.
   - `memoria-persistente-chatbots-telegram/` — Telegram + LangChain/LangGraph + MongoDB memory talk.
   - `introduccion-a-langchain/` — LangChain intro talk (SoporteBot case: models, prompts, structured outputs, RAG, agents).
@@ -21,12 +21,13 @@ python3 -m http.server 8000
   - `introduccion-a-fastapi/` — FastAPI intro talk (Tienda API case: REST, routing, Pydantic validation, dependencies, database, security, testing). Uses its own FastAPI-branded theme (teal), not the shared navy one.
   - `arquitecturas-multitenant-en-python/` — multitenant SaaS in Python talk (AulaSaaS case: the 3 isolation patterns, PostgreSQL schemas, django-tenants, operations, FastAPI/SQLAlchemy). Ships its own Django/Postgres-branded theme (green/blue).
   - `introduccion-a-django-rest-framework/` — DRF intro talk (taller/cursos case: REST basics, models, serializers, ViewSets, routers, testing the API with the browsable API/curl). Ships its own DRF-branded theme (crimson + Django green).
+  - `introduccion-a-django/` — Django intro talk merging the two FLISOL 2017 Loja decks (taller/blog case: philosophy, MTV, project setup, models, ORM, admin, views, templates, static files). Ships its own Django-branded theme (dark green + mint).
 - `vendor/` lives inside each deck (Reveal, and Chart.js/fonts for the opencode one). Do not edit.
 
 ## Decks
 
 - Slides are inline `<section>` elements in each deck's `index.html`; interactivity is that deck's `js/deck.js`.
 - opencode deck only: `js/data.js` is a **generated snapshot** of opencode usage stats (single line assigning `window.DECK`). There is no generator in this repo — regenerate externally or edit the JSON by hand. Numbers use `data-count="<path.into.DECK>"` (plus optional `data-fmt="money|m|int|raw"`); add computed values in the `extra` object in `deck.js`, not inline.
-- memory, langchain, agentes-de-ia, fastapi, multitenant and drf decks: speaker notes live in `<aside class="notes">` per slide (Reveal notes plugin); code blocks use highlight.js (`language-python`).
-- langchain and memory share the same visual theme (`css/theme.css`, copied per deck) and `css/fonts.css`; the fastapi (teal), multitenant (Django green/Postgres blue) and drf (crimson/Django green) decks ship their own branded variants.
+- memory, langchain, agentes-de-ia, fastapi, multitenant, drf and django decks: speaker notes live in `<aside class="notes">` per slide (Reveal notes plugin); code blocks use highlight.js (`language-python`).
+- langchain and memory share the same visual theme (`css/theme.css`, copied per deck) and `css/fonts.css`; the fastapi (teal), multitenant (Django green/Postgres blue), drf (crimson/Django green) and django (dark green/mint) decks ship their own branded variants.
 - PDF/print export: load a deck URL with `?print-pdf`; `deck.js` detects this and skips animations/typing.
