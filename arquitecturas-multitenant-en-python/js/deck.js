@@ -62,6 +62,58 @@ function highlightLines(scope) {
   });
 }
 
+/* -------- Chart.js -------- */
+const charts = {};
+const CH = { django: "#0C4B33", djangoL: "#2E7D5B", pg: "#336791", pgL: "#4A90C2", amber: "#D9820A", red: "#C94141" };
+function makeCharts() {
+  if (typeof Chart === "undefined") return;
+  Chart.defaults.font.family = "Inter";
+  Chart.defaults.color = "#5B6B85";
+  const el = (n) => document.querySelector(`[data-chart="${n}"]`);
+  const vis = (n) => { const c = el(n); return c && c.offsetWidth > 0 ? c : null; };
+  const anim = REDUCED || PRINT ? false : { duration: 800 };
+  const c1 = vis("costeAislamiento");
+  if (c1 && !charts.coste) {
+    charts.coste = new Chart(c1, {
+      type: "bubble",
+      data: { datasets: [
+        { label: "Shared schema", data: [{ x: 1, y: 1, r: 22 }], backgroundColor: "rgba(217,130,10,.75)", borderColor: CH.amber, borderWidth: 2 },
+        { label: "Schema-per-tenant", data: [{ x: 2, y: 2, r: 16 }], backgroundColor: "rgba(12,75,51,.8)", borderColor: CH.django, borderWidth: 2 },
+        { label: "DB-por-tenant", data: [{ x: 3, y: 3, r: 11 }], backgroundColor: "rgba(201,65,65,.75)", borderColor: CH.red, borderWidth: 2 },
+      ] },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: anim,
+        plugins: { legend: { position: "bottom" } },
+        scales: {
+          x: { min: 0.5, max: 3.5, ticks: { callback: (v) => ({ 1: "Bajo", 2: "Medio", 3: "Alto" }[v] || "") }, grid: { color: "#E6EFE9" }, title: { display: true, text: "Aislamiento" } },
+          y: { min: 0.5, max: 3.5, ticks: { callback: (v) => ({ 1: "Bajo", 2: "Medio", 3: "Alto" }[v] || "") }, grid: { color: "#E6EFE9" }, title: { display: true, text: "Coste / operación" } },
+        },
+      },
+    });
+  }
+  const c2 = vis("migracion");
+  if (c2 && !charts.migracion) {
+    charts.migracion = new Chart(c2, {
+      type: "line",
+      data: {
+        labels: ["10", "50", "100", "250", "500"],
+        datasets: [
+          { label: "En serie (uno a uno)", data: [1, 5, 10, 25, 50], borderColor: CH.amber, backgroundColor: "rgba(217,130,10,.12)", fill: true, tension: .35, borderWidth: 3, pointRadius: 5 },
+          { label: "En paralelo (8 procesos)", data: [0.5, 1.5, 3, 6, 12], borderColor: CH.django, backgroundColor: "rgba(12,75,51,.12)", fill: true, tension: .35, borderWidth: 3, pointRadius: 5 },
+        ],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: anim,
+        plugins: { legend: { position: "bottom" }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.raw} min` } } },
+        scales: {
+          y: { grid: { color: "#E6EFE9" }, title: { display: true, text: "minutos" } },
+          x: { grid: { display: false }, title: { display: true, text: "nº de tenants" } },
+        },
+      },
+    });
+  }
+}
+
 /* -------- Reveal -------- */
 Reveal.initialize({
   hash: true,
@@ -77,5 +129,5 @@ Reveal.initialize({
   plugins: [RevealNotes, RevealHighlight, RevealSearch, RevealZoom],
   highlight: { highlightOnLoad: true },
 });
-Reveal.on("ready", () => { highlightLines(document); });
-Reveal.on("slidechanged", (e) => { highlightLines(e.currentSlide); });
+Reveal.on("ready", () => { highlightLines(document); makeCharts(); });
+Reveal.on("slidechanged", (e) => { highlightLines(e.currentSlide); makeCharts(); });

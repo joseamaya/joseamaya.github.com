@@ -171,22 +171,119 @@
   <aside class="notes">⏱ 90 s · Plantear el dilema aislamiento vs coste. Toda la charla es una respuesta a este trade-off.</aside>
 </section>
 
-<!-- 8 patrones -->
+<!-- 8 Caos DB-por-tenant -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El extremo</div>
+    <h2>Database-per-tenant sin automatización</h2>
+    <p class="lead">Cada cliente con su instalación y su base de datos: versiones que se separan y operación multiplicada.</p>
+    <svg viewBox="0 0 1160 300" role="img" aria-label="Seis clientes, cada uno con su aplicación y su base de datos, en versiones distintas" style="width:100%;height:auto;display:block;margin-top:10px">
+      <title>Instalaciones y versiones dispersas</title>
+      <g>
+        <rect x="20" y="16" width="360" height="120" rx="12" fill="#fff" stroke="#D8E6DE"/>
+        <rect x="36" y="44" width="150" height="76" rx="10" fill="#EAF1F7" stroke="#336791"/>
+        <text x="111" y="74" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#2A5D86">app</text>
+        <text x="111" y="100" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#A36208">v2.1</text>
+        <rect x="206" y="44" width="150" height="76" rx="10" fill="#EAF4EF" stroke="#0C4B33"/>
+        <text x="281" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#0A5138">BD</text>
+      </g>
+      <g>
+        <rect x="400" y="16" width="360" height="120" rx="12" fill="#fff" stroke="#D8E6DE"/>
+        <rect x="416" y="44" width="150" height="76" rx="10" fill="#EAF1F7" stroke="#336791"/>
+        <text x="491" y="74" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#2A5D86">app</text>
+        <text x="491" y="100" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#C94141">v1.9</text>
+        <rect x="586" y="44" width="150" height="76" rx="10" fill="#EAF4EF" stroke="#0C4B33"/>
+        <text x="661" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#0A5138">BD</text>
+      </g>
+      <g>
+        <rect x="780" y="16" width="360" height="120" rx="12" fill="#fff" stroke="#D8E6DE"/>
+        <rect x="796" y="44" width="150" height="76" rx="10" fill="#EAF1F7" stroke="#336791"/>
+        <text x="871" y="74" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#2A5D86">app</text>
+        <text x="871" y="100" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#0A5138">v2.3</text>
+        <rect x="966" y="44" width="150" height="76" rx="10" fill="#EAF4EF" stroke="#0C4B33"/>
+        <text x="1041" y="88" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#0A5138">BD</text>
+      </g>
+      <g>
+        <rect x="20" y="164" width="360" height="120" rx="12" fill="#fff" stroke="#D8E6DE"/>
+        <rect x="36" y="192" width="150" height="76" rx="10" fill="#EAF1F7" stroke="#336791"/>
+        <text x="111" y="222" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#2A5D86">app</text>
+        <text x="111" y="248" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#C94141">v1.5</text>
+        <rect x="206" y="192" width="150" height="76" rx="10" fill="#EAF4EF" stroke="#0C4B33"/>
+        <text x="281" y="236" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#0A5138">BD</text>
+      </g>
+      <g>
+        <rect x="400" y="164" width="360" height="120" rx="12" fill="#fff" stroke="#D8E6DE"/>
+        <rect x="416" y="192" width="150" height="76" rx="10" fill="#EAF1F7" stroke="#336791"/>
+        <text x="491" y="222" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#2A5D86">app</text>
+        <text x="491" y="248" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#A36208">v2.2</text>
+        <rect x="586" y="192" width="150" height="76" rx="10" fill="#EAF4EF" stroke="#0C4B33"/>
+        <text x="661" y="236" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#0A5138">BD</text>
+      </g>
+      <g>
+        <rect x="780" y="164" width="360" height="120" rx="12" fill="#fff" stroke="#D8E6DE"/>
+        <rect x="796" y="192" width="150" height="76" rx="10" fill="#EAF1F7" stroke="#336791"/>
+        <text x="871" y="222" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#2A5D86">app</text>
+        <text x="871" y="248" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#0A5138">v2.3</text>
+        <rect x="966" y="192" width="150" height="76" rx="10" fill="#EAF4EF" stroke="#0C4B33"/>
+        <text x="1041" y="236" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#0A5138">BD</text>
+      </g>
+    </svg>
+    <div class="callout warn" style="margin-top:10px"><span class="ic">!</span><div>Cada versión distinta es un despliegue, una migración y un backup por separado: el coste crece con cada cliente.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · La imagen que quería recuperar de la charla original: la dispersión de instalaciones. Es el argumento a favor del punto medio.</aside>
+</section>
+
+<!-- 9 patrones -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Las tres opciones</div>
     <h2>Los 3 patrones de multitenancy</h2>
-    <div class="grid g3" style="margin-top:16px">
-      <div class="card a-red"><div class="label">1 · compartido</div><div class="value" style="font-size:.82em">Shared schema</div><p>Una BD, un schema. Cada tabla lleva <code>tenant_id</code>. Máximo ahorro, máximo riesgo.</p></div>
-      <div class="card a-django"><div class="label">2 · por schema</div><div class="value" style="font-size:.82em">Schema-per-tenant</div><p>Una BD, un <b>schema</b> por tenant. Aislamiento fuerte y buena eficiencia. <b>El enfoque de esta charla.</b></p></div>
-      <div class="card a-amber"><div class="label">3 · por base</div><div class="value" style="font-size:.82em">Database-per-tenant</div><p>Una BD por cliente. Aislamiento total; coste y operación altos.</p></div>
-    </div>
+    <svg viewBox="0 0 1160 300" role="img" aria-label="Comparación de los tres patrones: shared schema con un schema compartido, schema por tenant con un schema por cliente, y base de datos por tenant con una base por cliente" style="width:100%;height:auto;display:block;margin-top:10px">
+      <title>Los tres patrones de multitenancy</title>
+      <text x="180" y="24" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="20" fill="#0A1512">Shared schema</text>
+      <rect x="20" y="38" width="320" height="196" rx="14" fill="#fff" stroke="#D8E6DE"/>
+      <text x="40" y="64" font-family="'JetBrains Mono',monospace" font-size="12" fill="#5B6B63">base de datos</text>
+      <rect x="40" y="78" width="280" height="136" rx="10" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="60" y="106" font-family="'JetBrains Mono',monospace" font-size="14" fill="#0A5138">schema public</text>
+      <text x="60" y="140" font-family="'JetBrains Mono',monospace" font-size="13" fill="#2B3A33">cursos · alumnos · notas</text>
+      <text x="60" y="166" font-family="'JetBrains Mono',monospace" font-size="13" fill="#A36208">todas con tenant_id</text>
+      <text x="180" y="266" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#A36208">aislamiento bajo · coste mínimo</text>
+      <text x="560" y="24" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="20" fill="#0A5138">Schema-per-tenant</text>
+      <rect x="400" y="38" width="320" height="196" rx="14" fill="#fff" stroke="#D8E6DE"/>
+      <text x="420" y="64" font-family="'JetBrains Mono',monospace" font-size="12" fill="#5B6B63">base de datos</text>
+      <rect x="416" y="78" width="88" height="136" rx="10" fill="#EAF1F7" stroke="#336791"/>
+      <text x="460" y="102" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#2A5D86">public</text>
+      <rect x="516" y="78" width="88" height="136" rx="10" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="560" y="102" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#0A5138">acme</text>
+      <rect x="616" y="78" width="88" height="136" rx="10" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="660" y="102" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#0A5138">gea</text>
+      <text x="460" y="146" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5B6B63">compartido</text>
+      <text x="560" y="166" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2B3A33">cursos</text>
+      <text x="560" y="186" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2B3A33">alumnos</text>
+      <text x="660" y="166" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2B3A33">cursos</text>
+      <text x="660" y="186" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2B3A33">alumnos</text>
+      <text x="560" y="266" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#0A5138">aislamiento alto · coste bajo</text>
+      <text x="960" y="24" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="20" fill="#0A1512">DB-por-tenant</text>
+      <rect x="780" y="38" width="96" height="196" rx="12" fill="#fff" stroke="#D8E6DE"/>
+      <text x="828" y="64" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#5B6B63">BD acme</text>
+      <rect x="792" y="78" width="72" height="136" rx="8" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="828" y="152" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2B3A33">cursos</text>
+      <rect x="892" y="38" width="96" height="196" rx="12" fill="#fff" stroke="#D8E6DE"/>
+      <text x="940" y="64" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#5B6B63">BD gea</text>
+      <rect x="904" y="78" width="72" height="136" rx="8" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="940" y="152" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2B3A33">cursos</text>
+      <rect x="1004" y="38" width="96" height="196" rx="12" fill="#fff" stroke="#D8E6DE"/>
+      <text x="1052" y="64" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#5B6B63">BD kepler</text>
+      <rect x="1016" y="78" width="72" height="136" rx="8" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="1052" y="152" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2B3A33">cursos</text>
+      <text x="940" y="266" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#C94141">aislamiento total · coste alto</text>
+    </svg>
     <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>PostgreSQL es ideal para el patrón 2: los <b>schemas</b> son como carpetas dentro de la misma base de datos.</div></div>
   </div>
   <aside class="notes">⏱ 150 s · Nombres canónicos (los mismos de la doc de django-tenants y del artículo de Microsoft). El patrón 2 es el "punto medio" que perseguimos.</aside>
 </section>
 
-<!-- 9 Comparativa -->
+<!-- 10 Comparativa -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Elegir con criterio</div>
@@ -205,7 +302,7 @@
   <aside class="notes">⏱ 120 s · No hay patrón único. Para B2B con clientes que exigen sus datos separados, schema-per-tenant es el balance habitual.</aside>
 </section>
 
-<!-- 10 Cómo elegir -->
+<!-- 11 Cómo elegir -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Decisión</div>
@@ -223,7 +320,21 @@
   <aside class="notes">⏱ 90 s · Herramienta de decisión, no dogma. Pedir al público su caso y elegir en voz alta.</aside>
 </section>
 
-<!-- 11 PostgreSQL schemas -->
+<!-- 12 Gráfica coste vs aislamiento -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Ilustrativo</div>
+    <h2>Coste vs aislamiento</h2>
+    <p class="lead">Cada patrón se posiciona distinto: más aislamiento suele implicar más operación.</p>
+    <div style="position:relative;height:400px;margin-top:8px">
+      <canvas data-chart="costeAislamiento" role="img" aria-label="Gráfica de burbujas: shared schema con aislamiento bajo y coste bajo; schema-per-tenant con aislamiento medio y coste medio; database-per-tenant con aislamiento alto y coste alto"></canvas>
+    </div>
+    <p class="muted italic" style="font-size:.4em;margin:.2em 0 0">Valores cualitativos para comparar patrones; no es un benchmark.</p>
+  </div>
+  <aside class="notes">⏱ 90 s · El punto medio: schema-per-tenant no es el más aislado ni el más barato, pero es el mejor balance para B2B.</aside>
+</section>
+
+<!-- 13 PostgreSQL schemas -->
 <section class="light">
   <div class="pad">
     <div class="kicker">La pieza clave</div>
@@ -237,7 +348,7 @@
   <aside class="notes">⏱ 120 s · La analogía de la carpeta: mismo nombre de archivo en carpetas distintas. search_path es el "directorio actual" de la base de datos.</aside>
 </section>
 
-<!-- 12 Diagrama de schemas -->
+<!-- 14 Diagrama de schemas -->
 <section class="light">
   <div class="pad">
     <div class="kicker">AulaSaaS</div>
@@ -267,7 +378,7 @@
   <aside class="notes">⏱ 90 s · Visual: mismo conjunto de tablas replicado por schema. Esta es la imagen que deben recordar del bloque.</aside>
 </section>
 
-<!-- 13 RLS -->
+<!-- 15 RLS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Si compartes schema</div>
@@ -285,7 +396,7 @@ CREATE POLICY aislamiento ON cursos
   <aside class="notes">⏱ 120 s · RLS es la red de seguridad del patrón compartido. En schema-per-tenant el aislamiento ya lo da el search_path.</aside>
 </section>
 
-<!-- 14 Fugas de datos -->
+<!-- 16 Fugas de datos -->
 <section class="light">
   <div class="pad">
     <div class="kicker">El riesgo real</div>
@@ -301,7 +412,7 @@ CREATE POLICY aislamiento ON cursos
   <aside class="notes">⏱ 90 s · El aislamiento no es un detalle técnico, es el requisito de negocio número uno. Volveremos a esto en seguridad.</aside>
 </section>
 
-<!-- 15 Divisor 02 -->
+<!-- 17 Divisor 02 -->
 <section class="navy">
   <div class="pad">
     <div class="sectionnum">02</div>
@@ -311,7 +422,7 @@ CREATE POLICY aislamiento ON cursos
   <aside class="notes">⏱ 10 s · Divisor. Del concepto a la implementación.</aside>
 </section>
 
-<!-- 16 Qué es django-tenants -->
+<!-- 18 Qué es django-tenants -->
 <section class="light">
   <div class="pad">
     <div class="kicker">La librería</div>
@@ -327,7 +438,7 @@ CREATE POLICY aislamiento ON cursos
   <aside class="notes">⏱ 120 s · Corrección clave respecto a la charla original. Mismo autor original, fork activo. pip install django-tenants.</aside>
 </section>
 
-<!-- 17 Cómo funciona -->
+<!-- 19 Cómo funciona -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Flujo de una petición</div>
@@ -348,7 +459,42 @@ CREATE POLICY aislamiento ON cursos
   <aside class="notes">⏱ 120 s · Todo el mecanismo en una imagen: subdominio → middleware → search_path. Si no hay dominio, responde 404.</aside>
 </section>
 
-<!-- 18 Instalación -->
+<!-- 20 Enrutamiento por subdominio -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Enrutamiento</div>
+    <h2>Un dominio, un tenant</h2>
+    <p class="lead">El subdominio decide qué schema se consulta, sin tocar las vistas.</p>
+    <svg viewBox="0 0 1160 300" role="img" aria-label="Dos clientes entran por acme.tuapp.com y gea.tuapp.com a la misma aplicación Django, que selecciona el schema acme o gea en PostgreSQL" style="width:100%;height:auto;display:block;margin-top:10px">
+      <title>Enrutamiento por subdominio hacia el schema del tenant</title>
+      <rect x="20" y="40" width="240" height="80" rx="12" fill="#fff" stroke="#336791"/>
+      <text x="140" y="86" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" fill="#2A5D86">acme.tuapp.com</text>
+      <rect x="20" y="180" width="240" height="80" rx="12" fill="#fff" stroke="#336791"/>
+      <text x="140" y="226" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" fill="#2A5D86">gea.tuapp.com</text>
+      <path d="M262 80 C 340 80, 360 140, 430 148" fill="none" stroke="#5B6B63" stroke-width="2" marker-end="url(#ar)"/>
+      <path d="M262 220 C 340 220, 360 165, 430 157" fill="none" stroke="#5B6B63" stroke-width="2" marker-end="url(#ar)"/>
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5B6B63"/></marker></defs>
+      <rect x="440" y="80" width="260" height="150" rx="14" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="570" y="128" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="18" fill="#0A5138">App Django</text>
+      <text x="570" y="158" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#2B3A33">TenantMainMiddleware</text>
+      <text x="570" y="184" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#2B3A33">request.tenant</text>
+      <path d="M702 155 L 772 155" fill="none" stroke="#0C4B33" stroke-width="3" marker-end="url(#ar2)"/>
+      <defs><marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#0C4B33"/></marker></defs>
+      <rect x="780" y="40" width="360" height="230" rx="14" fill="#fff" stroke="#D8E6DE"/>
+      <text x="960" y="72" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="16" fill="#0A1512">PostgreSQL</text>
+      <rect x="800" y="90" width="100" height="150" rx="10" fill="#EAF1F7" stroke="#336791"/>
+      <text x="850" y="170" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#2A5D86">public</text>
+      <rect x="912" y="90" width="100" height="150" rx="10" fill="#EAF4EF" stroke="#0C4B33" stroke-width="3"/>
+      <text x="962" y="170" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#0A5138">acme</text>
+      <rect x="1024" y="90" width="100" height="150" rx="10" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="1074" y="170" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#0A5138">gea</text>
+      <text x="962" y="258" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#0A5138">search_path = acme, public</text>
+    </svg>
+  </div>
+  <aside class="notes">⏱ 90 s · El middleware traduce host → tenant → search_path. La vista nunca sabe de dominios; solo de datos.</aside>
+</section>
+
+<!-- 21 Instalación -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">Puesta en marcha</div>
@@ -365,7 +511,7 @@ CREATE POLICY aislamiento ON cursos
   <aside class="notes">⏱ 90 s · Un solo comando de instalación. Recuerda: psycopg 3, no psycopg2.</aside>
 </section>
 
-<!-- 19 settings DATABASES -->
+<!-- 22 settings DATABASES -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Configuración · 1</div>
@@ -389,7 +535,7 @@ CREATE POLICY aislamiento ON cursos
   <aside class="notes">⏱ 90 s · El único cambio "mágico" en la conexión. Todo lo demás es configuración normal de Django.</aside>
 </section>
 
-<!-- 20 settings middleware -->
+<!-- 23 settings middleware -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Configuración · 2</div>
@@ -416,7 +562,7 @@ CREATE POLICY aislamiento ON cursos
   <aside class="notes">⏱ 120 s · El orden importa: TenantMainMiddleware debe ejecutarse antes que cualquier middleware que toque la base de datos.</aside>
 </section>
 
-<!-- 21 settings apps -->
+<!-- 24 settings apps -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Configuración · 3</div>
@@ -446,7 +592,7 @@ INSTALLED_APPS = list(SHARED_APPS) + [
   <aside class="notes">⏱ 150 s · La distinción más importante del setup. contenttypes aparece en ambos porque cada schema necesita las tablas base de Django.</aside>
 </section>
 
-<!-- 22 settings tenant model -->
+<!-- 25 settings tenant model -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Configuración · 4</div>
@@ -465,7 +611,7 @@ DATABASE_ROUTERS = (
   <aside class="notes">⏱ 90 s · El router decide qué apps van a public y cuáles a cada tenant al migrar. Es lo que hace que migrate_schemas sepa dónde ir.</aside>
 </section>
 
-<!-- 23 modelos -->
+<!-- 26 modelos -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Los modelos</div>
@@ -488,7 +634,7 @@ class Domain(DomainMixin):
   <aside class="notes">⏱ 120 s · Client guarda el schema; Domain guarda el subdominio. Con auto_create_schema=True, al guardar se crea y migra el schema.</aside>
 </section>
 
-<!-- 24 tenant público -->
+<!-- 27 tenant público -->
 <section class="light">
   <div class="pad">
     <div class="kicker">El dominio principal</div>
@@ -509,7 +655,7 @@ Domain.objects.create(
   <aside class="notes">⏱ 90 s · Detalle que sorprende a todos: la web principal es un tenant más, con schema_name="public".</aside>
 </section>
 
-<!-- 25 migraciones -->
+<!-- 28 migraciones -->
 <section class="dark">
   <div class="pad">
     <div class="kicker">Migraciones</div>
@@ -520,14 +666,29 @@ Domain.objects.create(
 <span class="d">$</span> python manage.py migrate_schemas <span class="c">--tenant</span>
 <span class="d">$</span> python manage.py migrate_schemas   <span class="d"># ambos</span></div>
     </div>
-    <div class="kv" style="margin-top:14px;border-color:var(--dark-line)"><b>--shared</b> solo el schema public</div>
-    <div class="kv" style="border-color:var(--dark-line)"><b>--tenant</b> todos los schemas de tenants</div>
     <div class="callout info" style="margin-top:12px"><span class="ic">i</span><div>No uses <code>migrate</code> a secas: <code>migrate_schemas</code> aplica cada app en el schema que le toca.</div></div>
+    <svg viewBox="0 0 1160 190" role="img" aria-label="migrate_schemas con --shared actualiza el schema public y con --tenant actualiza cada schema de tenant" style="width:100%;height:auto;display:block;margin-top:10px">
+      <title>Flujo de migrate_schemas</title>
+      <rect x="20" y="52" width="260" height="80" rx="12" fill="#12211B" stroke="#2E7D5B" stroke-width="2"/>
+      <text x="150" y="98" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" fill="#fff">migrate_schemas</text>
+      <path d="M282 84 C 330 84, 340 58, 388 55" fill="none" stroke="#4A90C2" stroke-width="2" marker-end="url(#m1)"/>
+      <path d="M282 100 C 330 100, 340 128, 388 133" fill="none" stroke="#2E7D5B" stroke-width="2" marker-end="url(#m2)"/>
+      <defs>
+        <marker id="m1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#4A90C2"/></marker>
+        <marker id="m2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#2E7D5B"/></marker>
+      </defs>
+      <rect x="400" y="20" width="720" height="68" rx="12" fill="#12211B" stroke="#4A90C2"/>
+      <text x="424" y="60" font-family="'JetBrains Mono',monospace" font-size="14" fill="#8FC3E8">--shared</text>
+      <text x="560" y="60" font-family="'JetBrains Mono',monospace" font-size="14" fill="#C6E0D4">solo el schema public</text>
+      <rect x="400" y="100" width="720" height="68" rx="12" fill="#12211B" stroke="#2E7D5B"/>
+      <text x="424" y="140" font-family="'JetBrains Mono',monospace" font-size="14" fill="#7FC2A6">--tenant</text>
+      <text x="560" y="140" font-family="'JetBrains Mono',monospace" font-size="14" fill="#C6E0D4">cada schema: acme · gea · kepler</text>
+    </svg>
   </div>
   <aside class="notes">⏱ 120 s · Shared primero, luego tenants. En despliegues, esto es parte del pipeline de release.</aside>
 </section>
 
-<!-- 26 migraciones paralelas -->
+<!-- 29 migraciones paralelas -->
 <section class="light">
   <div class="pad">
     <div class="kicker">A escala</div>
@@ -543,7 +704,21 @@ Domain.objects.create(
   <aside class="notes">⏱ 90 s · El ejecutor multiprocessing reparte los schemas entre procesos. En mantenimientos, migra por lotes.</aside>
 </section>
 
-<!-- 27 crear tenant -->
+<!-- 30 Gráfica migración serie vs paralelo -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Ilustrativo</div>
+    <h2>Migrar cientos de tenants</h2>
+    <p class="lead">El tiempo crece con el número de schemas; el ejecutor en paralelo lo reparte entre procesos.</p>
+    <div style="position:relative;height:400px;margin-top:8px">
+      <canvas data-chart="migracion" role="img" aria-label="Gráfica de líneas: el tiempo de migración crece con el número de tenants y es mucho mayor en serie que en paralelo"></canvas>
+    </div>
+    <p class="muted italic" style="font-size:.4em;margin:.2em 0 0">Cifras ilustrativas para mostrar la tendencia; no es un benchmark.</p>
+  </div>
+  <aside class="notes">⏱ 90 s · Con 500 tenants la diferencia es de horas a minutos. El paralelo tiene límites: conexiones y bloqueos.</aside>
+</section>
+
+<!-- 31 crear tenant -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Alta de cliente</div>
@@ -572,7 +747,7 @@ Domain.objects.create(
   <aside class="notes">⏱ 150 s · El comando sirve para pruebas; en producto se hace programáticamente desde el registro. Ojo con el coste de migrar al crear.</aside>
 </section>
 
-<!-- 28 provisioning -->
+<!-- 32 provisioning -->
 <section class="light">
   <div class="pad">
     <div class="kicker">En producción</div>
@@ -594,7 +769,7 @@ def provisionar(tenant_id):
   <aside class="notes">⏱ 120 s · Provisioning asíncrono con Celery. Evita bloquear al usuario y permite reintentos si algo falla a mitad.</aside>
 </section>
 
-<!-- 29 rutas por tenant -->
+<!-- 33 rutas por tenant -->
 <section class="light">
   <div class="pad">
     <div class="kicker">En la vista</div>
@@ -614,7 +789,7 @@ def inicio(request):
   <aside class="notes">⏱ 90 s · El middleware pone el tenant en la request. Vistas y templates personalizan sin saber de dominios.</aside>
 </section>
 
-<!-- 30 datos compartidos -->
+<!-- 34 datos compartidos -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Qué va dónde</div>
@@ -628,7 +803,7 @@ def inicio(request):
   <aside class="notes">⏱ 90 s · Esta decisión se toma una vez y cuesta cambiarla. Pensarla bien antes de escribir modelos.</aside>
 </section>
 
-<!-- 31 errores comunes setup -->
+<!-- 35 errores comunes setup -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Para no tropezar</div>
@@ -644,7 +819,7 @@ def inicio(request):
   <aside class="notes">⏱ 90 s · Repaso del bloque 02. Estos cuatro cubren la mayoría de dudas del primer contacto.</aside>
 </section>
 
-<!-- 32 Divisor 03 -->
+<!-- 36 Divisor 03 -->
 <section class="navy">
   <div class="pad">
     <div class="sectionnum">03</div>
@@ -654,7 +829,7 @@ def inicio(request):
   <aside class="notes">⏱ 10 s · Divisor. La parte que casi nunca se explica y que más duele en producción.</aside>
 </section>
 
-<!-- 33 tests -->
+<!-- 37 tests -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Probar</div>
@@ -674,7 +849,7 @@ class CursoTest(TenantTestCase):
   <aside class="notes">⏱ 120 s · TenantTestCase crea y migra un schema para cada test. Ojo: con muchos tests, el tiempo de migración se nota.</aside>
 </section>
 
-<!-- 34 config por tenant -->
+<!-- 38 config por tenant -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Personalización</div>
@@ -695,7 +870,7 @@ class CursoTest(TenantTestCase):
   <aside class="notes">⏱ 120 s · El branding y los planes son datos compartidos (van en public). Las decisiones "de negocio" del colegio, en su schema.</aside>
 </section>
 
-<!-- 35 media por tenant -->
+<!-- 39 media por tenant -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Archivos</div>
@@ -717,7 +892,7 @@ class Documento(models.Model):
   <aside class="notes">⏱ 120 s · El aislamiento no es solo de base de datos. Un bucket compartido mal servido puede filtrar documentos entre colegios.</aside>
 </section>
 
-<!-- 36 celery por tenant -->
+<!-- 40 celery por tenant -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Tareas en background</div>
@@ -738,7 +913,7 @@ def enviar_reporte(schema_name, curso_id):
   <aside class="notes">⏱ 120 s · Error clásico: la tarea corre sin tenant y consulta public. schema_context y tenant_context son las herramientas clave.</aside>
 </section>
 
-<!-- 37 seguridad -->
+<!-- 41 seguridad -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Aislamiento</div>
@@ -756,7 +931,7 @@ def enviar_reporte(schema_name, curso_id):
   <aside class="notes">⏱ 120 s · Repasar cada fila con ejemplos. El aislamiento se rompe por detalles, no por el mecanismo central.</aside>
 </section>
 
-<!-- 38 rendimiento -->
+<!-- 42 rendimiento -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Escala</div>
@@ -772,7 +947,52 @@ def enviar_reporte(schema_name, curso_id):
   <aside class="notes">⏱ 120 s · Con schema-per-tenant, la operación de la BD es más pesada: muchos objetos. Monitorea y automatiza el mantenimiento.</aside>
 </section>
 
-<!-- 39 observabilidad -->
+<!-- 43 Despliegue -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Infraestructura</div>
+    <h2>Despliegue</h2>
+    <p class="lead">Una sola app atiende a todos los tenants; los recursos se comparten o se separan donde importa.</p>
+    <svg viewBox="0 0 1160 320" role="img" aria-label="Internet entra por un balanceador a varios workers de la aplicación; los workers usan PostgreSQL con schemas por tenant, caché Redis y almacenamiento S3" style="width:100%;height:auto;display:block;margin-top:8px">
+      <title>Despliegue de AulaSaaS</title>
+      <defs><marker id="d1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5B6B63"/></marker></defs>
+      <rect x="16" y="130" width="126" height="70" rx="12" fill="#fff" stroke="#D8E6DE"/>
+      <text x="79" y="170" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#2B3A33">Internet</text>
+      <path d="M144 165 L 194 165" fill="none" stroke="#5B6B63" stroke-width="2" marker-end="url(#d1)"/>
+      <rect x="200" y="110" width="150" height="110" rx="12" fill="#EAF1F7" stroke="#336791"/>
+      <text x="275" y="158" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="16" fill="#2A5D86">nginx</text>
+      <text x="275" y="182" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#5B6B63">balanceador</text>
+      <path d="M352 165 C 376 165, 380 90, 404 90" fill="none" stroke="#5B6B63" stroke-width="2" marker-end="url(#d1)"/>
+      <path d="M352 165 L 404 165" fill="none" stroke="#5B6B63" stroke-width="2" marker-end="url(#d1)"/>
+      <path d="M352 165 C 376 165, 380 240, 404 240" fill="none" stroke="#5B6B63" stroke-width="2" marker-end="url(#d1)"/>
+      <rect x="410" y="56" width="170" height="68" rx="12" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="495" y="96" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#0A5138">worker 1</text>
+      <rect x="410" y="131" width="170" height="68" rx="12" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="495" y="171" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#0A5138">worker 2</text>
+      <rect x="410" y="206" width="170" height="68" rx="12" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="495" y="246" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#0A5138">worker 3</text>
+      <path d="M582 90 C 620 90, 624 140, 654 150" fill="none" stroke="#5B6B63" stroke-width="2" marker-end="url(#d1)"/>
+      <path d="M582 165 L 654 165" fill="none" stroke="#5B6B63" stroke-width="2" marker-end="url(#d1)"/>
+      <path d="M582 240 C 620 240, 624 190, 654 180" fill="none" stroke="#5B6B63" stroke-width="2" marker-end="url(#d1)"/>
+      <rect x="660" y="56" width="220" height="218" rx="14" fill="#fff" stroke="#336791"/>
+      <text x="770" y="86" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="16" fill="#2A5D86">PostgreSQL</text>
+      <rect x="680" y="104" width="180" height="66" rx="10" fill="#EAF1F7" stroke="#336791"/>
+      <text x="770" y="144" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#2A5D86">public · compartido</text>
+      <rect x="680" y="182" width="180" height="66" rx="10" fill="#EAF4EF" stroke="#0C4B33"/>
+      <text x="770" y="222" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#0A5138">schemas por tenant</text>
+      <path d="M884 165 L 934 165" fill="none" stroke="#5B6B63" stroke-width="2" marker-end="url(#d1)"/>
+      <rect x="940" y="56" width="204" height="90" rx="12" fill="#fff" stroke="#D8E6DE"/>
+      <text x="1042" y="94" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#2B3A33">Redis caché</text>
+      <text x="1042" y="118" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5B6B63">clave por tenant</text>
+      <rect x="940" y="184" width="204" height="90" rx="12" fill="#fff" stroke="#D8E6DE"/>
+      <text x="1042" y="222" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#2B3A33">S3 media</text>
+      <text x="1042" y="246" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5B6B63">prefijo por tenant</text>
+    </svg>
+  </div>
+  <aside class="notes">⏱ 90 s · La app escala horizontalmente; la base de datos es compartida con schemas. Caché y archivos también deben segmentarse por tenant.</aside>
+</section>
+
+<!-- 44 observabilidad -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Ver qué pasa</div>
@@ -788,7 +1008,7 @@ def enviar_reporte(schema_name, curso_id):
   <aside class="notes">⏱ 90 s · Inyecta el tenant en el logger y en el tracing lo antes posible (middleware). Ahorra horas de debugging.</aside>
 </section>
 
-<!-- 40 billing -->
+<!-- 45 billing -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Negocio</div>
@@ -804,23 +1024,50 @@ def enviar_reporte(schema_name, curso_id):
   <aside class="notes">⏱ 90 s · Billing es un buen ejemplo de dato compartido que gobierna el tenant. Enlaza negocio con arquitectura.</aside>
 </section>
 
-<!-- 41 onboarding -->
+<!-- 46 onboarding -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Ciclo de vida</div>
     <h2>Onboarding y offboarding</h2>
-    <div class="layers" style="margin-top:16px">
-      <div class="ly"><b>1 · Registro</b><span>se crea el tenant (pendiente) y su dominio.</span></div>
-      <div class="ly"><b>2 · Provisioning</b><span>schema + migraciones + datos iniciales + admin.</span></div>
-      <div class="ly"><b>3 · Activación</b><span>se factura el plan y se habilita el subdominio.</span></div>
-      <div class="ly"><b>4 · Suspensión</b><span>por impago o baja: se bloquea el acceso, no los datos.</span></div>
-      <div class="ly"><b>5 · Baja</b><span>export de datos y borrado del schema.</span></div>
-    </div>
+    <svg viewBox="0 0 1160 230" role="img" aria-label="Línea de tiempo del tenant: registro, provisioning, activación, suspensión y baja" style="width:100%;height:auto;display:block;margin-top:14px">
+      <title>Ciclo de vida del tenant</title>
+      <line x1="90" y1="120" x2="1080" y2="120" stroke="#D8E6DE" stroke-width="4"/>
+      <g>
+        <circle cx="130" cy="120" r="16" fill="#0C4B33"/>
+        <text x="130" y="126" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#fff">1</text>
+        <text x="130" y="86" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="15" fill="#0A1512">Registro</text>
+        <text x="130" y="166" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5B6B63">tenant + dominio</text>
+      </g>
+      <g>
+        <circle cx="360" cy="120" r="16" fill="#0C4B33"/>
+        <text x="360" y="126" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#fff">2</text>
+        <text x="360" y="86" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="15" fill="#0A1512">Provisioning</text>
+        <text x="360" y="166" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5B6B63">schema + migraciones</text>
+      </g>
+      <g>
+        <circle cx="590" cy="120" r="16" fill="#2E7D5B"/>
+        <text x="590" y="126" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#fff">3</text>
+        <text x="590" y="86" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="15" fill="#0A1512">Activación</text>
+        <text x="590" y="166" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5B6B63">plan + subdominio</text>
+      </g>
+      <g>
+        <circle cx="820" cy="120" r="16" fill="#D9820A"/>
+        <text x="820" y="126" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#fff">4</text>
+        <text x="820" y="86" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="15" fill="#0A1512">Suspensión</text>
+        <text x="820" y="166" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5B6B63">bloquea acceso</text>
+      </g>
+      <g>
+        <circle cx="1050" cy="120" r="16" fill="#C94141"/>
+        <text x="1050" y="126" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="14" fill="#fff">5</text>
+        <text x="1050" y="86" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="15" fill="#0A1512">Baja</text>
+        <text x="1050" y="166" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#5B6B63">export + borrado</text>
+      </g>
+    </svg>
   </div>
   <aside class="notes">⏱ 90 s · Trata el tenant como una entidad con ciclo de vida, no como una fila más. Automatiza cada etapa.</aside>
 </section>
 
-<!-- 42 GDPR -->
+<!-- 47 GDPR -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Cumplimiento</div>
@@ -835,7 +1082,7 @@ def enviar_reporte(schema_name, curso_id):
   <aside class="notes">⏱ 90 s · Con schema-per-tenant, exportar o borrar un cliente es limpiamente acotado (su schema). Es una ventaja de este patrón.</aside>
 </section>
 
-<!-- 43 backups -->
+<!-- 48 backups -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Continuidad</div>
@@ -851,7 +1098,7 @@ def enviar_reporte(schema_name, curso_id):
   <aside class="notes">⏱ 90 s · El dump por schema (opción -n) permite recuperar un cliente concreto. Ensaya los restores: un backup sin probar no es un backup.</aside>
 </section>
 
-<!-- 44 checklist -->
+<!-- 49 checklist -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Antes de producción</div>
@@ -868,7 +1115,7 @@ def enviar_reporte(schema_name, curso_id):
   <aside class="notes">⏱ 60 s · Repaso accionable. Sugerir guardar esta slide como checklist del proyecto real.</aside>
 </section>
 
-<!-- 45 Divisor 04 -->
+<!-- 50 Divisor 04 -->
 <section class="navy">
   <div class="pad">
     <div class="sectionnum">04</div>
@@ -878,7 +1125,7 @@ def enviar_reporte(schema_name, curso_id):
   <aside class="notes">⏱ 10 s · Divisor. El patrón es agnóstico del framework; veamos cómo se ve con SQLAlchemy.</aside>
 </section>
 
-<!-- 46 SQLAlchemy enfoques -->
+<!-- 51 SQLAlchemy enfoques -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Más allá de Django</div>
@@ -892,7 +1139,7 @@ def enviar_reporte(schema_name, curso_id):
   <aside class="notes">⏱ 90 s · Los mismos 3 patrones aplican en FastAPI. Aquí mostramos los dos más usados con SQLAlchemy.</aside>
 </section>
 
-<!-- 47 SQLAlchemy schema -->
+<!-- 52 SQLAlchemy schema -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Enfoque A</div>
@@ -916,7 +1163,7 @@ def set_schema(dbapi_conn, record):
   <aside class="notes">⏱ 120 s · El evento checkout fija el search_path por conexión según un ContextVar que pones en el middleware. Muy parecido a django-tenants por dentro.</aside>
 </section>
 
-<!-- 48 SQLAlchemy RLS -->
+<!-- 53 SQLAlchemy RLS -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Enfoque B</div>
@@ -937,7 +1184,7 @@ def set_schema(dbapi_conn, record):
   <aside class="notes">⏱ 120 s · Combina filtrado en el ORM (rendimiento, índices) con RLS (seguridad). Defensa en profundidad.</aside>
 </section>
 
-<!-- 49 Django vs FastAPI -->
+<!-- 54 Django vs FastAPI -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Elegir stack</div>
@@ -956,7 +1203,7 @@ def set_schema(dbapi_conn, record):
   <aside class="notes">⏱ 120 s · Sin fanatismo. Si necesitas admin y CRUD rápido, Django. Si es una API pura de alto tráfico, FastAPI.</aside>
 </section>
 
-<!-- 50 Mi experiencia -->
+<!-- 55 Mi experiencia -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Mi experiencia</div>
@@ -972,7 +1219,7 @@ def set_schema(dbapi_conn, record):
   <aside class="notes">⏱ 90 s · Aterrizar la teoría en un caso real propio. No mencionar detalles confidenciales; enfatizar el modelo, no los datos.</aside>
 </section>
 
-<!-- 51 Aprendí -->
+<!-- 56 Aprendí -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Lecciones</div>
@@ -988,7 +1235,7 @@ def set_schema(dbapi_conn, record):
   <aside class="notes">⏱ 90 s · Cuatro lecciones de producción. Si el tiempo aprieta, esta slide y la checklist son las que deben quedar claras.</aside>
 </section>
 
-<!-- 52 Chuleta -->
+<!-- 57 Chuleta -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Para llevar</div>
@@ -1007,7 +1254,7 @@ def set_schema(dbapi_conn, record):
   <aside class="notes">⏱ 60 s · Repaso relámpago. Sugerir guardarla como referencia para el día a día.</aside>
 </section>
 
-<!-- 53 Recursos -->
+<!-- 58 Recursos -->
 <section class="light">
   <div class="pad">
     <div class="kicker">Para seguir</div>
@@ -1023,7 +1270,7 @@ def set_schema(dbapi_conn, record):
   <aside class="notes">⏱ 60 s · Dar el enlace del repo y las docs. Animar a clonar y cambiarle el dominio al primer tenant.</aside>
 </section>
 
-<!-- 54 Gracias -->
+<!-- 59 Gracias -->
 <section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.16" data-background-transition="fade">
   <div class="pad">
     <div class="kicker" style="color:#7FC2A6">Gracias</div>
@@ -1049,6 +1296,7 @@ def set_schema(dbapi_conn, record):
 <script src="vendor/reveal/highlight.js"></script>
 <script src="vendor/reveal/search.js"></script>
 <script src="vendor/reveal/zoom.js"></script>
+<script src="vendor/chartjs/chart.umd.min.js"></script>
 <script src="js/deck.js"></script>
 </body>
 </html>
