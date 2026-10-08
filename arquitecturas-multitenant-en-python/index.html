@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arquitecturas multitenant en Python · José Miguel Amaya</title>
+<meta name="description" content="Cómo construir SaaS multiempresa en Python: los 3 patrones de aislamiento, PostgreSQL schemas, django-tenants y operación en producción. Caso práctico: AulaSaaS. Charla de José Miguel Amaya (Python Piura · Piura AI).">
+<link rel="canonical" href="https://joseamaya.github.io/arquitecturas-multitenant-en-python/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Arquitecturas multitenant en Python">
+<meta property="og:description" content="Los 3 patrones de aislamiento, PostgreSQL schemas, django-tenants y operación en producción, con el caso AulaSaaS.">
+<meta property="og:url" content="https://joseamaya.github.io/arquitecturas-multitenant-en-python/">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="vendor/reveal/reset.css">
+<link rel="stylesheet" href="vendor/reveal/reveal.css">
+<link rel="stylesheet" href="vendor/reveal/highlight-theme.css">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  .reveal pre{font-size:.46em}
+  .ide pre{font-size:.44em}
+  .cl{display:block}
+  .cl.hl{background:rgba(12,75,51,.18);box-shadow:-8px 0 0 rgba(12,75,51,.18);border-radius:4px}
+  .cap{font-family:'JetBrains Mono',monospace;font-size:.4em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:.35em 0 .15em}
+  section.dark .cap,section.navy .cap{color:#7FC2A6}
+  .big-q{font-family:'Montserrat',sans-serif;font-weight:800;font-size:1.5em;color:var(--ink);line-height:1.08;margin:0}
+  .layers{display:flex;flex-direction:column;gap:10px}
+  .layers .ly{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:#fff}
+  .layers .ly b{font-family:'JetBrains Mono',monospace;font-size:.44em;color:var(--django-ink);min-width:11em}
+  .layers .ly span{font-size:.46em;color:var(--body)}
+  section.light .kicker{color:var(--django-ink)}
+  @media (prefers-reduced-motion: reduce){
+    .reveal .fragment{transition:none!important}
+    .reveal .slides section{transition:none!important}
+  }
+</style>
+</head>
+<body>
+<noscript>
+  <style>
+    .reveal{position:static;height:auto}
+    .reveal .slides{position:static;width:auto;height:auto;transform:none!important}
+    .reveal .slides>section{display:block;position:relative;min-height:0;height:auto;padding:40px 24px;border-bottom:1px solid #d8e6de}
+    .reveal .foot{display:none}
+  </style>
+  <p style="font-family:sans-serif;padding:16px;background:#0A1512;color:#fff;margin:0">Esta presentación usa JavaScript (Reveal.js) para navegar. Aquí está el contenido completo.</p>
+</noscript>
+<div class="reveal"><div class="slides">
+
+<!-- 1 Portada -->
+<section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.16" data-background-transition="fade">
+  <div class="pad">
+    <div class="kicker" style="color:#7FC2A6">Python Piura · Piura AI</div>
+    <h1 style="font-size:1.85em;line-height:1.03">Arquitecturas <span style="color:var(--django-l)">multitenant</span> en Python</h1>
+    <p class="lead" style="color:#C6E0D4;font-size:.64em;margin-top:.6em">SaaS multiempresa con PostgreSQL schemas y django-tenants: caso AulaSaaS</p>
+    <div style="margin-top:1.1em">
+      <strong style="color:#fff;font-size:.6em;display:block">Ing. José Miguel Amaya Camacho</strong>
+      <span style="color:#9FB4D4;font-size:.48em">CTO &amp; Socio Fundador · Xprende Tech · Fundador de Piura AI y Python Piura</span>
+    </div>
+  </div>
+  <aside class="notes">⏱ 30 s · Promesa: entender los tres modelos de aislamiento y montar un SaaS multiempresa real con django-tenants, incluyendo la parte que casi nadie explica: operación, migraciones y seguridad.</aside>
+</section>
+
+<!-- 2 Quién soy -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Quién les habla</div>
+    <h2>José Miguel Amaya — SaaS y multitenancy</h2>
+    <div class="grid g2" style="margin-top:18px;align-items:start;grid-template-columns:260px 1fr">
+      <img loading="lazy" decoding="async" src="assets/miguel-square.jpg" alt="José Miguel Amaya" style="width:100%;border-radius:14px;border:3px solid var(--django-l)">
+      <ul style="font-size:.56em;line-height:1.6;margin:0;padding-left:1.1em">
+        <li>CTO y socio fundador de <strong>Xprende Tech</strong>. Full Stack Engineer en Efilm Online.</li>
+        <li>Construí una <strong>plataforma SaaS de e-learning multiempresa</strong> (Xprende) con Django.</li>
+        <li>Especialista en Python, Django/FastAPI e IA (LangChain, LangGraph, RAG).</li>
+        <li>Fundador de <strong>Piura AI</strong>, <strong>Tallanix</strong>, <strong>Python Piura</strong> y <strong>VICUX</strong>.</li>
+      </ul>
+    </div>
+    <div style="display:flex;gap:60px;align-items:end;margin-top:8px">
+      <div>
+        <div class="muted" style="font-family:'JetBrains Mono';font-size:.36em">comunidad</div>
+        <div style="display:flex;gap:22px;align-items:center;margin-top:6px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-pythonpiura.jpg" alt="" style="height:66px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-piuraai.png" alt="" style="height:62px">
+        </div>
+      </div>
+      <div>
+        <div class="muted" style="font-family:'JetBrains Mono';font-size:.36em">empresa</div>
+        <div style="display:flex;gap:22px;align-items:center;margin-top:6px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-tallanix.png" alt="" style="height:54px">
+          <img aria-hidden="true" loading="lazy" decoding="async" src="assets/logo-xprende.png" alt="" style="height:38px">
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 30 s · Treinta segundos de credibilidad. Lo relevante: no es teoría, es una plataforma que estuvo en producción con varios clientes reales.</aside>
+</section>
+
+<!-- 3 Agenda -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Agenda · 60 minutos</div>
+    <h2>El recorrido de hoy</h2>
+    <ul class="agenda" style="margin-top:14px">
+      <li><b>01</b> Fundamentos: tenants y aislamiento <span>10 min</span></li>
+      <li><b>02</b> django-tenants: schema por tenant <span>20 min</span></li>
+      <li><b>03</b> Operación: migraciones, tests, seguridad <span>18 min</span></li>
+      <li><b>04</b> FastAPI/SQLAlchemy y mi experiencia <span>12 min</span></li>
+    </ul>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Todo gira alrededor de un solo caso: <b>AulaSaaS</b>, una plataforma de e-learning que atiende a varios colegios.</div></div>
+  </div>
+  <aside class="notes">⏱ 30 s · Mapa completo. La parte de operación es la que suele faltar en los tutoriales; aquí la cubrimos con tiempo.</aside>
+</section>
+
+<!-- 4 El caso -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El caso</div>
+    <h2>AulaSaaS</h2>
+    <p class="lead">Un SaaS de e-learning que da servicio a <b>varios colegios</b> con una sola instalación.</p>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-django"><div class="label">compartido</div><div class="value" style="font-size:.85em">Planes y cuentas</div><p>Tenants, dominios, usuarios y facturación viven en <code>public</code>.</p></div>
+      <div class="card a-pg"><div class="label">por tenant</div><div class="value" style="font-size:.85em">Colegio</div><p>Cursos, alumnos, notas y asistencia: datos de cada cliente.</p></div>
+      <div class="card a-amber"><div class="label">entrega</div><div class="value" style="font-size:.85em">Subdominios</div><p><code>acme.tuapp.com</code> y <code>gea.tuapp.com</code> sirven al mismo código.</p></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center">
+      <span class="pill">tenant: acme</span>
+      <span class="pill">tenant: gea</span>
+      <span class="pill pg">schema: public</span>
+      <span class="pill pg">PostgreSQL</span>
+    </div>
+  </div>
+  <aside class="notes">⏱ 45 s · Fijar el caso una sola vez. Un colegio = un tenant = un subdominio = un schema. Ese es el modelo mental.</aside>
+</section>
+
+<!-- 5 Divisor 01 -->
+<section class="navy">
+  <div class="pad">
+    <div class="sectionnum">01</div>
+    <h2 style="font-size:1.6em">Fundamentos</h2>
+    <p class="lead" style="color:#C6E0D4;font-size:.6em">Tenants, aislamiento y PostgreSQL schemas</p>
+  </div>
+  <aside class="notes">⏱ 10 s · Divisor. Primero entender el problema antes de tocar código.</aside>
+</section>
+
+<!-- 6 Qué es un tenant -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Vocabulario</div>
+    <h2 class="big-q">¿Qué es un tenant?</h2>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card a-django"><div class="label">tenant</div><div class="value" style="font-size:.9em">Inquilino</div><p>Un cliente lógico cuyos datos deben mantenerse separados del resto. En AulaSaaS, cada colegio.</p></div>
+      <div class="card a-pg"><div class="label">multitenancy</div><div class="value" style="font-size:.9em">Compartir</div><p>Una sola instalación atiende a muchos tenants, compartiendo infraestructura pero aislando datos.</p></div>
+    </div>
+    <div class="callout info" style="margin-top:16px"><span class="ic">i</span><div>La clave no es "muchos clientes", sino <b>cómo separas sus datos</b>. De eso salen los 3 patrones.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Distinguir tenant (concepto de negocio) de la técnica usada para aislarlo. El resto del bloque trata sobre las técnicas.</aside>
+</section>
+
+<!-- 7 El problema -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El problema</div>
+    <h2>SaaS multiempresa</h2>
+    <p class="lead">Sin un modelo claro aparecen dos extremos, y ambos duelen.</p>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card a-red"><div class="label">si comparto todo</div><div class="value" style="font-size:.85em">Una sola tabla</div><p>Filtros manuales (<code>where tenant_id=...</code>) en cada query. Un olvido = una fuga entre colegios.</p></div>
+      <div class="card a-amber"><div class="label">si aíslo todo</div><div class="value" style="font-size:.85em">Una BD por cliente</div><p>Aislamiento perfecto, pero el coste y la operación se multiplican por cada tenant.</p></div>
+    </div>
+    <div class="callout warn" style="margin-top:16px"><span class="ic">!</span><div>El objetivo es el punto medio: aislamiento fuerte <b>sin</b> multiplicar la operación.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Plantear el dilema aislamiento vs coste. Toda la charla es una respuesta a este trade-off.</aside>
+</section>
+
+<!-- 8 patrones -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Las tres opciones</div>
+    <h2>Los 3 patrones de multitenancy</h2>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-red"><div class="label">1 · compartido</div><div class="value" style="font-size:.82em">Shared schema</div><p>Una BD, un schema. Cada tabla lleva <code>tenant_id</code>. Máximo ahorro, máximo riesgo.</p></div>
+      <div class="card a-django"><div class="label">2 · por schema</div><div class="value" style="font-size:.82em">Schema-per-tenant</div><p>Una BD, un <b>schema</b> por tenant. Aislamiento fuerte y buena eficiencia. <b>El enfoque de esta charla.</b></p></div>
+      <div class="card a-amber"><div class="label">3 · por base</div><div class="value" style="font-size:.82em">Database-per-tenant</div><p>Una BD por cliente. Aislamiento total; coste y operación altos.</p></div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>PostgreSQL es ideal para el patrón 2: los <b>schemas</b> son como carpetas dentro de la misma base de datos.</div></div>
+  </div>
+  <aside class="notes">⏱ 150 s · Nombres canónicos (los mismos de la doc de django-tenants y del artículo de Microsoft). El patrón 2 es el "punto medio" que perseguimos.</aside>
+</section>
+
+<!-- 9 Comparativa -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Elegir con criterio</div>
+    <h2>Comparativa</h2>
+    <table style="margin-top:14px">
+      <thead><tr><th></th><th>Shared schema</th><th>Schema-per-tenant</th><th>DB-por-tenant</th></tr></thead>
+      <tbody>
+        <tr><td><b>Aislamiento</b></td><td>Bajo (filtros)</td><td>Alto</td><td>Total</td></tr>
+        <tr><td><b>Coste</b></td><td>Mínimo</td><td>Bajo</td><td>Alto</td></tr>
+        <tr><td><b>Complejidad</b></td><td>Baja</td><td>Media</td><td>Alta</td></tr>
+        <tr><td><b>Migraciones</b></td><td>Una</td><td>Por schema</td><td>Por base</td></tr>
+        <tr><td><b>Ideal para</b></td><td>muchos tenants, datos simples</td><td>B2B, aislamiento por cliente</td><td>regulación estricta</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notes">⏱ 120 s · No hay patrón único. Para B2B con clientes que exigen sus datos separados, schema-per-tenant es el balance habitual.</aside>
+</section>
+
+<!-- 10 Cómo elegir -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Decisión</div>
+    <h2>Cómo elegir</h2>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="kv"><b>Nº de tenants</b> cientos o miles → schema-per-tenant</div>
+      <div class="kv"><b>Aislamiento</b> requisito legal fuerte → DB-por-tenant</div>
+      <div class="kv"><b>Datos comunes</b> catálogos globales → schema <code>public</code></div>
+      <div class="kv"><b>Equipo</b> pequeño → minimiza la operación</div>
+      <div class="kv"><b>Personalización</b> por cliente → favorece separar</div>
+      <div class="kv"><b>Coste</b> prioridad → shared schema + RLS</div>
+    </div>
+    <div class="callout info" style="margin-top:16px"><span class="ic">i</span><div>Y siempre: <b>puedes migrar después</b>. Empezar compartido y pasar a schemas es más fácil que al revés.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Herramienta de decisión, no dogma. Pedir al público su caso y elegir en voz alta.</aside>
+</section>
+
+<!-- 11 PostgreSQL schemas -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">La pieza clave</div>
+    <h2>PostgreSQL schemas</h2>
+    <p class="lead">Un <b>schema</b> es un espacio de nombres dentro de una base de datos: permite repetir el nombre de tabla sin conflictos.</p>
+    <div class="kv" style="margin-top:14px"><b>public</b> schema por defecto, ideal para lo compartido</div>
+    <div class="kv"><b>acme.cursos</b> y <b>gea.cursos</b> son tablas distintas</div>
+    <div class="kv"><b>search_path</b> indica en qué schemas buscar las tablas</div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Con <code>search_path = acme, public</code> el ORM consulta <code>acme</code> primero y cae a <code>public</code> para lo compartido.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · La analogía de la carpeta: mismo nombre de archivo en carpetas distintas. search_path es el "directorio actual" de la base de datos.</aside>
+</section>
+
+<!-- 12 Diagrama de schemas -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">AulaSaaS</div>
+    <h2>Una base de datos, muchos espacios</h2>
+    <div class="db" style="margin-top:14px">
+      <div class="bar"><b>PostgreSQL</b> · base de datos <code>aulasass</code></div>
+      <div class="schemas">
+        <div class="schema pub">
+          <div class="sname">public</div>
+          <ul><li>client</li><li>domain</li><li>auth_user</li><li>planes</li></ul>
+          <span class="tag">compartido</span>
+        </div>
+        <div class="schema">
+          <div class="sname">acme</div>
+          <ul><li>cursos</li><li>alumnos</li><li>notas</li></ul>
+          <span class="tag">tenant</span>
+        </div>
+        <div class="schema">
+          <div class="sname">gea</div>
+          <ul><li>cursos</li><li>alumnos</li><li>notas</li></ul>
+          <span class="tag">tenant</span>
+        </div>
+      </div>
+    </div>
+    <div class="callout info" style="margin-top:12px"><span class="ic">i</span><div>Cada colegio tiene sus propias tablas <code>cursos</code> y <code>alumnos</code>, sin verse entre sí.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Visual: mismo conjunto de tablas replicado por schema. Esta es la imagen que deben recordar del bloque.</aside>
+</section>
+
+<!-- 13 RLS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Si compartes schema</div>
+    <h2>Row-Level Security</h2>
+    <p class="lead">Si eliges <b>shared schema</b>, no confíes solo en el filtrado del ORM: refuérzalo en la base de datos.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">rls.sql</span></div>
+      <pre><code class="language-sql" data-hl="1,3,4">ALTER TABLE cursos ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY aislamiento ON cursos
+  USING (tenant_id = current_setting('app.tenant_id')::int);</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Postgres aplica el filtro por ti: aunque una query olvide el <code>WHERE</code>, no devuelve datos de otro tenant.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · RLS es la red de seguridad del patrón compartido. En schema-per-tenant el aislamiento ya lo da el search_path.</aside>
+</section>
+
+<!-- 14 Fugas de datos -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El riesgo real</div>
+    <h2>Fugas de datos entre tenants</h2>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Un <code>WHERE tenant_id=...</code> olvidado en shared schema.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Un <code>search_path</code> mal fijado que apunta al schema equivocado.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Un dominio que resuelve al tenant incorrecto.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Caché o archivos servidos sin segmentar por tenant.</div></div>
+    </div>
+    <div class="callout warn" style="margin-top:16px"><span class="ic">!</span><div>Una fuga entre clientes de una plataforma B2B suele ser el peor incidente posible: legal, económico y reputacional.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · El aislamiento no es un detalle técnico, es el requisito de negocio número uno. Volveremos a esto en seguridad.</aside>
+</section>
+
+<!-- 15 Divisor 02 -->
+<section class="navy">
+  <div class="pad">
+    <div class="sectionnum">02</div>
+    <h2 style="font-size:1.6em">django-tenants</h2>
+    <p class="lead" style="color:#C6E0D4;font-size:.6em">Schema por tenant en Django, de la teoría al código</p>
+  </div>
+  <aside class="notes">⏱ 10 s · Divisor. Del concepto a la implementación.</aside>
+</section>
+
+<!-- 16 Qué es django-tenants -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">La librería</div>
+    <h2>Qué es django-tenants</h2>
+    <p class="lead">El paquete de referencia para multitenancy con <b>schemas de PostgreSQL</b> en Django.</p>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-django"><div class="value" style="font-size:.8em;color:var(--django-ink)">Activo</div><p>Fork mantenido por la comunidad. Compatible con Django 5 y psycopg 3.</p></div>
+      <div class="card a-pg"><div class="value" style="font-size:.8em;color:var(--pg-ink)">Transparente</div><p>Casi no cambias tu código: el schema se fija por petición.</p></div>
+      <div class="card a-amber"><div class="value" style="font-size:.8em;color:var(--amber-ink)">Postgres-only</div><p>Usa schemas, así que requiere PostgreSQL (no SQLite/MySQL).</p></div>
+    </div>
+    <div class="callout warn" style="margin-top:16px"><span class="ic">!</span><div>En 2019 se usaba <code>django-tenant-schemas</code>, pero está <b>sin mantenimiento</b>. Hoy instala <code>django-tenants</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Corrección clave respecto a la charla original. Mismo autor original, fork activo. pip install django-tenants.</aside>
+</section>
+
+<!-- 17 Cómo funciona -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Flujo de una petición</div>
+    <h2>Cómo funciona</h2>
+    <div class="reqflow" style="margin-top:22px">
+      <div class="node p"><b>Petición</b><small>acme.tuapp.com</small></div>
+      <div class="arrow">→</div>
+      <div class="node"><b>Middleware</b><small>lee el host</small></div>
+      <div class="arrow">→</div>
+      <div class="node t"><b>Tenant</b><small>busca el dominio</small></div>
+      <div class="arrow">→</div>
+      <div class="node p"><b>search_path</b><small>acme, public</small></div>
+      <div class="arrow">→</div>
+      <div class="node t"><b>Vista</b><small>ORM en ese schema</small></div>
+    </div>
+    <div class="callout info" style="margin-top:20px"><span class="ic">i</span><div>El host de la petición determina el tenant. Cada dominio vive en la tabla del schema <code>public</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Todo el mecanismo en una imagen: subdominio → middleware → search_path. Si no hay dominio, responde 404.</aside>
+</section>
+
+<!-- 18 Instalación -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Puesta en marcha</div>
+    <h2 style="color:#fff">Instalación</h2>
+    <p class="lead">Django 5, PostgreSQL y el driver psycopg 3.</p>
+    <div class="term" style="margin-top:14px">
+      <div class="bar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span>bash</span></div>
+      <div class="body"><span class="d">$</span> pip install <span class="g">django django-tenants "psycopg[binary]"</span>
+<span class="d">$</span> django-admin startproject aulasass .
+<span class="d">$</span> python manage.py startapp customers</div>
+    </div>
+    <div class="callout info" style="margin-top:14px"><span class="ic">i</span><div>Necesitas un servidor PostgreSQL accesible; django-tenants no soporta SQLite.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Un solo comando de instalación. Recuerda: psycopg 3, no psycopg2.</aside>
+</section>
+
+<!-- 19 settings DATABASES -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Configuración · 1</div>
+    <h2>Base de datos</h2>
+    <p class="lead">Cambia el <code>ENGINE</code> por el backend de django-tenants.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">settings.py</span></div>
+      <pre><code class="language-python" data-hl="3">DATABASES = {
+    "default": {
+        "ENGINE": "django_tenants.postgresql_backend",
+        "NAME": "aulasass",
+        "USER": "aulasass",
+        "PASSWORD": "...",
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Este backend es el que dirige las consultas al schema activo según el <code>search_path</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · El único cambio "mágico" en la conexión. Todo lo demás es configuración normal de Django.</aside>
+</section>
+
+<!-- 20 settings middleware -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Configuración · 2</div>
+    <h2>Middleware y hosts</h2>
+    <div class="grid g2" style="margin-top:14px;align-items:start;gap:20px">
+      <div>
+        <div class="cap">middleware</div>
+        <pre><code class="language-python" data-hl="1,2">MIDDLEWARE = [
+    "django_tenants.middleware.main"
+    ".TenantMainMiddleware",
+    # ... el resto
+]</code></pre>
+      </div>
+      <div>
+        <div class="cap">hosts</div>
+        <pre><code class="language-python" data-hl="1,2">ALLOWED_HOSTS = [
+    "localhost", ".localhost",
+    ".tuapp.com",
+]</code></pre>
+      </div>
+    </div>
+    <div class="callout warn" style="margin-top:14px"><span class="ic">!</span><div>El middleware va <b>primero</b> en la lista. El punto inicial en <code>.localhost</code> habilita los subdominios en desarrollo.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · El orden importa: TenantMainMiddleware debe ejecutarse antes que cualquier middleware que toque la base de datos.</aside>
+</section>
+
+<!-- 21 settings apps -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Configuración · 3</div>
+    <h2>Shared, tenant e instaladas</h2>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">settings.py</span></div>
+      <pre style="font-size:.38em"><code class="language-python" data-hl="1,2,9,14">SHARED_APPS = [
+    "django_tenants",        # obligatorio
+    "customers",             # client + domain
+    "django.contrib.contenttypes",
+    "django.contrib.auth",
+    "django.contrib.sessions",
+    "django.contrib.admin",
+]
+
+TENANT_APPS = [
+    "django.contrib.contenttypes",
+    "cursos", "alumnos",   # datos por tenant
+]
+
+INSTALLED_APPS = list(SHARED_APPS) + [
+    a for a in TENANT_APPS if a not in SHARED_APPS
+]</code></pre>
+    </div>
+    <div class="callout info" style="margin-top:12px"><span class="ic">i</span><div><code>SHARED_APPS</code> van al schema <code>public</code>; <code>TENANT_APPS</code> se crean en cada schema de tenant.</div></div>
+  </div>
+  <aside class="notes">⏱ 150 s · La distinción más importante del setup. contenttypes aparece en ambos porque cada schema necesita las tablas base de Django.</aside>
+</section>
+
+<!-- 22 settings tenant model -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Configuración · 4</div>
+    <h2>Modelo de tenant y enrutador</h2>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">settings.py</span></div>
+      <pre><code class="language-python" data-hl="1,2,4">TENANT_MODEL = "customers.Client"
+TENANT_DOMAIN_MODEL = "customers.Domain"
+
+DATABASE_ROUTERS = (
+    "django_tenants.routers.TenantSyncRouter",
+)</code></pre>
+    </div>
+    <div class="callout info" style="margin-top:12px"><span class="ic">i</span><div>Le dicen a Django <b>qué modelos representan al tenant y sus dominios</b>, y qué apps sincronizar en cada schema.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · El router decide qué apps van a public y cuáles a cada tenant al migrar. Es lo que hace que migrate_schemas sepa dónde ir.</aside>
+</section>
+
+<!-- 23 modelos -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Los modelos</div>
+    <h2>Client y Domain</h2>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">customers/models.py</span></div>
+      <pre><code class="language-python" data-hl="1,4,5,6,9">from django_tenants.models import TenantMixin, DomainMixin
+from django.db import models
+
+class Client(TenantMixin):
+    nombre = models.CharField(max_length=100)
+    plan = models.CharField(max_length=20, default="basico")
+    auto_create_schema = True
+
+class Domain(DomainMixin):
+    pass</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div><code>TenantMixin</code> aporta <code>schema_name</code>; <code>DomainMixin</code> aporta <code>domain</code> e <code>is_primary</code>. Añade tus propios campos.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Client guarda el schema; Domain guarda el subdominio. Con auto_create_schema=True, al guardar se crea y migra el schema.</aside>
+</section>
+
+<!-- 24 tenant público -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">El dominio principal</div>
+    <h2>El tenant público</h2>
+    <p class="lead">Tu dominio principal también es un tenant, respaldado por el schema <code>public</code>.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">shell</span></div>
+      <pre><code class="language-python" data-hl="1,4,6">from customers.models import Client, Domain
+
+public = Client(schema_name="public", nombre="AulaSaaS")
+public.save()
+Domain.objects.create(
+    domain="tuapp.com", tenant=public, is_primary=True,
+)</code></pre>
+    </div>
+    <div class="callout warn" style="margin-top:12px"><span class="ic">!</span><div>Sin este tenant, <code>tuapp.com</code> responde <b>404</b>: el middleware no encuentra a quién servir.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Detalle que sorprende a todos: la web principal es un tenant más, con schema_name="public".</aside>
+</section>
+
+<!-- 25 migraciones -->
+<section class="dark">
+  <div class="pad">
+    <div class="kicker">Migraciones</div>
+    <h2 style="color:#fff">Migrar schemas</h2>
+    <div class="term" style="margin-top:14px">
+      <div class="bar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span>bash</span></div>
+      <div class="body"><span class="d">$</span> python manage.py migrate_schemas <span class="c">--shared</span>
+<span class="d">$</span> python manage.py migrate_schemas <span class="c">--tenant</span>
+<span class="d">$</span> python manage.py migrate_schemas   <span class="d"># ambos</span></div>
+    </div>
+    <div class="kv" style="margin-top:14px;border-color:var(--dark-line)"><b>--shared</b> solo el schema public</div>
+    <div class="kv" style="border-color:var(--dark-line)"><b>--tenant</b> todos los schemas de tenants</div>
+    <div class="callout info" style="margin-top:12px"><span class="ic">i</span><div>No uses <code>migrate</code> a secas: <code>migrate_schemas</code> aplica cada app en el schema que le toca.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Shared primero, luego tenants. En despliegues, esto es parte del pipeline de release.</aside>
+</section>
+
+<!-- 26 migraciones paralelas -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">A escala</div>
+    <h2>Migraciones en paralelo</h2>
+    <p class="lead">Con cientos de tenants, migrar uno a uno tarda demasiado.</p>
+    <div class="term" style="margin-top:12px">
+      <div class="bar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span>bash</span></div>
+      <div class="body"><span class="d">$</span> python manage.py migrate_schemas \
+    <span class="c">--executor=multiprocessing</span> <span class="d">--parallel=8</span></div>
+    </div>
+    <div class="callout warn" style="margin-top:14px"><span class="ic">!</span><div>Las migraciones deben ser <b>idempotentes</b> y rápidas: un error en un schema puede dejar tenants desincronizados.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · El ejecutor multiprocessing reparte los schemas entre procesos. En mantenimientos, migra por lotes.</aside>
+</section>
+
+<!-- 27 crear tenant -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Alta de cliente</div>
+    <h2>Crear un tenant</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:12px;align-items:start">
+      <div>
+        <div class="cap">comando</div>
+        <pre style="font-size:.4em"><code class="language-bash">python manage.py create_tenant \
+  --schema_name=acme \
+  --name=Acme \
+  --domain=acme.localhost</code></pre>
+      </div>
+      <div>
+        <div class="cap">programático</div>
+        <pre style="font-size:.4em"><code class="language-python" data-hl="3,6">tenant = Client(
+    schema_name="acme", nombre="Acme",
+)
+tenant.save()
+Domain.objects.create(
+    domain="acme.localhost", tenant=tenant,
+)</code></pre>
+      </div>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div><code>tenant.save()</code> crea el schema y ejecuta las migraciones: el tenant queda listo al instante.</div></div>
+  </div>
+  <aside class="notes">⏱ 150 s · El comando sirve para pruebas; en producto se hace programáticamente desde el registro. Ojo con el coste de migrar al crear.</aside>
+</section>
+
+<!-- 28 provisioning -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">En producción</div>
+    <h2>Provisioning al registrarse</h2>
+    <p class="lead">Crear un schema y migrarlo tarda; no lo hagas en la petición de registro.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">tareas.py</span></div>
+      <pre><code class="language-python" data-hl="1,4,5,6">from celery import shared_task
+from customers.models import Client
+
+@shared_task
+def provisionar(tenant_id):
+    tenant = Client.objects.get(id=tenant_id)
+    tenant.create_schema(check_if_exists=True)
+    # sembrar datos iniciales, admin, plan...</code></pre>
+    </div>
+    <div class="callout warn" style="margin-top:12px"><span class="ic">!</span><div>Marca el tenant como <code>pendiente</code> hasta que el schema esté listo: el middleware debe ignorar tenants sin terminar.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Provisioning asíncrono con Celery. Evita bloquear al usuario y permite reintentos si algo falla a mitad.</aside>
+</section>
+
+<!-- 29 rutas por tenant -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">En la vista</div>
+    <h2>Acceder al tenant actual</h2>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">vistas.py</span></div>
+      <pre><code class="language-python" data-hl="1,4,5,6">from django.db import connection
+
+def inicio(request):
+    tenant = request.tenant            # objeto Client
+    schema = connection.schema_name    # "acme" o "public"
+    nombre = request.tenant.nombre
+    return render(request, "inicio.html", {"colegio": nombre})</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div><code>request.tenant</code> es útil para branding y features; <code>connection.schema_name</code> para lógica de datos.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · El middleware pone el tenant en la request. Vistas y templates personalizan sin saber de dominios.</aside>
+</section>
+
+<!-- 30 datos compartidos -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Qué va dónde</div>
+    <h2>Datos compartidos vs por tenant</h2>
+    <div class="grid g2" style="margin-top:16px;align-items:start">
+      <div class="card a-django"><div class="label">public · shared</div><div class="value" style="font-size:.85em">Compartido</div><p>Tenants, dominios, usuarios globales, planes, facturación, catálogos.</p></div>
+      <div class="card a-pg"><div class="label">schema del tenant</div><div class="value" style="font-size:.85em">Aislado</div><p>Cursos, alumnos, notas, asistencia, configuración y branding del colegio.</p></div>
+    </div>
+    <div class="callout info" style="margin-top:16px"><span class="ic">i</span><div>Regla: si dos clientes podrían discrepar sobre un dato, va <b>por tenant</b>. Si es común a todos, va en <code>public</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Esta decisión se toma una vez y cuesta cambiarla. Pensarla bien antes de escribir modelos.</aside>
+</section>
+
+<!-- 31 errores comunes setup -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Para no tropezar</div>
+    <h2>Errores comunes del setup</h2>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Usar <code>migrate</code> en vez de <code>migrate_schemas</code>.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Olvidar <code>TenantMainMiddleware</code> o ponerlo fuera de orden.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>No crear el tenant <code>public</code> y recibir 404 en el dominio raíz.</div></div>
+      <div class="callout err" style="margin:0"><span class="ic">×</span><div>Poner apps con datos de cliente dentro de <code>SHARED_APPS</code>.</div></div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Con el setup correcto, casi todo el código Django que ya sabes sigue funcionando igual.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Repaso del bloque 02. Estos cuatro cubren la mayoría de dudas del primer contacto.</aside>
+</section>
+
+<!-- 32 Divisor 03 -->
+<section class="navy">
+  <div class="pad">
+    <div class="sectionnum">03</div>
+    <h2 style="font-size:1.6em">Operación</h2>
+    <p class="lead" style="color:#C6E0D4;font-size:.6em">Lo que separa una demo de un producto</p>
+  </div>
+  <aside class="notes">⏱ 10 s · Divisor. La parte que casi nunca se explica y que más duele en producción.</aside>
+</section>
+
+<!-- 33 tests -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Probar</div>
+    <h2>Tests en multitenant</h2>
+    <p class="lead">django-tenants aporta clases de test que crean un tenant temporal.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">cursos/tests.py</span></div>
+      <pre><code class="language-python" data-hl="1,3,4,5">from django_tenants.test.cases import TenantTestCase
+
+class CursoTest(TenantTestCase):
+    def test_crear_curso(self):
+        Curso.objects.create(nombre="Matemática")
+        self.assertEqual(Curso.objects.count(), 1)</code></pre>
+    </div>
+    <div class="callout warn" style="margin-top:12px"><span class="ic">!</span><div>Los tests con schemas usan <code>TransactionTestCase</code>: son más lentos y no se paralelizan igual que los normales.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · TenantTestCase crea y migra un schema para cada test. Ojo: con muchos tests, el tiempo de migración se nota.</aside>
+</section>
+
+<!-- 34 config por tenant -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Personalización</div>
+    <h2>Configuración por tenant</h2>
+    <p class="lead">Cada colegio quiere su logo, su subdominio y sus funciones.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">public/models.py</span></div>
+      <pre><code class="language-python" data-hl="5,6,7">class TenantConfig(models.Model):
+    tenant = models.OneToOneField(
+        "customers.Client", on_delete=models.CASCADE,
+    )
+    plan = models.CharField(max_length=20, default="basico")
+    logo = models.ImageField(upload_to="logos/")
+    gamificado = models.BooleanField(default=False)</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Configuración global del tenant → en <code>public</code>. Datos de negocio → en el schema del tenant.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · El branding y los planes son datos compartidos (van en public). Las decisiones "de negocio" del colegio, en su schema.</aside>
+</section>
+
+<!-- 35 media por tenant -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Archivos</div>
+    <h2>Media y archivos por tenant</h2>
+    <p class="lead">Las subidas deben aislarse igual que los datos: una ruta por tenant.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">storage.py</span></div>
+      <pre><code class="language-python" data-hl="1,3,4,5">from django.db import connection
+
+def ruta_por_tenant(instance, filename):
+    schema = connection.schema_name
+    return f"{schema}/documentos/{filename}"
+
+class Documento(models.Model):
+    archivo = models.FileField(upload_to=ruta_por_tenant)</code></pre>
+    </div>
+    <div class="callout warn" style="margin-top:12px"><span class="ic">!</span><div>Con S3, sirve los archivos con URLs firmadas y prefijo por tenant; nunca uses un bucket plano y público.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · El aislamiento no es solo de base de datos. Un bucket compartido mal servido puede filtrar documentos entre colegios.</aside>
+</section>
+
+<!-- 36 celery por tenant -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Tareas en background</div>
+    <h2>Celery por tenant</h2>
+    <p class="lead">Un worker no tiene subdominio: hay que decirle explícitamente en qué schema trabajar.</p>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">tareas.py</span></div>
+      <pre><code class="language-python" data-hl="1,4,5,6">from django_tenants.utils import schema_context
+
+@shared_task
+def enviar_reporte(schema_name, curso_id):
+    with schema_context(schema_name):
+        # aquí el ORM usa el schema del tenant
+        generar_pdf(curso_id)</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>Siempre pasa el <code>schema_name</code> a la tarea y envuélvela en <code>schema_context</code>: sin eso, usa <code>public</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Error clásico: la tarea corre sin tenant y consulta public. schema_context y tenant_context son las herramientas clave.</aside>
+</section>
+
+<!-- 37 seguridad -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Aislamiento</div>
+    <h2>Seguridad y fugas</h2>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="kv"><b>Admin</b> limita ver tenants ajeno (TenantAdminMixin)</div>
+      <div class="kv"><b>search_path</b> fíjalo tú; nunca lo tomes del cliente</div>
+      <div class="kv"><b>Cache</b> incluye el schema en la clave</div>
+      <div class="kv"><b>Sesiones</b> de un tenant no valen en otro</div>
+      <div class="kv"><b>Reset</b> de contraseña con dominio correcto</div>
+      <div class="kv"><b>Auditoría</b> registra el tenant en cada acción</div>
+    </div>
+    <div class="callout err" style="margin-top:16px"><span class="ic">×</span><div>Nunca construyas el <code>search_path</code> concatenando texto del usuario: es una inyección SQL.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Repasar cada fila con ejemplos. El aislamiento se rompe por detalles, no por el mecanismo central.</aside>
+</section>
+
+<!-- 38 rendimiento -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Escala</div>
+    <h2>Rendimiento y conexiones</h2>
+    <p class="lead">Un schema por tenant no multiplica conexiones, pero sí el trabajo de bootstrap.</p>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-pg"><div class="value" style="font-size:.78em;color:var(--pg-ink)">CONN_MAX_AGE</div><p>Reutiliza conexiones; evita reconectar en cada petición.</p></div>
+      <div class="card a-django"><div class="value" style="font-size:.78em;color:var(--django-ink)">PgBouncer</div><p>Pool del lado de la base de datos para muchos workers.</p></div>
+      <div class="card a-amber"><div class="value" style="font-size:.78em;color:var(--amber-ink)">Índices por schema</div><p>Cada tabla replicada necesita sus índices; cuida el tamaño.</p></div>
+    </div>
+    <div class="callout info" style="margin-top:16px"><span class="ic">i</span><div>Vigila el número de schemas: miles de tablas replicadas cambian el comportamiento del planificador de Postgres.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Con schema-per-tenant, la operación de la BD es más pesada: muchos objetos. Monitorea y automatiza el mantenimiento.</aside>
+</section>
+
+<!-- 39 observabilidad -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Ver qué pasa</div>
+    <h2>Observabilidad por tenant</h2>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="callout" style="margin:0"><span class="ic">i</span><div>Logs con el <code>schema_name</code> en cada línea.</div></div>
+      <div class="callout" style="margin:0"><span class="ic">i</span><div>Métricas y errores segmentados por tenant.</div></div>
+      <div class="callout" style="margin:0"><span class="ic">i</span><div>APM/tracing que propague el tenant en el contexto.</div></div>
+      <div class="callout" style="margin:0"><span class="ic">i</span><div>Alertas por tenant ruidoso o con errores.</div></div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Sin el tenant en los logs, depurar un incidente en producción se vuelve adivinanza.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Inyecta el tenant en el logger y en el tracing lo antes posible (middleware). Ahorra horas de debugging.</aside>
+</section>
+
+<!-- 40 billing -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Negocio</div>
+    <h2>Billing y metering por tenant</h2>
+    <p class="lead">Si cobras por uso, necesitas medirlo por tenant y limitarlo.</p>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-django"><div class="value" style="font-size:.78em;color:var(--django-ink)">Planes</div><p>Límites por plan: nº de alumnos, almacenamiento, funciones.</p></div>
+      <div class="card a-pg"><div class="value" style="font-size:.78em;color:var(--pg-ink)">Metering</div><p>Registra consumo por tenant para facturar y avisar.</p></div>
+      <div class="card a-amber"><div class="value" style="font-size:.78em;color:var(--amber-ink)">Suspensión</div><p>Un tenant impago se bloquea sin afectar al resto.</p></div>
+    </div>
+    <div class="callout info" style="margin-top:16px"><span class="ic">i</span><div>El estado de suscripción vive en <code>public</code> y condiciona el acceso al schema del tenant.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Billing es un buen ejemplo de dato compartido que gobierna el tenant. Enlaza negocio con arquitectura.</aside>
+</section>
+
+<!-- 41 onboarding -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Ciclo de vida</div>
+    <h2>Onboarding y offboarding</h2>
+    <div class="layers" style="margin-top:16px">
+      <div class="ly"><b>1 · Registro</b><span>se crea el tenant (pendiente) y su dominio.</span></div>
+      <div class="ly"><b>2 · Provisioning</b><span>schema + migraciones + datos iniciales + admin.</span></div>
+      <div class="ly"><b>3 · Activación</b><span>se factura el plan y se habilita el subdominio.</span></div>
+      <div class="ly"><b>4 · Suspensión</b><span>por impago o baja: se bloquea el acceso, no los datos.</span></div>
+      <div class="ly"><b>5 · Baja</b><span>export de datos y borrado del schema.</span></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 90 s · Trata el tenant como una entidad con ciclo de vida, no como una fila más. Automatiza cada etapa.</aside>
+</section>
+
+<!-- 42 GDPR -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Cumplimiento</div>
+    <h2>Borrado y export de datos</h2>
+    <p class="lead">Derecho al olvido y portabilidad, aplicados por tenant.</p>
+    <div class="grid g2" style="margin-top:16px;align-items:start">
+      <div class="card a-pg"><div class="label">export</div><div class="value" style="font-size:.85em">Portabilidad</div><p>Volcar todo el schema de un tenant a JSON/CSV bajo demanda.</p></div>
+      <div class="card a-red"><div class="label">delete</div><div class="value" style="font-size:.85em">Olvido</div><p>Borrar el tenant y su schema: <code>auto_drop_schema</code> o comando explícito.</p></div>
+    </div>
+    <div class="callout warn" style="margin-top:16px"><span class="ic">!</span><div>El borrado debe ser <b>definitivo</b> e incluir backups, caché y ficheros, no solo las tablas.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Con schema-per-tenant, exportar o borrar un cliente es limpiamente acotado (su schema). Es una ventaja de este patrón.</aside>
+</section>
+
+<!-- 43 backups -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Continuidad</div>
+    <h2>Backups por tenant</h2>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="kv"><b>Global</b> <code>pg_dump</code> de toda la base</div>
+      <div class="kv"><b>Por schema</b> <code>pg_dump -n acme</code></div>
+      <div class="kv"><b>Restore puntual</b> recuperar un solo cliente</div>
+      <div class="kv"><b>Verificación</b> probar restores periódicamente</div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Poder restaurar <b>un</b> tenant sin tocar a los demás es otra ventaja de separar por schema.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · El dump por schema (opción -n) permite recuperar un cliente concreto. Ensaya los restores: un backup sin probar no es un backup.</aside>
+</section>
+
+<!-- 44 checklist -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Antes de producción</div>
+    <h2>Checklist</h2>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="callout tip" style="margin:0"><span class="ic">✓</span><div>Tenant <code>public</code> creado y sirviendo.</div></div>
+      <div class="callout tip" style="margin:0"><span class="ic">✓</span><div>Migraciones shared/tenant en el pipeline de release.</div></div>
+      <div class="callout tip" style="margin:0"><span class="ic">✓</span><div>Tenant en logs, métricas y auditoría.</div></div>
+      <div class="callout tip" style="margin:0"><span class="ic">✓</span><div>Provisioning asíncrono con estado <code>pendiente</code>.</div></div>
+      <div class="callout tip" style="margin:0"><span class="ic">✓</span><div>Tests con <code>TenantTestCase</code>.</div></div>
+      <div class="callout tip" style="margin:0"><span class="ic">✓</span><div>Backups y borrado por schema probados.</div></div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 60 s · Repaso accionable. Sugerir guardar esta slide como checklist del proyecto real.</aside>
+</section>
+
+<!-- 45 Divisor 04 -->
+<section class="navy">
+  <div class="pad">
+    <div class="sectionnum">04</div>
+    <h2 style="font-size:1.6em">FastAPI/SQLAlchemy y experiencia</h2>
+    <p class="lead" style="color:#C6E0D4;font-size:.6em">Multitenancy fuera de Django y lecciones reales</p>
+  </div>
+  <aside class="notes">⏱ 10 s · Divisor. El patrón es agnóstico del framework; veamos cómo se ve con SQLAlchemy.</aside>
+</section>
+
+<!-- 46 SQLAlchemy enfoques -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Más allá de Django</div>
+    <h2>Multitenancy con SQLAlchemy</h2>
+    <div class="grid g2" style="margin-top:16px;align-items:start">
+      <div class="card a-pg"><div class="label">enfoque A</div><div class="value" style="font-size:.82em">schema por sesión</div><p>Igual que django-tenants: <code>search_path</code> por petición. Reutiliza el mismo esquema SQL.</p></div>
+      <div class="card a-django"><div class="label">enfoque B</div><div class="value" style="font-size:.82em">tenant_id + RLS</div><p>Cada tabla lleva <code>tenant_id</code>; Postgres lo refuerza con RLS.</p></div>
+    </div>
+    <div class="callout info" style="margin-top:16px"><span class="ic">i</span><div>La decisión no cambia: compartir por filas o separar por schema. El framework solo cambia <b>dónde</b> fijas el contexto.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Los mismos 3 patrones aplican en FastAPI. Aquí mostramos los dos más usados con SQLAlchemy.</aside>
+</section>
+
+<!-- 47 SQLAlchemy schema -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Enfoque A</div>
+    <h2>schema-per-tenant con SQLAlchemy</h2>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">db.py</span></div>
+      <pre style="font-size:.4em"><code class="language-python" data-hl="1,3,4,5,6">from sqlalchemy import event
+from contextvars import ContextVar
+
+tenant_ctx = ContextVar("schema", default="public")
+
+@event.listens_for(engine, "checkout")
+def set_schema(dbapi_conn, record):
+    schema = tenant_ctx.get()
+    dbapi_conn.cursor().execute(
+        f'SET search_path TO "{schema}", public'
+    )</code></pre>
+    </div>
+    <div class="callout warn" style="margin-top:12px"><span class="ic">!</span><div>Valida siempre el <code>schema</code> contra una lista blanca antes de interpolarlo: aquí también hay riesgo de inyección.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · El evento checkout fija el search_path por conexión según un ContextVar que pones en el middleware. Muy parecido a django-tenants por dentro.</aside>
+</section>
+
+<!-- 48 SQLAlchemy RLS -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Enfoque B</div>
+    <h2>tenant_id + RLS con SQLAlchemy</h2>
+    <div class="ide" style="margin-top:12px">
+      <div class="filebar"><span class="dots"><span style="background:#FF5F57"></span><span style="background:#FEBC2E"></span><span style="background:#28C840"></span></span><span class="fname">modelos.py</span></div>
+      <pre><code class="language-python" data-hl="4,5,7">class Curso(Base):
+    __tablename__ = "cursos"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    tenant_id: Mapped[int] = mapped_column(index=True)
+    nombre: Mapped[str]
+
+# RLS en Postgres usa current_setting('app.tenant_id')</code></pre>
+    </div>
+    <div class="callout tip" style="margin-top:12px"><span class="ic">✓</span><div>En cada petición: <code>SET app.tenant_id = ...</code> y Postgres filtra aunque olvides el <code>WHERE</code>.</div></div>
+  </div>
+  <aside class="notes">⏱ 120 s · Combina filtrado en el ORM (rendimiento, índices) con RLS (seguridad). Defensa en profundidad.</aside>
+</section>
+
+<!-- 49 Django vs FastAPI -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Elegir stack</div>
+    <h2>Django vs FastAPI para SaaS</h2>
+    <table style="margin-top:14px">
+      <thead><tr><th></th><th>Django + django-tenants</th><th>FastAPI + SQLAlchemy</th></tr></thead>
+      <tbody>
+        <tr><td><b>Multitenancy</b></td><td>Listo (schemas)</td><td>Manual (contexto)</td></tr>
+        <tr><td><b>Admin</b></td><td>Incluido</td><td>No incluido</td></tr>
+        <tr><td><b>Velocidad</b></td><td>Buena</td><td>Muy alta</td></tr>
+        <tr><td><b>Ecosistema</b></td><td>Enorme</td><td>Moderno, asíncrono</td></tr>
+        <tr><td><b>Ideal para</b></td><td>SaaS con back-office</td><td>APIs y servicios</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notes">⏱ 120 s · Sin fanatismo. Si necesitas admin y CRUD rápido, Django. Si es una API pura de alto tráfico, FastAPI.</aside>
+</section>
+
+<!-- 50 Mi experiencia -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Mi experiencia</div>
+    <h2>Xprende: SaaS de e-learning</h2>
+    <p class="lead">Plataforma multicliente de aprendizaje con gamificación, construida sobre estas ideas.</p>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card a-django"><div class="label">cliente</div><div class="value" style="font-size:.9em">Marathon</div><p>Programa de formación con retos y puntos.</p></div>
+      <div class="card a-pg"><div class="label">cliente</div><div class="value" style="font-size:.9em">Expoflores</div><p>Sectores y equipos con seguimiento propio.</p></div>
+      <div class="card a-amber"><div class="label">cliente</div><div class="value" style="font-size:.9em">Johannes Kepler</div><p>Colegio con alumnos, cursos y gamificación.</p></div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>Una sola plataforma, varios clientes: mismo código, datos y experiencia separados por tenant.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Aterrizar la teoría en un caso real propio. No mencionar detalles confidenciales; enfatizar el modelo, no los datos.</aside>
+</section>
+
+<!-- 51 Aprendí -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Lecciones</div>
+    <h2>Qué aprendí</h2>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="callout" style="margin:0"><span class="ic">i</span><div>El <b>aislamiento</b> es un requisito de negocio, no un detalle.</div></div>
+      <div class="callout" style="margin:0"><span class="ic">i</span><div>La <b>operación</b> (migraciones, backups, logs) pesa más que el setup.</div></div>
+      <div class="callout" style="margin:0"><span class="ic">i</span><div>Automatiza el <b>ciclo de vida</b> del tenant desde el día uno.</div></div>
+      <div class="callout" style="margin:0"><span class="ic">i</span><div>Decide temprano <b>qué es compartido y qué es por tenant</b>.</div></div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>schema-per-tenant da aislamiento fuerte con una operación manejable: el mejor balance para B2B.</div></div>
+  </div>
+  <aside class="notes">⏱ 90 s · Cuatro lecciones de producción. Si el tiempo aprieta, esta slide y la checklist son las que deben quedar claras.</aside>
+</section>
+
+<!-- 52 Chuleta -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Para llevar</div>
+    <h2>Chuleta multitenant</h2>
+    <div class="grid g2" style="margin-top:14px;gap:14px">
+      <div class="kv"><b>ENGINE</b> <code>django_tenants.postgresql_backend</code></div>
+      <div class="kv"><b>Middleware</b> <code>TenantMainMiddleware</code> primero</div>
+      <div class="kv"><b>Apps</b> <code>SHARED_APPS</code> / <code>TENANT_APPS</code></div>
+      <div class="kv"><b>Modelo</b> <code>TENANT_MODEL</code> + <code>TENANT_DOMAIN_MODEL</code></div>
+      <div class="kv"><b>Migrar</b> <code>migrate_schemas --shared|--tenant</code></div>
+      <div class="kv"><b>Contexto</b> <code>schema_context(...)</code></div>
+      <div class="kv"><b>Tests</b> <code>TenantTestCase</code></div>
+      <div class="kv"><b>Datos</b> public vs schema del tenant</div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 60 s · Repaso relámpago. Sugerir guardarla como referencia para el día a día.</aside>
+</section>
+
+<!-- 53 Recursos -->
+<section class="light">
+  <div class="pad">
+    <div class="kicker">Para seguir</div>
+    <h2>Recursos</h2>
+    <div class="grid g2" style="margin-top:16px;gap:14px">
+      <div class="kv"><b>Docs</b> django-tenants.readthedocs.io</div>
+      <div class="kv"><b>Código</b> github.com/joseamaya/multitenant</div>
+      <div class="kv"><b>Postgres</b> Schemas y Row-Level Security</div>
+      <div class="kv"><b>Artículo</b> Multi-Tenant Data Architecture (Microsoft)</div>
+    </div>
+    <div class="callout tip" style="margin-top:16px"><span class="ic">✓</span><div>El repo <code>joseamaya/multitenant</code> es un ejemplo mínimo para arrancar tu proyecto.</div></div>
+  </div>
+  <aside class="notes">⏱ 60 s · Dar el enlace del repo y las docs. Animar a clonar y cambiarle el dominio al primer tenant.</aside>
+</section>
+
+<!-- 54 Gracias -->
+<section class="navy" data-background-image="assets/bg-code.jpg" data-background-opacity="0.16" data-background-transition="fade">
+  <div class="pad">
+    <div class="kicker" style="color:#7FC2A6">Gracias</div>
+    <h1 style="font-size:1.8em">¿Preguntas?</h1>
+    <p class="lead" style="color:#C6E0D4;font-size:.6em">Elige tu patrón, separa por schema y automatiza la operación.</p>
+    <div style="margin-top:1.2em;display:flex;gap:60px;align-items:end">
+      <div>
+        <div style="color:#9FB4D4;font-size:.44em;font-family:'JetBrains Mono'">github · twitter</div>
+        <div style="color:#fff;font-size:.56em;font-family:'JetBrains Mono'">joseamaya · jamayac99</div>
+      </div>
+      <div>
+        <div style="color:#9FB4D4;font-size:.44em;font-family:'JetBrains Mono'">comunidad</div>
+        <div style="color:#fff;font-size:.56em;font-family:'JetBrains Mono'">Python Piura · Piura AI</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">⏱ 30 s · Agradecer y abrir preguntas. Idea central: schema-per-tenant es el balance entre aislamiento y coste.</aside>
+</section>
+
+</div></div>
+<script src="vendor/reveal/reveal.js"></script>
+<script src="vendor/reveal/notes.js"></script>
+<script src="vendor/reveal/highlight.js"></script>
+<script src="vendor/reveal/search.js"></script>
+<script src="vendor/reveal/zoom.js"></script>
+<script src="js/deck.js"></script>
+</body>
+</html>
