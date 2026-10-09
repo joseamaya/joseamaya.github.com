@@ -16,7 +16,7 @@
 `[acum 0:40]`
 
 ### 2 · Quién soy
-"Vengo de construir agentes conversacionales en producción: LangChain, LangGraph, RAG. Pero hoy no hablo de mis proyectos: hablo de la base, para que al salir entiendas qué hay debajo de la palabra 'agente'."
+"Vengo de construir agentes conversacionales en producción: LangChain, LangGraph, RAG. Llevo tres años en esto. Hoy no hablo de mis proyectos: comparto los fundamentos, para que puedan construir su primer agente."
 `[acum 1:30]`
 
 ### 3 · El recorrido
@@ -73,7 +73,7 @@
 
 ### 11 · Un turno, narrado
 "Veámoslo con un ejemplo: '¿Cuánto vendimos en marzo?'. En cuatro pasos: el modelo no sabe el dato; pide la herramienta; tu código consulta la base de datos; y solo entonces responde."
-"Abajo está el turno por dentro, como lista de mensajes: system (las reglas), user (la pregunta), assistant (pide execute_sql), tool (el resultado: 42150) y assistant (la respuesta: 42.150)."
+"Por debajo, el turno es una lista de mensajes que crece: system (las reglas), user (la pregunta), assistant (pide execute_sql), tool (el resultado: 42150) y assistant (la respuesta: 42.150)."
 "Y no es solo para una tool: si la tarea lo pide, el agente encadena varias en el mismo turno. Como pedir '¿cuánto es 312.5 × 4.2 y cuántas palabras tiene este texto?': primero llama a una calculadora y recibe 1312.5; luego a un contador y recibe 5; y solo entonces, con ambos resultados, redacta. Dos herramientas, un solo turno, sin que el modelo ejecute nada."
 "El modelo solo pidió la consulta; la ejecutó tu código, con tus permisos."
 `[acum 9:50]`

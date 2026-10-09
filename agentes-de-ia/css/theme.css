@@ -59,6 +59,9 @@ section.dark .lead,section.dark p{color:#A9BAD4}
 .card .num{font-family:'Montserrat',sans-serif;font-weight:800;font-size:1.5em;line-height:1}
 .a-navy::before{background:var(--navy)}.a-cyan::before{background:var(--cyan)}.a-green::before{background:var(--green)}.a-amber::before{background:var(--amber)}.a-red::before{background:var(--red)}
 
+/* diagram (generated PNG, see render-diagrams.mjs) */
+.diagram{display:block;width:100%;height:auto;object-fit:contain;margin:.12em auto}
+
 /* flow */
 .flow{display:flex;align-items:stretch;gap:0;width:100%}
 .flow .step{flex:1 1 0;min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 10px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center}

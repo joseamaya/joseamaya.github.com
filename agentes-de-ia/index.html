@@ -44,12 +44,12 @@
       <ul style="font-size:.62em;line-height:1.7;margin:0;padding-left:1.1em">
         <li>CTO y socio fundador de <strong>Xprende Tech</strong>; fundador de <strong>Piura AI</strong> y <strong>Python Piura</strong>.</li>
         <li>Construyo agentes conversacionales en producción: LangChain, LangGraph, RAG.</li>
-        <li>Hoy no hablo de mis proyectos: hablo de la base, para que entiendan qué hay debajo de la palabra "agente".</li>
+        <li>Tres años construyendo agentes conversacionales.</li>
       </ul>
     </div>
   </div>
   <aside class="notes">
-    <p>"Vengo de construir agentes conversacionales en producción: LangChain, LangGraph, RAG. Pero hoy no hablo de mis proyectos: hablo de la base, para que al salir entiendas qué hay debajo de la palabra 'agente'."</p>
+    <p>"Vengo de construir agentes conversacionales en producción: LangChain, LangGraph, RAG. Llevo tres años en esto. Hoy no hablo de mis proyectos: comparto los fundamentos, para que puedan construir su primer agente."</p>
     <p>[acum 1:30]</p>
   </aside>
 </section>
@@ -147,14 +147,7 @@
     <div class="kicker">El corazón</div>
     <h2>El bucle del agente (ReAct)</h2>
     <p class="lead">El patrón clásico: razonar y actuar en un ciclo. Hoy el modelo lo hace con tool calling nativo.</p>
-    <div class="grid g3" style="margin-top:8px">
-      <div class="card a-navy"><div class="num" style="color:var(--navy)">1</div><h3>Contexto</h3><p>prompt + historial + reglas</p></div>
-      <div class="card a-cyan"><div class="num" style="color:var(--cyan)">2</div><h3>Razona</h3><p>el modelo decide el paso</p></div>
-      <div class="card a-amber"><div class="num" style="color:var(--amber)">3</div><h3>¿Tool?</h3><p>sí o no: la bifurcación</p></div>
-      <div class="card a-green"><div class="num" style="color:var(--green)">4</div><h3>Actúa</h3><p>tu código ejecuta la tool</p></div>
-      <div class="card a-cyan"><div class="num" style="color:var(--cyan)">5</div><h3>Observa</h3><p>el resultado vuelve al modelo</p></div>
-      <div class="card a-navy"><div class="num" style="color:var(--navy)">6</div><h3>Termina</h3><p>cuando no pide más tools</p></div>
-    </div>
+    <img class="diagram" src="assets/diagram-loop.png" alt="El bucle del agente (ReAct)" style="max-height:400px">
     <p class="mt" style="color:var(--navy);font-weight:800;font-size:.6em">Es un ciclo, no una línea: el modelo decide el paso, la ejecución vive en tu código.</p>
   </div>
   <aside class="notes">
@@ -191,11 +184,7 @@
   <div class="pad">
     <div class="kicker">Cómo funciona · tool calling</div>
     <h2>El modelo propone; tu código ejecuta.</h2>
-    <div class="grid g3" style="margin-top:20px">
-      <div class="card a-cyan"><div class="num" style="color:var(--cyan)">1</div><h3>Le presentas un contrato</h3><p>Nombre, parámetros y descripción. Viajan en la petición (tools=): eso es lo que el modelo ve.</p></div>
-      <div class="card a-amber"><div class="num" style="color:var(--amber)">2</div><h3>El modelo pide</h3><p>"llama a execute_sql con query=...". No ejecuta nada.</p></div>
-      <div class="card a-green"><div class="num" style="color:var(--green)">3</div><h3>Tu código ejecuta</h3><p>Con tus permisos y tu validación. El resultado vuelve como mensaje.</p></div>
-    </div>
+    <img class="diagram" src="assets/diagram-toolcalling.png" alt="Tool calling" style="max-height:430px">
     <p class="mt" style="color:var(--navy);font-weight:800;font-size:.6em">Esa separación es lo que hace al agente seguro: el modelo propone, tú dispones.</p>
   </div>
   <aside class="notes">
@@ -233,21 +222,12 @@
     <div class="kicker">Un turno, por dentro</div>
     <h2>"¿Cuánto vendimos en marzo?"</h2>
     <p class="lead">El modelo no sabe el dato: pide la herramienta, tu código consulta, y solo entonces responde.</p>
-    <div class="flow" style="margin-top:8px">
-      <div class="step"><div class="n" style="color:var(--navy);font-size:.55em">1 · No sabe el dato</div></div>
-      <div class="arrow">→</div>
-      <div class="step"><div class="n" style="color:var(--amber);font-size:.55em">2 · Pide la herramienta</div></div>
-      <div class="arrow">→</div>
-      <div class="step"><div class="n" style="color:var(--cyan);font-size:.55em">3 · Tu código consulta</div></div>
-      <div class="arrow">→</div>
-      <div class="step"><div class="n" style="color:var(--green);font-size:.55em">4 · Responde con el dato</div></div>
-    </div>
-    <img src="assets/term-messages.png" alt="" style="width:58%;margin:10px auto 0;border-radius:12px">
+    <img class="diagram" src="assets/diagram-turn.png" alt="Un turno por dentro" style="max-height:405px">
     <p class="mt" style="color:var(--navy);font-weight:800;font-size:.55em">El modelo solo pidió la consulta; la ejecutó tu código, con tus permisos. Y si hace falta, encadena varias tools en el mismo turno.</p>
   </div>
   <aside class="notes">
     <p>"Veámoslo con un ejemplo: '¿Cuánto vendimos en marzo?'. En cuatro pasos: el modelo no sabe el dato; pide la herramienta; tu código consulta la base de datos; y solo entonces responde."</p>
-    <p>"Abajo está el turno por dentro, como lista de mensajes: system (las reglas), user (la pregunta), assistant (pide execute_sql), tool (el resultado: 42150) y assistant (la respuesta: 42.150)."</p>
+    <p>"Por debajo, el turno es una lista de mensajes que crece: system (las reglas), user (la pregunta), assistant (pide execute_sql), tool (el resultado: 42150) y assistant (la respuesta: 42.150)."</p>
     <p>"Y no es solo para una tool: si la tarea lo pide, el agente encadena varias en el mismo turno. Como pedir '¿cuánto es 312.5 × 4.2 y cuántas palabras tiene este texto?': primero llama a una calculadora y recibe 1312.5; luego a un contador y recibe 5; y solo entonces, con ambos resultados, redacta. Dos herramientas, un solo turno, sin que el modelo ejecute nada."</p>
     <p>"El modelo solo pidió la consulta; la ejecutó tu código, con tus permisos."</p>
     <p>[acum 9:50]</p>
@@ -456,12 +436,7 @@
   <div class="pad">
     <div class="kicker">LangGraph · control explícito</div>
     <h2>LangGraph: control cuando lo necesitas</h2>
-    <div class="grid g2" style="margin-top:18px">
-      <div class="card a-cyan"><h3>Cuándo bajar</h3><p>Ramas condicionales, varios agentes, ciclos con reglas propias o interrupciones en puntos exactos.</p></div>
-      <div class="card a-navy"><h3>Grafo con estado</h3><p>Estado tipado, nodos (pasos) y aristas que deciden a dónde ir según el estado.</p></div>
-      <div class="card a-amber"><h3>Memoria</h3><p>Un checkpointer guarda el hilo; el store, lo que cruza conversaciones. El thread_id separa charlas.</p></div>
-      <div class="card a-green"><h3>Humano en el bucle</h3><p>El grafo se pausa antes de una tool sensible; apruebas o editas y reanuda con resume.</p></div>
-    </div>
+    <img class="diagram" src="assets/diagram-langgraph.png" alt="Grafo con estado de LangGraph" style="max-height:415px">
     <p class="mt" style="color:var(--navy);font-weight:800;font-size:.5em">create_agent cubre el 80%; baja a LangGraph cuando necesites este control. El detalle de cada pieza merece su propio espacio.</p>
   </div>
   <aside class="notes">
@@ -477,16 +452,8 @@
   <div class="pad">
     <div class="kicker">La recuperación (RAG)</div>
     <h2>La recuperación: responder con tus datos</h2>
-    <div class="flow" style="margin-top:22px">
-      <div class="step"><div class="n" style="color:var(--navy);font-size:.55em">El modelo</div><small>no sabe el dato</small></div>
-      <div class="arrow">→</div>
-      <div class="step"><div class="n" style="color:var(--cyan);font-size:.55em">Pide buscar</div><small>"busca en mis documentos"</small></div>
-      <div class="arrow">→</div>
-      <div class="step"><div class="n" style="color:var(--green);font-size:.55em">Recibe pasajes</div><small>los fragmentos relevantes</small></div>
-      <div class="arrow">→</div>
-      <div class="step"><div class="n" style="color:var(--amber);font-size:.55em">Responde</div><small>solo con eso</small></div>
-    </div>
-    <div class="card a-cyan" style="margin-top:20px"><p style="color:var(--navy);font-size:.5em;font-weight:700;margin:0;line-height:1.4">La recuperación conecta al agente con tus datos: fragmentas los documentos, los guardas como embeddings en un índice y traes los fragmentos más parecidos. Cómo buscar bien merece su propio espacio.</p></div>
+    <img class="diagram" src="assets/diagram-rag.png" alt="Pipeline de RAG" style="max-height:380px">
+    <div class="card a-cyan" style="margin-top:14px"><p style="color:var(--navy);font-size:.5em;font-weight:700;margin:0;line-height:1.4">La recuperación conecta al agente con tus datos: fragmentas los documentos, los guardas como embeddings en un índice y traes los fragmentos más parecidos. Cómo buscar bien merece su propio espacio.</p></div>
   </div>
   <aside class="notes">
     <p>"La recuperación, el RAG: son las siglas de Retrieval-Augmented Generation, recuperar información y añadirla al contexto del modelo."</p>
@@ -501,13 +468,7 @@
   <div class="pad">
     <div class="kicker">Construir · el plano</div>
     <h2>El agente completo, de una pieza</h2>
-    <div class="grid g4" style="margin-top:20px;grid-template-columns:repeat(5,1fr);gap:12px">
-      <div class="card a-cyan" style="padding:14px 12px"><h3 style="font-size:.5em">Modelo</h3><p style="font-size:.4em">razona y redacta. Sustituible por configuración.</p></div>
-      <div class="card a-amber" style="padding:14px 12px"><h3 style="font-size:.5em">Instrucciones</h3><p style="font-size:.4em">el system prompt: rol, reglas y límites.</p></div>
-      <div class="card a-green" style="padding:14px 12px"><h3 style="font-size:.5em">Herramientas</h3><p style="font-size:.4em">actúan; se describen solas con su docstring.</p></div>
-      <div class="card a-navy" style="padding:14px 12px"><h3 style="font-size:.5em">Middleware</h3><p style="font-size:.4em">hooks: contexto, guardrails, resiliencia.</p></div>
-      <div class="card a-cyan" style="padding:14px 12px"><h3 style="font-size:.5em">Memoria</h3><p style="font-size:.4em">checkpointer (el hilo) y store (entre hilos).</p></div>
-    </div>
+    <img class="diagram" src="assets/diagram-blueprint.png" alt="El agente completo: modelo y arnés" style="max-height:480px">
     <p class="mt" style="color:var(--navy);font-weight:800;font-size:.55em">Ese es el agente: el modelo y su arnés (instrucciones, herramientas, middleware y memoria). Lo demás —RAG, canales, observabilidad— se conecta alrededor.</p>
   </div>
   <aside class="notes">
