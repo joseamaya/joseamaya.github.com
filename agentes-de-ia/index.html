@@ -340,12 +340,20 @@
   <div class="pad">
     <div class="kicker">LangChain v1 · el mínimo</div>
     <h2>El agente mínimo</h2>
-    <div class="term" style="margin-top:14px"><div class="body" style="font-size:.38em"><span class="c">agent</span> = <span class="g">create_agent</span>(<span class="c">model</span>=<span class="g">"openai:gpt-5"</span>, <span class="c">tools</span>=[...], <span class="c">system_prompt</span>=<span class="g">"..."</span>)</div></div>
-    <div class="grid g2" style="margin-top:16px">
-      <div class="card a-cyan"><h3>Rol y objetivo</h3><p>Quién es y qué debe lograr.</p></div>
-      <div class="card a-red"><h3>Reglas y límites</h3><p>Qué puede y qué no; cuándo pausar.</p></div>
-      <div class="card a-amber"><h3>Formato y tono</h3><p>Cómo responde: idioma, longitud y estilo.</p></div>
-      <div class="card a-green"><h3>Cuando no sabe</h3><p>No inventar: usar una tool o decirlo.</p></div>
+    <div style="display:flex;gap:24px;margin-top:16px">
+      <div class="term" style="flex:1.2;align-self:flex-start">
+        <div class="bar"><div class="dots"><span style="background:#F87171"></span><span style="background:#F5A623"></span><span style="background:#7AC943"></span></div><span class="fname">agent.py</span></div>
+        <div class="body"><span class="c">agent</span> = <span class="g">create_agent</span>(
+    <span class="c">model</span>=<span class="g">"openai:gpt-5"</span>,
+    <span class="c">tools</span>=[...],
+    <span class="c">system_prompt</span>=<span class="g">"..."</span>,
+)</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:12px">
+        <div class="card a-cyan"><h3>Rol y objetivo</h3><p>Quién es y qué debe lograr.</p></div>
+        <div class="card a-red"><h3>Reglas y límites</h3><p>Qué puede y qué no; cuándo pausar. No inventar: usar una tool o decirlo.</p></div>
+        <div class="card a-amber"><h3>Formato y tono</h3><p>Cómo responde: idioma, longitud y estilo.</p></div>
+      </div>
     </div>
     <p class="mt" style="color:var(--navy);font-weight:800;font-size:.52em">create_agent arma el grafo por dentro; el system_prompt son las reglas del agente.</p>
   </div>
