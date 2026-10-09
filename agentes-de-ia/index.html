@@ -401,11 +401,24 @@
   <div class="pad">
     <div class="kicker" style="color:var(--navy)">LangChain v1 · configuración y salida</div>
     <h2>Modelo sustituible, middleware y salida</h2>
-    <div class="term" style="margin-top:14px"><div class="body" style="font-size:.5em"><span class="c">model</span>=<span class="g">"openai:gpt-5"</span>   <span class="d"># o anthropic:..., google:..., ollama:...</span></div></div>
-    <div class="grid g3" style="margin-top:16px">
-      <div class="card a-cyan"><h3>Modelo sustituible</h3><p>Cambia de proveedor con una línea: <span class="mono">init_chat_model</span> unifica la interfaz, y las content blocks dan un formato común a texto, imágenes y más.</p></div>
-      <div class="card a-green"><h3>Middleware</h3><p>Hooks antes y después del modelo, y de cada tool: contexto, guardrails (PII), aprobación, resiliencia y subagentes. No es un runtime aparte.</p></div>
-      <div class="card a-navy"><h3>Salida</h3><p>Estructurada (Pydantic, <span class="mono">response_format → structured_response</span>) para integrar; y streaming para ver la respuesta en vivo.</p></div>
+    <div style="display:flex;gap:24px;margin-top:16px">
+      <div class="term" style="flex:1.2;align-self:flex-start">
+        <div class="bar"><div class="dots"><span style="background:#F87171"></span><span style="background:#F5A623"></span><span style="background:#7AC943"></span></div><span class="fname">model.py</span></div>
+        <div class="body"><span class="c">model</span> = <span class="g">"openai:gpt-5"</span>
+<span class="d"># o anthropic:..., google:..., ollama:...</span>
+
+<span class="c">agent</span> = <span class="g">create_agent</span>(
+    <span class="c">model</span>=<span class="c">model</span>,
+    <span class="c">tools</span>=[...],
+    <span class="c">middleware</span>=[...],
+    <span class="c">response_format</span>=<span class="g">Answer</span>,
+)</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+        <div class="card a-cyan" style="padding:16px 20px"><h3 style="font-size:.8em">Modelo sustituible</h3><p style="font-size:.38em">Cambia de proveedor con una línea: <span class="mono">init_chat_model</span> unifica la interfaz, y las content blocks dan un formato común a texto, imágenes y más.</p></div>
+        <div class="card a-green" style="padding:16px 20px"><h3 style="font-size:.8em">Middleware</h3><p style="font-size:.38em">Hooks antes y después del modelo, y de cada tool: contexto, guardrails (PII), aprobación, resiliencia y subagentes. No es un runtime aparte.</p></div>
+        <div class="card a-navy" style="padding:16px 20px"><h3 style="font-size:.8em">Salida</h3><p style="font-size:.38em">Estructurada (Pydantic, <span class="mono">response_format → structured_response</span>) para integrar; y streaming para ver la respuesta en vivo.</p></div>
+      </div>
     </div>
     <p class="mt" style="color:var(--navy);font-weight:800;font-size:.5em">El modelo se cambia con una línea; el middleware extiende el bucle; la salida se adapta a tu sistema.</p>
   </div>
